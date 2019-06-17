@@ -1,0 +1,13 @@
+# Python-related
+build/
+dist/
+*.pyc
+__pycache__/
+gdc_ng_models.egg-info/
+
+# IDE
+.idea/
+.vscode/
+
+# Virtualenv
+venv/
