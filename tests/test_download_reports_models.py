@@ -6,10 +6,6 @@ from gdc_ng_models.models.download_reports import (
 )
 
 
-def test_ping(db_session):
-    assert True
-
-
 def test_create_usage_reports(create_reports_db, db_session):
 
     report = DataUsageReport()

@@ -9,6 +9,7 @@ from sqlalchemy.orm import sessionmaker
 
 from gdc_ng_models.models import (
     download_reports,
+    qcreport,
     redaction,
 )
 from gdc_ng_models.snacks import database as db
@@ -34,6 +35,13 @@ def create_reports_db(db_engine):
     download_reports.Base.metadata.create_all(db_engine)
     yield
     download_reports.Base.metadata.drop_all(db_engine)
+
+
+@pytest.fixture(scope='session')
+def create_qcreport_db(db_engine):
+    qcreport.Base.metadata.create_all(db_engine)
+    yield
+    qcreport.Base.metadata.drop_all(db_engine)
 
 
 @pytest.fixture(scope='session')

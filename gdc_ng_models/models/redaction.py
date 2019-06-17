@@ -1,8 +1,15 @@
-import copy
-
 from datetime import datetime
-
-from sqlalchemy import Boolean, Column, DateTime, Enum, ForeignKey, Integer, String, Text, text
+from sqlalchemy import (
+    Boolean,
+    Column,
+    DateTime,
+    Enum,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
+    text,
+)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
