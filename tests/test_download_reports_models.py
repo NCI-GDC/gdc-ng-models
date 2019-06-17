@@ -1,5 +1,6 @@
 from datetime import date
 
+from cdisutils.dictionary import sort_dict
 from gdc_ng_models.models.download_reports import (
     DataDownloadReport,
     DataUsageReport,
@@ -26,7 +27,12 @@ def test_create_usage_reports(create_reports_db, db_session):
 
     assert rp.api_report == report.api_report
     assert rp.report_period == report.report_period
-    assert rp.portal_report == report.portal_report
+    assert sort_dict(rp.api_report) == sort_dict(report.api_report)
+    assert sort_dict(rp.portal_report) == sort_dict(report.portal_report)
+    assert sort_dict(rp.website_report) == sort_dict(report.website_report)
+    assert sort_dict(rp.doc_site_report) == sort_dict(report.doc_site_report)
+    assert rp.date_created == report.date_created
+    assert rp.last_updated == report.last_updated
 
 
 def test_create_download_report(create_reports_db, db_session):
@@ -49,6 +55,15 @@ def test_create_download_report(create_reports_db, db_session):
         .filter(DataDownloadReport.report_period == report.report_period)\
         .first()
 
-    assert rp.access_location_report == report.access_location_report
     assert rp.report_period == report.report_period
+    assert sort_dict(rp.project_id_report) == \
+        sort_dict(report.project_id_report)
+    assert sort_dict(rp.experimental_strategy_report) == \
+        sort_dict(report.experimental_strategy_report)
+    assert sort_dict(rp.access_type_report) == \
+        sort_dict(report.access_type_report)
+    assert sort_dict(rp.access_location_report) == \
+        sort_dict(report.access_location_report)
     assert rp.project_id_report == report.project_id_report
+    assert rp.date_created == report.date_created
+    assert rp.last_updated == report.last_updated
