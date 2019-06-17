@@ -6,4 +6,7 @@ setup(
     description='Non-graph GDC models',
     license='Apache',
     packages=find_packages(),
+    scripts=[
+        'bin/ng-models',
+    ],
 )

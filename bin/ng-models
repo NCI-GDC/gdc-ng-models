@@ -1,0 +1,89 @@
+#!/usr/bin/env python
+
+import importlib
+
+from cdislogging import get_logger
+
+from gdc_ng_models.utils.arg_parser import get_parser
+from gdc_ng_models.snacks.database import (
+    create_database,
+    get_configs,
+    postgres_engine_factory,
+)
+
+
+logger = get_logger('ng-models-cli')
+
+
+def get_module(args):
+
+    name = args.module
+
+    try:
+        return importlib.import_module(
+            'gdc_ng_models.models.' + name
+        )
+    except ModuleNotFoundError:
+        logger.error(
+            'No ng-model [{name}] exists!'.format(name=name)
+        )
+
+
+def parse_configs(args):
+
+    configs = get_configs()
+
+    configs['host'] = args.host if args.host else configs['host']
+    configs['database'] = args.database if args.host else configs['database']
+    configs['admin_user'] = \
+        args.admin_user if args.host else configs['admin_user']
+    configs['admin_password'] = \
+        args.host if args.admin_password else configs['admin_password']
+
+    all_list = [
+        configs['host'],
+        configs['database'],
+        configs['admin_user'],
+        configs['admin_password'],
+    ]
+
+    return configs if all(all_list) else None
+
+
+def make_database_and_tables(module, configs):
+
+    try:
+        create_database(configs, configs.get('database'))
+
+        engine = postgres_engine_factory(configs)
+        module.Base.metadata.create_all(engine)
+
+        logger.info(
+            'Successfully created ng-models table [{name}]'
+            .format(name=module.__name__)
+        )
+        return 0
+
+    except Exception as e:
+        logger.error(e)
+        return 1
+
+
+def main():
+    parser = get_parser()
+    args = parser.parse_args()
+
+    module = get_module(args)
+    configs = parse_configs(args)
+
+    if module is None or configs is None:
+        logger.info(
+            'Halting because module or configs aren\'t correct.'
+        )
+        return 1
+
+    return make_database_and_tables(module, configs)
+
+
+if __name__ == '__main__':
+    main()
