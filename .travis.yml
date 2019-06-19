@@ -16,4 +16,4 @@ install:
   - pip install -r dev-requirements.txt
   - python setup.py install
 
-script: "./service_wrapper_testing.sh pytest -v"
+script: "./service_wrapper.sh pytest -v"

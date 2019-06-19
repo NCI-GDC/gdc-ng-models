@@ -1,5 +1,4 @@
 psycopg2-binary==2.8.2
 sqlalchemy==1.3.3
 
--e git+ssh://git@github.com/uc-cdis/cdislogging.git@0.0.2#egg=cdislogging
--e git+ssh://git@github.com/NCI-GDC/psqlgraph.git@62473c25e0f788045ba9efda77c736016ea49c25#egg=psqlgraph
+-e git+https://git@github.com/uc-cdis/cdislogging.git@0.0.2#egg=cdislogging
