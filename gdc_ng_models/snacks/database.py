@@ -22,7 +22,7 @@ def get_configs():
 
 def postgres_engine_factory(configs):
     return create_engine(
-        'postgres://{user}@{host}/{database}'.format(
+        'postgresql://{user}@{host}/{database}'.format(
             user=configs.get('admin_user'),
             host=configs.get('host'),
             database=configs.get('database'),

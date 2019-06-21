@@ -1,13 +1,7 @@
-from distutils.version import StrictVersion
-import sqlalchemy as db
 from sqlalchemy import Column, Text, DateTime, text, Integer, Index, func
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
-
-if StrictVersion(db.__version__) >= StrictVersion('1.3.4'):
-    from sqlalchemy.dialects.postgresql.json import JSONB
-else:
-    from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.postgresql import JSONB
 
 
 Base = declarative_base()
