@@ -16,7 +16,14 @@ from sqlalchemy.dialects.postgresql import JSONB
 
 Base = declarative_base()
 SEVERITY = Enum("CRITICAL", "WARNING", "PASSED", name="error_severity")
-TEST_RUN_STATUS = Enum("PENDING", "RUNNING", "SUCCESS", "ERROR", "FAILED", name="test_run_status")
+TEST_RUN_STATUS = Enum(
+    "PENDING",
+    "RUNNING",
+    "SUCCESS",
+    "ERROR",
+    "FAILED",
+    name="test_run_status"
+)
 
 
 class TestRun(Base):
@@ -31,7 +38,12 @@ class TestRun(Base):
     is_stale = Column(Boolean(64), nullable=False, default=False)
 
     # e.g. pending/running/finished
-    status = Column(TEST_RUN_STATUS, default="PENDING", nullable=False, index=True)
+    status = Column(
+        TEST_RUN_STATUS,
+        default="PENDING",
+        nullable=False,
+        index=True
+    )
 
     test_results = relationship('ValidationResult',
                                 back_populates='test_run',
@@ -73,7 +85,7 @@ class ValidationResult(Base):
     id = Column(Integer, primary_key=True)
 
     node_id = Column(String(64), nullable=False)
-    submitter_id = Column(String(128))
+    submitter_id = Column(String(128), nullable=False)
 
     error_type = Column(String(128), nullable=True, default='', index=True)
 
@@ -85,7 +97,12 @@ class ValidationResult(Base):
 
     related_nodes = Column(JSONB, nullable=True)
 
-    test_run_id = Column(Integer, ForeignKey("qc_test_runs.id"), nullable=False, primary_key=True)
+    test_run_id = Column(
+        Integer,
+        ForeignKey("qc_test_runs.id"),
+        nullable=False,
+        primary_key=True
+    )
     test_run = relationship('TestRun', back_populates='test_results')
 
     date_created = Column(
@@ -123,6 +140,7 @@ class ValidationResult(Base):
     def to_json(self):
         return {
             'node_id': self.node_id,
+            'submitter_id': self.submitter_id,
             'error': self.error_type,
             'severity': self.severity,
             'message': self.message,
