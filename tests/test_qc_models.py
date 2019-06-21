@@ -43,6 +43,7 @@ def test_create_validation_result(test_run, db_session):
     vr = qcreport.ValidationResult()
     vr.id = 1
     vr.node_id = str(uuid.uuid4())
+    vr.submitter_id = 'some_submitter_id'
     vr.severity = "fatal"
     vr.error_type = "NO_READ_PAIR_NUMBER"
     vr.message = "The FASTQ is paired but has no read_pair_number"
