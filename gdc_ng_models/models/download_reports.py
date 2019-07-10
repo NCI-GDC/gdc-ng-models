@@ -161,7 +161,7 @@ class DataDownloadReport(Base):
 
 class MonthlyAwstats(Base):
     __tablename__ = 'monthly_awstats'
-    report_date = db.Column('report_date', db.Date, primary_key=True)
+    date = db.Column('date', db.Date, primary_key=True)
     site = db.Column('site', db.String(length=50), primary_key=True)
     # TODO: many of these are currently Integers, should they be BigInts?
     unique_visitors = db.Column('unique_visitors', db.Integer)
