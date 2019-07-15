@@ -8,6 +8,11 @@ from gdc_ng_models.utils.decorators import try_or_log_error
 
 logger = get_logger(__name__)
 
+PERMISSIONS = dict(
+    READ="SELECT",
+    WRITE="SELECT, INSERT, UPDATE, DELETE"
+)
+
 
 def get_configs():
     return {
@@ -22,8 +27,9 @@ def get_configs():
 
 def postgres_engine_factory(configs):
     return create_engine(
-        'postgresql://{user}@{host}/{database}'.format(
+        'postgresql://{user}:{password}@{host}/{database}'.format(
             user=configs.get('admin_user'),
+            password=configs.get("admin_password"),
             host=configs.get('host'),
             database=configs.get('database'),
         )
@@ -101,4 +107,44 @@ def grant_all_privileges(configs, database, user):
         configs,
         stmt,
         grant_all_privileges.__name__ + ' success'
+    )
+
+
+@try_or_log_error(logger)
+def grant_privilege(configs, permission, user, tables):
+    """
+    Args:
+        configs (dict):
+        permission (str):
+        user (str):
+        tables (list[str]):
+    """
+    stmt = 'GRANT {permission} ON TABLE {tables} TO {user}'\
+        .format(
+            tables=", ".join(tables),
+            permission=PERMISSIONS[permission.upper()],
+            user=user
+        )
+    logger.debug(stmt)
+    execute_statement(
+        configs,
+        stmt,
+        grant_privilege.__name__ + ' success'
+    )
+
+
+@try_or_log_error(logger)
+def revoke_privilege(configs, permission, user, tables):
+
+    stmt = 'REVOKE {permission} ON TABLE {tables} FROM {user}'\
+        .format(
+            tables=", ".join(tables),
+            permission=PERMISSIONS[permission.upper()],
+            user=user
+        )
+    logger.debug(stmt)
+    execute_statement(
+        configs,
+        stmt,
+        revoke_privilege.__name__ + ' success'
     )

@@ -14,7 +14,7 @@ def get_parser():
     )
 
     parser.add_argument(
-        '-host',
+        '-H',
         '--host',
         type=str,
         help='The database host',
@@ -43,4 +43,46 @@ def get_parser():
         required=False,
     )
 
+    sub_parser = parser.add_subparsers()
+
+    create_parser = sub_parser.add_parser("create", help="Create tables")
+    create_parser.set_defaults(action="create")
+
+    grant_parser = sub_parser.add_parser("grant", help="Grants privileges in module tables")
+
+    grant_parser.add_argument(
+        "-r",
+        "--role",
+        type=str,
+        required=True,
+        help="User role to grant permissions to"
+    )
+
+    grant_parser.add_argument(
+        "-P",
+        "--permission",
+        required=True,
+        choices=["read", "write"],
+        help="Permission to grand to user"
+    )
+    grant_parser.set_defaults(action="grant")
+
+    revoke_parser = sub_parser.add_parser("revoke", help="Revokes privileges in module tables")
+
+    revoke_parser.add_argument(
+        "-r",
+        "--role",
+        type=str,
+        required=True,
+        help="User role to grant permissions to"
+    )
+
+    revoke_parser.add_argument(
+        "-P",
+        "--permission",
+        required=True,
+        choices=["read", "write"],
+        help="User permission to revoke"
+    )
+    revoke_parser.set_defaults(action="revoke")
     return parser
