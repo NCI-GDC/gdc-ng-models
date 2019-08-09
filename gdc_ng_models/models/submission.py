@@ -11,7 +11,7 @@ from datetime import datetime
 from json import loads, dumps
 import pytz
 import sqlalchemy as db
-from sqlalchemy import func
+from sqlalchemy import func, Sequence
 from sqlalchemy.ext.declarative import declarative_base, declared_attr
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship, deferred
@@ -61,7 +61,9 @@ class TransactionLog(Base):
         return "<TransactionLog({}, {})>".format(
             self.id, self.created_datetime)
 
-    def to_json(self, fields=set()):
+    def to_json(self, fields=None):
+
+        fields = fields or set()
         # Source fields
         existing_fields = [c.name for c in self.__table__.c]+[
             'entities', 'documents']
@@ -103,9 +105,11 @@ class TransactionLog(Base):
 
         return doc
 
+    id_seq = Sequence("transaction_logs_id_seq", metadata=Base.metadata)
     id = Column(
         Integer,
         primary_key=True,
+        server_default=id_seq.next_value()
     )
 
     submitter = Column(
@@ -172,14 +176,15 @@ class TransactionLog(Base):
 
 
 class TransactionSnapshot(Base):
+
     __tablename__ = 'transaction_snapshots'
 
     def __repr__(self):
         return "<TransactionSnapshot({}, {})>".format(
             self.id, self.transaction_id)
 
-    def to_json(self, fields=set()):
-        fields = set(fields)
+    def to_json(self, fields=None):
+        fields = set(fields) if fields else set()
         existing_fields = [c.name for c in self.__table__.c]
         if not fields:
             fields = existing_fields
@@ -223,11 +228,12 @@ class TransactionSnapshot(Base):
 
 
 class TransactionDocument(Base):
+
     __tablename__ = 'transaction_documents'
 
-    def to_json(self, fields=set()):
+    def to_json(self, fields=None):
         # Source fields
-        fields = set(fields)
+        fields = set(fields) if fields else set()
         existing_fields = {c.name for c in self.__table__.c}
 
         # Default fields

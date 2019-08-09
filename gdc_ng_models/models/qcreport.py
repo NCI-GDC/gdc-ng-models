@@ -8,7 +8,7 @@ from sqlalchemy import (
     String,
     Text,
     text,
-)
+    Sequence)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, validates
 from sqlalchemy.dialects.postgresql import JSONB
@@ -30,7 +30,8 @@ class TestRun(Base):
 
     __tablename__ = 'qc_test_runs'
 
-    id = Column(Integer, primary_key=True)
+    id_seq = Sequence("qc_test_runs_id_seq", metadata=Base.metadata)
+    id = Column(Integer, primary_key=True, server_default=id_seq.next_value())
     project_id = Column(String(64), nullable=False, index=True)
 
     entity_id = Column(String(64), nullable=False)
@@ -82,7 +83,8 @@ class ValidationResult(Base):
 
     __tablename__ = 'qc_validation_results'
 
-    id = Column(Integer, primary_key=True)
+    id_seq = Sequence("qc_validation_results_id_seq", metadata=Base.metadata)
+    id = Column(Integer, primary_key=True, server_default=id_seq.next_value())
 
     node_id = Column(String(64), nullable=False)
     submitter_id = Column(String(128), nullable=False)

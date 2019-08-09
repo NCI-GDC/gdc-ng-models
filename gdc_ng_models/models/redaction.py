@@ -9,7 +9,7 @@ from sqlalchemy import (
     String,
     Text,
     text,
-)
+    Sequence)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
@@ -25,7 +25,8 @@ class RedactionLog(Base):
 
     __tablename__ = 'redaction_log'
 
-    id = Column(Integer, primary_key=True, nullable=False)
+    id_seq = Sequence("redaction_log_id_seq", metadata=Base.metadata)
+    id = Column(Integer, primary_key=True, server_default=id_seq.next_value())
     annotation_id = Column(String(64), nullable=False, unique=True)
 
     # who initiated the redaction
