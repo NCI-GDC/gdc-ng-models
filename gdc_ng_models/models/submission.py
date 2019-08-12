@@ -249,10 +249,12 @@ class TransactionDocument(Base):
         doc = {key: getattr(self, key) for key in fields}
         return doc
 
+    id_seq = Sequence("transaction_documents_id_seq", metadata=Base.metadata)
     id = Column(
         Integer,
         primary_key=True,
         nullable=False,
+        server_default=id_seq.next_value()
     )
 
     transaction_id = Column(
