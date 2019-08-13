@@ -7,13 +7,6 @@ python:
 addons:
   postgresql: '9.5'
 
-before_script:
-  - psql -c "create user gdc_test with superuser password 'gdc_test';" -U postgres
-  - psql -c 'create database automated_test with owner "gdc_test";' -U postgres
+install: "pip install tox-travis"
 
-install:
-  - pip install -r requirements.txt
-  - pip install -r dev-requirements.txt
-  - python setup.py install
-
-script: "./service_wrapper.sh pytest -v"
+script: "tox"
