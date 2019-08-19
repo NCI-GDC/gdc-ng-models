@@ -7,7 +7,7 @@ from sqlalchemy import (
     Integer,
     String,
     Text,
-)
+    Sequence)
 from sqlalchemy.dialects.postgresql import JSONB
 
 
@@ -16,7 +16,9 @@ Base = declarative_base()
 
 class FileReport(Base):
     __tablename__ = 'filereport'
-    id = Column('id', Integer, primary_key=True)
+
+    id_seq = Sequence("filereport_id_seq", metadata=Base.metadata)
+    id = Column('id', Integer, primary_key=True, server_default=id_seq.next_value())
     node_id = Column('node_id', Text, index=True)
     ip = Column('ip', String)
     country_code = Column('country_code', String, index=True)
