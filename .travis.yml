@@ -3,10 +3,14 @@ language: python
 python:
   - "2.7"
   - "3.5"
+  - "3.6"
 
 addons:
   postgresql: '9.5'
 
 install: "pip install tox-travis"
+
+before_script:
+  - psql -c 'create database automated_test;' -U postgres
 
 script: "tox"
