@@ -1,12 +1,12 @@
 import os
-from sqlalchemy import create_engine
+from logging import getLogger
 
-from cdislogging import get_logger
+from sqlalchemy import create_engine
 
 from gdc_ng_models.utils.decorators import try_or_log_error
 
 
-logger = get_logger(__name__)
+logger = getLogger(__name__)
 
 PERMISSIONS = dict(
     READ="SELECT",
