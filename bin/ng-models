@@ -2,13 +2,14 @@
 
 import importlib
 
-from cdislogging import get_logger
+import logging
 
 from gdc_ng_models.utils.arg_parser import get_parser
 from gdc_ng_models.snacks import database
 
 
-logger = get_logger('ng-models-cli')
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger('ng-models-cli')
 
 
 def get_module(args):
