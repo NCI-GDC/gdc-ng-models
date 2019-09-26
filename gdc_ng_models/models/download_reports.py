@@ -87,6 +87,7 @@ class DataUsageReport(Base):
 
         return json.loads(json.dumps({
             'report_period': str(self.report_period),
+            'all_report': self.all_report,
             'api_report': self.api_report,
             'portal_report': self.portal_report,
             'website_report': self.website_report,
