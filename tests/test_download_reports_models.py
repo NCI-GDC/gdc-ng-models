@@ -10,6 +10,7 @@ from gdc_ng_models.models.download_reports import (
 def test_create_usage_reports(create_reports_db, db_session):
 
     report = DataUsageReport()
+    report.set_all_report(visits=9, visitors=2, requests=999, network_usage=99.0)
     report.set_api_report(visits=10, visitors=1, requests=100, network_usage=100.0)
     report.set_portal_report(visits=10, visitors=3, requests=100, network_usage=120.0)
     report.set_doc_site_report(visits=10, visitors=4, requests=100, network_usage=10.0)
@@ -27,6 +28,7 @@ def test_create_usage_reports(create_reports_db, db_session):
 
     assert rp.api_report == report.api_report
     assert rp.report_period == report.report_period
+    assert sort_dict(rp.all_report) == sort_dict(report.all_report)
     assert sort_dict(rp.api_report) == sort_dict(report.api_report)
     assert sort_dict(rp.portal_report) == sort_dict(report.portal_report)
     assert sort_dict(rp.website_report) == sort_dict(report.website_report)

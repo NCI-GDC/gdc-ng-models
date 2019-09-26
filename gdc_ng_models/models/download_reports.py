@@ -22,6 +22,9 @@ class DataUsageReport(Base):
     report_period = db.Column(
         db.Date, primary_key=True, nullable=False)  # MM/YYYY 01/31/2019
 
+    all_report = db.Column(
+        JSONB, nullable=False, default=DEFAULT_USAGE_REPORT)
+
     api_report = db.Column(
         JSONB, nullable=False, default=DEFAULT_USAGE_REPORT)
 
@@ -38,6 +41,14 @@ class DataUsageReport(Base):
         db.DateTime(timezone=True), nullable=False, server_default=db.text('now()'))
     last_updated = db.Column(
         db.DateTime(timezone=True), nullable=False, server_default=db.text('now()'))
+
+    def set_all_report(self, visits, visitors, requests, network_usage):
+        self.all_report = dict(
+            visits=visits,
+            visitors=visitors,
+            requests=requests,
+            network_usage=network_usage
+        )
 
     def set_api_report(self, visits, visitors, requests, network_usage):
         self.api_report = dict(
