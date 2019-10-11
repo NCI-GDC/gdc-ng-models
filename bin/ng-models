@@ -79,10 +79,10 @@ def main():
     if args.action == "create":
         return make_database_and_tables(module, configs)
     elif args.action == "grant":
-        tables = module.Base.metadata.tables.keys() + module.Base.metadata._sequences.keys()
+        tables = list(module.Base.metadata.tables.keys()) + list(module.Base.metadata._sequences.keys())
         database.grant_privilege(configs, args.permission, args.role, tables)
     elif args.action == "revoke":
-        tables = module.Base.metadata.tables.keys() + module.Base.metadata._sequences.keys()
+        tables = list(module.Base.metadata.tables.keys()) + list(module.Base.metadata._sequences.keys())
         database.revoke_privilege(configs, args.permission, args.role, tables)
 
 
