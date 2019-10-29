@@ -171,7 +171,7 @@ class TransactionLog(Base):
 
     canonical_json = deferred(Column(
         JSONB,
-        default={},
+        server_default='[]',
         nullable=False,
     ))
 
