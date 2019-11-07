@@ -1,12 +1,12 @@
 import os
-from sqlalchemy import create_engine
+from logging import getLogger
 
-from cdislogging import get_logger
+from sqlalchemy import create_engine
 
 from gdc_ng_models.utils.decorators import try_or_log_error
 
 
-logger = get_logger(__name__)
+logger = getLogger(__name__)
 
 PERMISSIONS = dict(
     READ="SELECT",
@@ -119,7 +119,7 @@ def grant_privilege(configs, permission, user, tables):
         user (str):
         tables (list[str]):
     """
-    stmt = 'GRANT {permission} ON TABLE {tables} TO {user}'\
+    stmt = 'GRANT {permission} ON {tables} TO {user}'\
         .format(
             tables=", ".join(tables),
             permission=PERMISSIONS[permission.upper()],
@@ -136,7 +136,7 @@ def grant_privilege(configs, permission, user, tables):
 @try_or_log_error(logger)
 def revoke_privilege(configs, permission, user, tables):
 
-    stmt = 'REVOKE {permission} ON TABLE {tables} FROM {user}'\
+    stmt = 'REVOKE {permission} ON {tables} FROM {user}'\
         .format(
             tables=", ".join(tables),
             permission=PERMISSIONS[permission.upper()],

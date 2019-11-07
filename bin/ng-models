@@ -2,13 +2,14 @@
 
 import importlib
 
-from cdislogging import get_logger
+import logging
 
 from gdc_ng_models.utils.arg_parser import get_parser
 from gdc_ng_models.snacks import database
 
 
-logger = get_logger('ng-models-cli')
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger('ng-models-cli')
 
 
 def get_module(args):
@@ -78,10 +79,10 @@ def main():
     if args.action == "create":
         return make_database_and_tables(module, configs)
     elif args.action == "grant":
-        tables = module.Base.metadata.tables.keys()
+        tables = list(module.Base.metadata.tables.keys()) + list(module.Base.metadata._sequences.keys())
         database.grant_privilege(configs, args.permission, args.role, tables)
     elif args.action == "revoke":
-        tables = module.Base.metadata.tables.keys()
+        tables = list(module.Base.metadata.tables.keys()) + list(module.Base.metadata._sequences.keys())
         database.revoke_privilege(configs, args.permission, args.role, tables)
 
 
