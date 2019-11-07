@@ -180,6 +180,13 @@ class TransactionSnapshot(Base):
 
     __tablename__ = 'transaction_snapshots'
 
+    @declared_attr
+    def __table_args__(cls):
+        return (
+            Index('idx_transaction_snapshots_transactions_id', 'transaction_id'),
+        )
+
+
     def __repr__(self):
         return "<TransactionSnapshot({}, {})>".format(
             self.id, self.transaction_id)
@@ -231,6 +238,12 @@ class TransactionSnapshot(Base):
 class TransactionDocument(Base):
 
     __tablename__ = 'transaction_documents'
+
+    @declared_attr
+    def __table_args__(cls):
+        return (
+            Index('idx_transaction_document_transactions_id', 'transaction_id'),
+        )
 
     def to_json(self, fields=None):
         # Source fields
