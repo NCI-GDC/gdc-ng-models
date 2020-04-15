@@ -58,6 +58,17 @@ def test_study__defaults_updated_date(create_study_db, db_session):
     assert s.updated_date is not None
 
 
+def test_study__updates_updated_date(create_study_db, db_session):
+    db_session.add(study.Study(id=1618, name="asdf"))
+    db_session.commit()
+
+    db_session.query(study.Study).filter(study.Study.id == 1618).update({"name": "updated"})
+    db_session.commit()
+
+    updated = db_session.query(study.Study).filter(study.Study.id == 1618).first()
+    assert updated.updated_date > updated.created_date
+
+
 def test_study__to_json():
     s = study.Study(
         id=1618,
@@ -183,6 +194,20 @@ def test_study_program__defaults_updated_date(create_study_db, db_session):
     db_session.commit()
     s = db_session.query(study.StudyProgram).filter(study.StudyProgram.study_id == 1618 and study.StudyProgram.program_name == "alpha").first()
     assert s.updated_date is not None
+
+
+def test_study_program__updates_updated_date(create_study_db, db_session):
+    db_session.add(study.Study(id=1618, name="asdf"))
+    db_session.commit()
+
+    db_session.add(study.StudyProgram(study_id=1618, program_name="alpha"))
+    db_session.commit()
+
+    db_session.query(study.StudyProgram).filter(study.StudyProgram.study_id == 1618).update({"program_name": "updated"})
+    db_session.commit()
+
+    updated = db_session.query(study.StudyProgram).filter(study.StudyProgram.study_id == 1618).first()
+    assert updated.updated_date > updated.created_date
 
 
 def test_study_program__to_json():
@@ -328,6 +353,20 @@ def test_study_program_project__defaults_updated_date(create_study_db, db_sessio
                 and study.StudyProgramProject.project_code == "uno")\
         .first()
     assert s.updated_date is not None
+
+
+def test_study_program__updates_updated_date(create_study_db, db_session):
+    db_session.add(study.Study(id=1618, name="asdf"))
+    db_session.commit()
+
+    db_session.add(study.StudyProgramProject(study_id=1618, program_name="alpha", project_code="uno"))
+    db_session.commit()
+
+    db_session.query(study.StudyProgramProject).filter(study.StudyProgramProject.study_id == 1618).update({"project_code": "updated"})
+    db_session.commit()
+
+    updated = db_session.query(study.StudyProgramProject).filter(study.StudyProgramProject.study_id == 1618).first()
+    assert updated.updated_date > updated.created_date
 
 
 def test_study_program_project__to_json():

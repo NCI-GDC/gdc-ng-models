@@ -15,5 +15,14 @@ class AuditColumnsMixin:
     def __init__(self):
         pass
 
-    created_date = schema.Column(sqltypes.DateTime(timezone=True), nullable=False, server_default='now()')
-    updated_date = schema.Column(sqltypes.DateTime(timezone=True), nullable=False, server_default='now()')
+    created_date = schema.Column(
+        sqltypes.DateTime(timezone=True),
+        nullable=False,
+        server_default='now()'
+    )
+    updated_date = schema.Column(
+        sqltypes.DateTime(timezone=True),
+        nullable=False,
+        server_default='now()',
+        onupdate='now()'
+    )
