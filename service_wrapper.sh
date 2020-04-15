@@ -9,5 +9,5 @@ export PG_ADMIN_USER=postgres
 export PG_ADMIN_PASS=postgres
 
 # To use:
-#   ./service_wrapper_testing.sh pytest
+#   ./service_wrapper.sh pytest
 $@

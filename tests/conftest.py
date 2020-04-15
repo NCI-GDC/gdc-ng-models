@@ -11,7 +11,7 @@ from gdc_ng_models.models import (
     download_reports,
     qcreport,
     redaction,
-)
+    study)
 from gdc_ng_models.snacks import database as db
 
 import pytest
@@ -49,6 +49,13 @@ def create_redaction_log_db(db_engine):
     redaction.Base.metadata.create_all(db_engine)
     yield
     redaction.Base.metadata.drop_all(db_engine)
+
+
+@pytest.fixture(scope="session")
+def create_study_db(db_engine):
+    study.Base.metadata.create_all(db_engine)
+    yield
+    study.Base.metadata.drop_all(db_engine)
 
 
 @pytest.fixture(scope='function')
