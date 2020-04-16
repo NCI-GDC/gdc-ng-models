@@ -13,8 +13,8 @@ def test_study_rule__defaults_unique_ids(create_study_rule_db, db_session):
     db_session.add(studyrule.StudyRule(name="second"))
     db_session.commit()
 
-    first = db_session.query(studyrule.StudyRule).filter(studyrule.StudyRule.name == "first").first()
-    second = db_session.query(studyrule.StudyRule).filter(studyrule.StudyRule.name == "second").first()
+    first = db_session.query(studyrule.StudyRule).filter(studyrule.StudyRule.name == "first").one()
+    second = db_session.query(studyrule.StudyRule).filter(studyrule.StudyRule.name == "second").one()
     assert first.id is not None
     assert second.id is not None
     assert first.id != second.id
@@ -47,14 +47,14 @@ def test_study_rule__unique_name(create_study_rule_db, db_session):
 def test_study_rule__defaults_created_datetime(create_study_rule_db, db_session):
     db_session.add(studyrule.StudyRule(name="asdf"))
     db_session.commit()
-    s = db_session.query(studyrule.StudyRule).filter(studyrule.StudyRule.name == "asdf").first()
+    s = db_session.query(studyrule.StudyRule).filter(studyrule.StudyRule.name == "asdf").one()
     assert s.created_datetime is not None
 
 
 def test_study_rule__defaults_updated_datetime(create_study_rule_db, db_session):
     db_session.add(studyrule.StudyRule(name="asdf"))
     db_session.commit()
-    s = db_session.query(studyrule.StudyRule).filter(studyrule.StudyRule.name == "asdf").first()
+    s = db_session.query(studyrule.StudyRule).filter(studyrule.StudyRule.name == "asdf").one()
     assert s.updated_datetime is not None
 
 
@@ -65,7 +65,7 @@ def test_study_rule__updates_updated_datetime(create_study_rule_db, db_session):
     db_session.query(studyrule.StudyRule).filter(studyrule.StudyRule.id == 1618).update({"name": "updated"})
     db_session.commit()
 
-    updated = db_session.query(studyrule.StudyRule).filter(studyrule.StudyRule.id == 1618).first()
+    updated = db_session.query(studyrule.StudyRule).filter(studyrule.StudyRule.id == 1618).one()
     assert updated.updated_datetime > updated.created_datetime
 
 
@@ -83,11 +83,11 @@ def test_study_rule__whole_programs(create_study_rule_db, db_session):
     db_session.add(studyrule.StudyRuleProgram(study_rule_id=1618, program_name="beta"))
     db_session.commit()
 
-    first_study = db_session.query(studyrule.StudyRule).filter(studyrule.StudyRule.id == 1618).first()
+    first_study = db_session.query(studyrule.StudyRule).filter(studyrule.StudyRule.id == 1618).one()
     assert len(first_study.whole_programs) == 2
     assert all([program.study_rule_id == 1618 for program in first_study.whole_programs])
 
-    second_study = db_session.query(studyrule.StudyRule).filter(studyrule.StudyRule.id == 3141).first()
+    second_study = db_session.query(studyrule.StudyRule).filter(studyrule.StudyRule.id == 3141).one()
     assert len(second_study.whole_programs) == 0
 
 
@@ -105,11 +105,11 @@ def test_study_rule__partial_programs(create_study_rule_db, db_session):
     db_session.add(studyrule.StudyRuleProgramProject(study_rule_id=1618, program_name="alpha", project_code="dos"))
     db_session.commit()
 
-    first_study = db_session.query(studyrule.StudyRule).filter(studyrule.StudyRule.id == 1618).first()
+    first_study = db_session.query(studyrule.StudyRule).filter(studyrule.StudyRule.id == 1618).one()
     assert len(first_study.partial_programs) == 2
     assert all([program.study_rule_id == 1618 for program in first_study.partial_programs])
 
-    second_study = db_session.query(studyrule.StudyRule).filter(studyrule.StudyRule.id == 3141).first()
+    second_study = db_session.query(studyrule.StudyRule).filter(studyrule.StudyRule.id == 3141).one()
     assert len(second_study.partial_programs) == 0
 
 
@@ -251,7 +251,7 @@ def test_study_rule_program__defaults_created_datetime(create_study_rule_db, db_
     db_session.add(studyrule.StudyRuleProgram(study_rule_id=1618, program_name="alpha"))
     db_session.commit()
     s = db_session.query(studyrule.StudyRuleProgram).filter(
-        studyrule.StudyRuleProgram.study_rule_id == 1618 and studyrule.StudyRuleProgram.program_name == "alpha").first()
+        studyrule.StudyRuleProgram.study_rule_id == 1618 and studyrule.StudyRuleProgram.program_name == "alpha").one()
     assert s.created_datetime is not None
 
 
@@ -262,7 +262,7 @@ def test_study_rule_program__defaults_updated_datetime(create_study_rule_db, db_
     db_session.add(studyrule.StudyRuleProgram(study_rule_id=1618, program_name="alpha"))
     db_session.commit()
     s = db_session.query(studyrule.StudyRuleProgram).filter(
-        studyrule.StudyRuleProgram.study_rule_id == 1618 and studyrule.StudyRuleProgram.program_name == "alpha").first()
+        studyrule.StudyRuleProgram.study_rule_id == 1618 and studyrule.StudyRuleProgram.program_name == "alpha").one()
     assert s.updated_datetime is not None
 
 
@@ -278,7 +278,7 @@ def test_study_rule_program__updates_updated_datetime(create_study_rule_db, db_s
     db_session.commit()
 
     updated = db_session.query(studyrule.StudyRuleProgram).filter(
-        studyrule.StudyRuleProgram.study_rule_id == 1618).first()
+        studyrule.StudyRuleProgram.study_rule_id == 1618).one()
     assert updated.updated_datetime > updated.created_datetime
 
 
@@ -435,7 +435,7 @@ def test_study_rule_program_project__defaults_created_datetime (create_study_rul
         .filter(studyrule.StudyRuleProgramProject.study_rule_id == 1618
                 and studyrule.StudyRuleProgramProject.program_name == "alpha"
                 and studyrule.StudyRuleProgramProject.project_code == "uno") \
-        .first()
+        .one()
     assert s.created_datetime  is not None
 
 
@@ -449,7 +449,7 @@ def test_study_rule_program_project__defaults_updated_datetime (create_study_rul
         .filter(studyrule.StudyRuleProgramProject.study_rule_id == 1618
                 and studyrule.StudyRuleProgramProject.program_name == "alpha"
                 and studyrule.StudyRuleProgramProject.project_code == "uno") \
-        .first()
+        .one()
     assert s.updated_datetime is not None
 
 
@@ -466,7 +466,7 @@ def test_study_rule_program__updates_updated_datetime (create_study_rule_db, db_
     db_session.commit()
 
     updated = db_session.query(studyrule.StudyRuleProgramProject).filter(
-        studyrule.StudyRuleProgramProject.study_rule_id == 1618).first()
+        studyrule.StudyRuleProgramProject.study_rule_id == 1618).one()
     assert updated.updated_datetime > updated.created_datetime
 
 
