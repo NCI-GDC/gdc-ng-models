@@ -32,8 +32,8 @@ class StudyRule(Base, audit.AuditColumnsMixin):
         schema.Index("study_rule_name_idx", "name", unique=True),
     )
 
-    whole_programs = orm.relationship("StudyRuleProgram")
-    partial_programs = orm.relationship("StudyRuleProgramProject")
+    whole_programs = orm.relationship("StudyRuleProgram", lazy="joined")
+    partial_programs = orm.relationship("StudyRuleProgramProject", lazy="joined")
 
     def __repr__(self):
         return "<StudyRule(id={id}, name='{name}', created_date={created_date}, updated_date={updated_date})>".format(
