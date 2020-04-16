@@ -1,6 +1,7 @@
 """Common audit metadata for our data models."""
+import datetime
 
-from sqlalchemy import schema
+from sqlalchemy import schema, sql, func
 from sqlalchemy.sql import sqltypes
 
 
@@ -18,11 +19,11 @@ class AuditColumnsMixin:
     created_date = schema.Column(
         sqltypes.DateTime(timezone=True),
         nullable=False,
-        server_default='now()'
+        server_default=sql.text('now()'),
     )
     updated_date = schema.Column(
         sqltypes.DateTime(timezone=True),
         nullable=False,
-        server_default='now()',
-        onupdate='now()'
+        server_default=sql.text('now()'),
+        onupdate=datetime.datetime.utcnow,
     )
