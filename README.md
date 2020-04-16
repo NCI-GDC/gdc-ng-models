@@ -9,7 +9,7 @@ The `ng` in `gdc-ng-models` stands for _non-graph_.
 ```sh
 psql -c "create user gdc_test with superuser password 'gdc_test';" -U postgres
 psql -c 'create database automated_test with owner "gdc_test";' -U postgres
-./service_wrapper_testing.sh pytest tests/
+./service_wrapper.sh pytest tests/
 ```
 
 ## Command-Line Scripts
@@ -19,7 +19,7 @@ This repository supplies the `ng-models` script which allows you to create the d
 To use, supply the `-m` parameter specifying the module (and related models/tables to be created). See example usage below:
 
 ```sh
-./service_wrapper_testing ng-models -m download_reports
+./service_wrapper.sh ng-models -m download_reports
 ng-models -m misc --host 127.0.0.1 -d automated_test -u postgres -p postgres
 ```
 
