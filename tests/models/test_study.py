@@ -44,21 +44,21 @@ def test_study_rule__unique_name(create_study_rule_db, db_session):
         db_session.commit()
 
 
-def test_study_rule__defaults_created_date(create_study_rule_db, db_session):
+def test_study_rule__defaults_created_datetime(create_study_rule_db, db_session):
     db_session.add(studyrule.StudyRule(name="asdf"))
     db_session.commit()
     s = db_session.query(studyrule.StudyRule).filter(studyrule.StudyRule.name == "asdf").first()
-    assert s.created_date is not None
+    assert s.created_datetime is not None
 
 
-def test_study_rule__defaults_updated_date(create_study_rule_db, db_session):
+def test_study_rule__defaults_updated_datetime(create_study_rule_db, db_session):
     db_session.add(studyrule.StudyRule(name="asdf"))
     db_session.commit()
     s = db_session.query(studyrule.StudyRule).filter(studyrule.StudyRule.name == "asdf").first()
-    assert s.updated_date is not None
+    assert s.updated_datetime is not None
 
 
-def test_study_rule__updates_updated_date(create_study_rule_db, db_session):
+def test_study_rule__updates_updated_datetime(create_study_rule_db, db_session):
     db_session.add(studyrule.StudyRule(id=1618, name="asdf"))
     db_session.commit()
 
@@ -66,7 +66,7 @@ def test_study_rule__updates_updated_date(create_study_rule_db, db_session):
     db_session.commit()
 
     updated = db_session.query(studyrule.StudyRule).filter(studyrule.StudyRule.id == 1618).first()
-    assert updated.updated_date > updated.created_date
+    assert updated.updated_datetime > updated.created_datetime
 
 
 def test_study_rule__whole_programs(create_study_rule_db, db_session):
@@ -117,7 +117,7 @@ def test_study_rule__to_json():
     s = studyrule.StudyRule(
         id=1618,
         name="asdf",
-        created_date=datetime.datetime(
+        created_datetime=datetime.datetime(
             year=2020,
             month=4,
             day=15,
@@ -127,7 +127,7 @@ def test_study_rule__to_json():
             microsecond=123,
             tzinfo=pytz.utc,
         ),
-        updated_date=datetime.datetime(
+        updated_datetime=datetime.datetime(
             year=2020,
             month=4,
             day=16,
@@ -140,8 +140,8 @@ def test_study_rule__to_json():
     expected = json.loads(json.dumps({
         "id": 1618,
         "name": "asdf",
-        "created_date": "2020-04-15T12:45:21.000123+00:00",
-        "updated_date": "2020-04-16T12:45:21.000123+00:00",
+        "created_datetime": "2020-04-15T12:45:21.000123+00:00",
+        "updated_datetime": "2020-04-16T12:45:21.000123+00:00",
     }))
     assert s.to_json() == expected
 
@@ -154,8 +154,8 @@ def test_study_rule__to_json_without_dates():
     expected = json.loads(json.dumps({
         "id": 1618,
         "name": "asdf",
-        "created_date": None,
-        "updated_date": None,
+        "created_datetime": None,
+        "updated_datetime": None,
     }))
     assert s.to_json() == expected
 
@@ -164,7 +164,7 @@ def test_study_rule__str():
     s = studyrule.StudyRule(
         id=1618,
         name="asdf",
-        created_date=datetime.datetime(
+        created_datetime=datetime.datetime(
             year=2020,
             month=4,
             day=15,
@@ -174,7 +174,7 @@ def test_study_rule__str():
             microsecond=123,
             tzinfo=pytz.utc,
         ),
-        updated_date=datetime.datetime(
+        updated_datetime=datetime.datetime(
             year=2020,
             month=4,
             day=16,
@@ -184,7 +184,7 @@ def test_study_rule__str():
             microsecond=123,
             tzinfo=pytz.utc,
         ))
-    expected = "<StudyRule(id=1618, name='asdf', created_date=2020-04-15T12:45:21.000123+00:00, updated_date=2020-04-16T12:45:21.000123+00:00)>"
+    expected = "<StudyRule(id=1618, name='asdf', created_datetime=2020-04-15T12:45:21.000123+00:00, updated_datetime=2020-04-16T12:45:21.000123+00:00)>"
     assert str(s) == expected
 
 
@@ -193,7 +193,7 @@ def test_study_rule__str_without_date():
         id=1618,
         name="asdf",
     )
-    expected = "<StudyRule(id=1618, name='asdf', created_date=None, updated_date=None)>"
+    expected = "<StudyRule(id=1618, name='asdf', created_datetime=None, updated_datetime=None)>"
     assert str(s) == expected
 
 
@@ -244,7 +244,7 @@ def test_study_rule_program__uniqueness(create_study_rule_db, db_session):
         db_session.commit()
 
 
-def test_study_rule_program__defaults_created_date(create_study_rule_db, db_session):
+def test_study_rule_program__defaults_created_datetime(create_study_rule_db, db_session):
     db_session.add(studyrule.StudyRule(id=1618, name="asdf"))
     db_session.commit()
 
@@ -252,10 +252,10 @@ def test_study_rule_program__defaults_created_date(create_study_rule_db, db_sess
     db_session.commit()
     s = db_session.query(studyrule.StudyRuleProgram).filter(
         studyrule.StudyRuleProgram.study_rule_id == 1618 and studyrule.StudyRuleProgram.program_name == "alpha").first()
-    assert s.created_date is not None
+    assert s.created_datetime is not None
 
 
-def test_study_rule_program__defaults_updated_date(create_study_rule_db, db_session):
+def test_study_rule_program__defaults_updated_datetime(create_study_rule_db, db_session):
     db_session.add(studyrule.StudyRule(id=1618, name="asdf"))
     db_session.commit()
 
@@ -263,10 +263,10 @@ def test_study_rule_program__defaults_updated_date(create_study_rule_db, db_sess
     db_session.commit()
     s = db_session.query(studyrule.StudyRuleProgram).filter(
         studyrule.StudyRuleProgram.study_rule_id == 1618 and studyrule.StudyRuleProgram.program_name == "alpha").first()
-    assert s.updated_date is not None
+    assert s.updated_datetime is not None
 
 
-def test_study_rule_program__updates_updated_date(create_study_rule_db, db_session):
+def test_study_rule_program__updates_updated_datetime(create_study_rule_db, db_session):
     db_session.add(studyrule.StudyRule(id=1618, name="asdf"))
     db_session.commit()
 
@@ -279,14 +279,14 @@ def test_study_rule_program__updates_updated_date(create_study_rule_db, db_sessi
 
     updated = db_session.query(studyrule.StudyRuleProgram).filter(
         studyrule.StudyRuleProgram.study_rule_id == 1618).first()
-    assert updated.updated_date > updated.created_date
+    assert updated.updated_datetime > updated.created_datetime
 
 
 def test_study_rule_program__to_json():
     sp = studyrule.StudyRuleProgram(
         study_rule_id=1618,
         program_name="alpha",
-        created_date=datetime.datetime(
+        created_datetime=datetime.datetime(
             year=2020,
             month=4,
             day=15,
@@ -296,7 +296,7 @@ def test_study_rule_program__to_json():
             microsecond=123,
             tzinfo=pytz.utc,
         ),
-        updated_date=datetime.datetime(
+        updated_datetime=datetime.datetime(
             year=2020,
             month=4,
             day=16,
@@ -310,8 +310,8 @@ def test_study_rule_program__to_json():
     expected = json.loads(json.dumps({
         "study_rule_id": 1618,
         "program_name": "alpha",
-        "created_date": "2020-04-15T12:45:21.000123+00:00",
-        "updated_date": "2020-04-16T12:45:21.000123+00:00",
+        "created_datetime": "2020-04-15T12:45:21.000123+00:00",
+        "updated_datetime": "2020-04-16T12:45:21.000123+00:00",
     }))
     assert sp.to_json() == expected
 
@@ -324,8 +324,8 @@ def test_study_rule_program__to_json_without_dates():
     expected = json.loads(json.dumps({
         "study_rule_id": 1618,
         "program_name": "alpha",
-        "created_date": None,
-        "updated_date": None,
+        "created_datetime": None,
+        "updated_datetime": None,
     }))
     assert sp.to_json() == expected
 
@@ -334,7 +334,7 @@ def test_study_rule_program__str():
     sp = studyrule.StudyRuleProgram(
         study_rule_id=1618,
         program_name="alpha",
-        created_date=datetime.datetime(
+        created_datetime=datetime.datetime(
             year=2020,
             month=4,
             day=15,
@@ -344,7 +344,7 @@ def test_study_rule_program__str():
             microsecond=123,
             tzinfo=pytz.utc,
         ),
-        updated_date=datetime.datetime(
+        updated_datetime=datetime.datetime(
             year=2020,
             month=4,
             day=16,
@@ -355,7 +355,7 @@ def test_study_rule_program__str():
             tzinfo=pytz.utc,
         )
     )
-    expected = "<StudyRuleProgram(study_rule_id=1618, program_name='alpha', created_date=2020-04-15T12:45:21.000123+00:00, updated_date=2020-04-16T12:45:21.000123+00:00)>"
+    expected = "<StudyRuleProgram(study_rule_id=1618, program_name='alpha', created_datetime=2020-04-15T12:45:21.000123+00:00, updated_datetime=2020-04-16T12:45:21.000123+00:00)>"
     assert str(sp) == expected
 
 
@@ -364,7 +364,7 @@ def test_study_rule_program__str_without_dates():
         study_rule_id=1618,
         program_name="alpha",
     )
-    expected = "<StudyRuleProgram(study_rule_id=1618, program_name='alpha', created_date=None, updated_date=None)>"
+    expected = "<StudyRuleProgram(study_rule_id=1618, program_name='alpha', created_datetime=None, updated_datetime=None)>"
     assert str(sp) == expected
 
 
@@ -425,7 +425,7 @@ def test_study_rule_program_project__study_rule_can_have_multiple_programs_and_p
         studyrule.StudyRuleProgramProject.study_rule_id == 1618).count() == 4
 
 
-def test_study_rule_program_project__defaults_created_date(create_study_rule_db, db_session):
+def test_study_rule_program_project__defaults_created_datetime (create_study_rule_db, db_session):
     db_session.add(studyrule.StudyRule(id=1618, name="asdf"))
     db_session.commit()
 
@@ -436,10 +436,10 @@ def test_study_rule_program_project__defaults_created_date(create_study_rule_db,
                 and studyrule.StudyRuleProgramProject.program_name == "alpha"
                 and studyrule.StudyRuleProgramProject.project_code == "uno") \
         .first()
-    assert s.created_date is not None
+    assert s.created_datetime  is not None
 
 
-def test_study_rule_program_project__defaults_updated_date(create_study_rule_db, db_session):
+def test_study_rule_program_project__defaults_updated_datetime (create_study_rule_db, db_session):
     db_session.add(studyrule.StudyRule(id=1618, name="asdf"))
     db_session.commit()
 
@@ -450,10 +450,10 @@ def test_study_rule_program_project__defaults_updated_date(create_study_rule_db,
                 and studyrule.StudyRuleProgramProject.program_name == "alpha"
                 and studyrule.StudyRuleProgramProject.project_code == "uno") \
         .first()
-    assert s.updated_date is not None
+    assert s.updated_datetime is not None
 
 
-def test_study_rule_program__updates_updated_date(create_study_rule_db, db_session):
+def test_study_rule_program__updates_updated_datetime (create_study_rule_db, db_session):
     db_session.add(studyrule.StudyRule(id=1618, name="asdf"))
     db_session.commit()
 
@@ -467,7 +467,7 @@ def test_study_rule_program__updates_updated_date(create_study_rule_db, db_sessi
 
     updated = db_session.query(studyrule.StudyRuleProgramProject).filter(
         studyrule.StudyRuleProgramProject.study_rule_id == 1618).first()
-    assert updated.updated_date > updated.created_date
+    assert updated.updated_datetime > updated.created_datetime
 
 
 def test_study_rule_program_project__to_json():
@@ -475,7 +475,7 @@ def test_study_rule_program_project__to_json():
         study_rule_id=1618,
         program_name="alpha",
         project_code="uno",
-        created_date=datetime.datetime(
+        created_datetime=datetime.datetime(
             year=2020,
             month=4,
             day=15,
@@ -485,7 +485,7 @@ def test_study_rule_program_project__to_json():
             microsecond=123,
             tzinfo=pytz.utc,
         ),
-        updated_date=datetime.datetime(
+        updated_datetime=datetime.datetime(
             year=2020,
             month=4,
             day=16,
@@ -500,8 +500,8 @@ def test_study_rule_program_project__to_json():
         "study_rule_id": 1618,
         "program_name": "alpha",
         "project_code": "uno",
-        "created_date": "2020-04-15T12:45:21.000123+00:00",
-        "updated_date": "2020-04-16T12:45:21.000123+00:00",
+        "created_datetime": "2020-04-15T12:45:21.000123+00:00",
+        "updated_datetime": "2020-04-16T12:45:21.000123+00:00",
     }))
     assert spp.to_json() == expected
 
@@ -516,8 +516,8 @@ def test_study_rule_program_project__to_json_without_dates():
         "study_rule_id": 1618,
         "program_name": "alpha",
         "project_code": "uno",
-        "created_date": None,
-        "updated_date": None,
+        "created_datetime": None,
+        "updated_datetime": None,
     }))
     assert spp.to_json() == expected
 
@@ -527,7 +527,7 @@ def test_study_rule_program_project__str():
         study_rule_id=1618,
         program_name="alpha",
         project_code="uno",
-        created_date=datetime.datetime(
+        created_datetime=datetime.datetime(
             year=2020,
             month=4,
             day=15,
@@ -537,7 +537,7 @@ def test_study_rule_program_project__str():
             microsecond=123,
             tzinfo=pytz.utc,
         ),
-        updated_date=datetime.datetime(
+        updated_datetime=datetime.datetime(
             year=2020,
             month=4,
             day=16,
@@ -548,7 +548,7 @@ def test_study_rule_program_project__str():
             tzinfo=pytz.utc,
         )
     )
-    expected = "<StudyRuleProgramProject(study_rule_id=1618, program_name='alpha', project_code='uno', created_date=2020-04-15T12:45:21.000123+00:00, updated_date=2020-04-16T12:45:21.000123+00:00)>"
+    expected = "<StudyRuleProgramProject(study_rule_id=1618, program_name='alpha', project_code='uno', created_datetime=2020-04-15T12:45:21.000123+00:00, updated_datetime=2020-04-16T12:45:21.000123+00:00)>"
     assert str(spp) == expected
 
 
@@ -558,5 +558,5 @@ def test_study_rule_program_project__str_without_dates():
         program_name="alpha",
         project_code="uno",
     )
-    expected = "<StudyRuleProgramProject(study_rule_id=1618, program_name='alpha', project_code='uno', created_date=None, updated_date=None)>"
+    expected = "<StudyRuleProgramProject(study_rule_id=1618, program_name='alpha', project_code='uno', created_datetime=None, updated_datetime=None)>"
     assert str(spp) == expected

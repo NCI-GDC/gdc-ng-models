@@ -18,8 +18,8 @@ class StudyRule(Base, audit.AuditColumnsMixin):
     Attributes:
         id: A unique identifier for the study rule.
         name: A unique, informational name for the study rule.
-        created_date: The date and time when the record is created.
-        updated_date: The date and time when the record is updated.
+        created_datetime: The date and time when the record is created.
+        updated_datetime: The date and time when the record is updated.
     """
 
     __tablename__ = "study_rule"
@@ -36,19 +36,19 @@ class StudyRule(Base, audit.AuditColumnsMixin):
     partial_programs = orm.relationship("StudyRuleProgramProject", lazy="joined")
 
     def __repr__(self):
-        return "<StudyRule(id={id}, name='{name}', created_date={created_date}, updated_date={updated_date})>".format(
+        return "<StudyRule(id={id}, name='{name}', created_datetime={created_datetime}, updated_datetime={updated_datetime})>".format(
             id=self.id,
             name=self.name,
-            created_date=self.created_date.isoformat() if self.created_date else None,
-            updated_date=self.updated_date.isoformat() if self.updated_date else None,
+            created_datetime=self.created_datetime.isoformat() if self.created_datetime else None,
+            updated_datetime=self.updated_datetime.isoformat() if self.updated_datetime else None,
         )
 
     def to_json(self):
         return {
             "id": self.id,
             "name": self.name,
-            "created_date": self.created_date.isoformat() if self.created_date else None,
-            "updated_date": self.updated_date.isoformat() if self.updated_date else None,
+            "created_datetime": self.created_datetime.isoformat() if self.created_datetime else None,
+            "updated_datetime": self.updated_datetime.isoformat() if self.updated_datetime else None,
         }
 
 
@@ -61,8 +61,8 @@ class StudyRuleProgram(Base, audit.AuditColumnsMixin):
     Attributes:
         study_rule_id: The id of the associated study rule.
         program_name: The name of the program to associate with the study rule.
-        created_date: The date and time when the record is created.
-        updated_date: The date and time when the record is updated.
+        created_datetime: The date and time when the record is created.
+        updated_datetime: The date and time when the record is updated.
     """
 
     __tablename__ = "study_rule_program"
@@ -75,19 +75,19 @@ class StudyRuleProgram(Base, audit.AuditColumnsMixin):
     )
 
     def __repr__(self):
-        return "<StudyRuleProgram(study_rule_id={study_rule_id}, program_name='{program_name}', created_date={created_date}, updated_date={updated_date})>".format(
+        return "<StudyRuleProgram(study_rule_id={study_rule_id}, program_name='{program_name}', created_datetime={created_datetime}, updated_datetime={updated_datetime})>".format(
             study_rule_id=self.study_rule_id,
             program_name=self.program_name,
-            created_date=self.created_date.isoformat() if self.created_date else None,
-            updated_date=self.updated_date.isoformat() if self.updated_date else None,
+            created_datetime=self.created_datetime.isoformat() if self.created_datetime else None,
+            updated_datetime=self.updated_datetime.isoformat() if self.updated_datetime else None,
         )
 
     def to_json(self):
         return {
             "study_rule_id": self.study_rule_id,
             "program_name": self.program_name,
-            "created_date": self.created_date.isoformat() if self.created_date else None,
-            "updated_date": self.updated_date.isoformat() if self.updated_date else None,
+            "created_datetime": self.created_datetime.isoformat() if self.created_datetime else None,
+            "updated_datetime": self.updated_datetime.isoformat() if self.updated_datetime else None,
         }
 
 
@@ -104,8 +104,8 @@ class StudyRuleProgramProject(Base, audit.AuditColumnsMixin):
         study_rule_id: The id of the associated study rule.
         program_name: The name of the program to associate with the study rule.
         project_code: The code of the project to associate with the study rule.
-        created_date: The date and time when the record is created.
-        updated_date: The date and time when the record is updated.
+        created_datetime: The date and time when the record is created.
+        updated_datetime: The date and time when the record is updated.
     """
 
     __tablename__ = "study_rule_program_project"
@@ -119,12 +119,12 @@ class StudyRuleProgramProject(Base, audit.AuditColumnsMixin):
     )
 
     def __repr__(self):
-        return "<StudyRuleProgramProject(study_rule_id={study_rule_id}, program_name='{program_name}', project_code='{project_code}', created_date={created_date}, updated_date={updated_date})>".format(
+        return "<StudyRuleProgramProject(study_rule_id={study_rule_id}, program_name='{program_name}', project_code='{project_code}', created_datetime={created_datetime}, updated_datetime={updated_datetime})>".format(
             study_rule_id=self.study_rule_id,
             program_name=self.program_name,
             project_code=self.project_code,
-            created_date=self.created_date.isoformat() if self.created_date else None,
-            updated_date=self.updated_date.isoformat() if self.updated_date else None,
+            created_datetime=self.created_datetime.isoformat() if self.created_datetime else None,
+            updated_datetime=self.updated_datetime.isoformat() if self.updated_datetime else None,
         )
 
     def to_json(self):
@@ -132,6 +132,6 @@ class StudyRuleProgramProject(Base, audit.AuditColumnsMixin):
             "study_rule_id": self.study_rule_id,
             "program_name": self.program_name,
             "project_code": self.project_code,
-            "created_date": self.created_date.isoformat() if self.created_date else None,
-            "updated_date": self.updated_date.isoformat() if self.updated_date else None,
+            "created_datetime": self.created_datetime.isoformat() if self.created_datetime else None,
+            "updated_datetime": self.updated_datetime.isoformat() if self.updated_datetime else None,
         }
