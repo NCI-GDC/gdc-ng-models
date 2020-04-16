@@ -5,116 +5,116 @@ import pytest
 import pytz
 from sqlalchemy import exc
 
-from gdc_ng_models.models import study
+from gdc_ng_models.models import studyrule
 
 
-def test_study__defaults_unique_ids(create_study_db, db_session):
-    db_session.add(study.Study(name="first"))
-    db_session.add(study.Study(name="second"))
+def test_study_rule__defaults_unique_ids(create_study_rule_db, db_session):
+    db_session.add(studyrule.StudyRule(name="first"))
+    db_session.add(studyrule.StudyRule(name="second"))
     db_session.commit()
 
-    first = db_session.query(study.Study).filter(study.Study.name == "first").first()
-    second = db_session.query(study.Study).filter(study.Study.name == "second").first()
+    first = db_session.query(studyrule.StudyRule).filter(studyrule.StudyRule.name == "first").first()
+    second = db_session.query(studyrule.StudyRule).filter(studyrule.StudyRule.name == "second").first()
     assert first.id is not None
     assert second.id is not None
     assert first.id != second.id
 
 
-def test_study__unique_id(create_study_db, db_session):
-    db_session.add(study.Study(id=1618, name="first"))
+def test_study_rule__unique_id(create_study_rule_db, db_session):
+    db_session.add(studyrule.StudyRule(id=1618, name="first"))
     db_session.commit()
 
-    with pytest.raises(exc.IntegrityError, match=r"study_pk"):
-        db_session.add(study.Study(id=1618, name="second"))
+    with pytest.raises(exc.IntegrityError, match=r"study_rule_pk"):
+        db_session.add(studyrule.StudyRule(id=1618, name="second"))
         db_session.commit()
 
 
-def test_study__name_must_be_defined(create_study_db, db_session):
+def test_study_rule__name_must_be_defined(create_study_rule_db, db_session):
     with pytest.raises(exc.IntegrityError, match=r"violates not-null constraint"):
-        db_session.add(study.Study(id=1618))
+        db_session.add(studyrule.StudyRule(id=1618))
         db_session.commit()
 
 
-def test_study__unique_name(create_study_db, db_session):
-    db_session.add(study.Study(name="dupe"))
+def test_study_rule__unique_name(create_study_rule_db, db_session):
+    db_session.add(studyrule.StudyRule(name="dupe"))
     db_session.commit()
 
-    with pytest.raises(exc.IntegrityError, match=r"study_name_idx"):
-        db_session.add(study.Study(name="dupe"))
+    with pytest.raises(exc.IntegrityError, match=r"study_rule_name_idx"):
+        db_session.add(studyrule.StudyRule(name="dupe"))
         db_session.commit()
 
 
-def test_study__defaults_created_date(create_study_db, db_session):
-    db_session.add(study.Study(name="asdf"))
+def test_study_rule__defaults_created_date(create_study_rule_db, db_session):
+    db_session.add(studyrule.StudyRule(name="asdf"))
     db_session.commit()
-    s = db_session.query(study.Study).filter(study.Study.name == "asdf").first()
+    s = db_session.query(studyrule.StudyRule).filter(studyrule.StudyRule.name == "asdf").first()
     assert s.created_date is not None
 
 
-def test_study__defaults_updated_date(create_study_db, db_session):
-    db_session.add(study.Study(name="asdf"))
+def test_study_rule__defaults_updated_date(create_study_rule_db, db_session):
+    db_session.add(studyrule.StudyRule(name="asdf"))
     db_session.commit()
-    s = db_session.query(study.Study).filter(study.Study.name == "asdf").first()
+    s = db_session.query(studyrule.StudyRule).filter(studyrule.StudyRule.name == "asdf").first()
     assert s.updated_date is not None
 
 
-def test_study__updates_updated_date(create_study_db, db_session):
-    db_session.add(study.Study(id=1618, name="asdf"))
+def test_study_rule__updates_updated_date(create_study_rule_db, db_session):
+    db_session.add(studyrule.StudyRule(id=1618, name="asdf"))
     db_session.commit()
 
-    db_session.query(study.Study).filter(study.Study.id == 1618).update({"name": "updated"})
+    db_session.query(studyrule.StudyRule).filter(studyrule.StudyRule.id == 1618).update({"name": "updated"})
     db_session.commit()
 
-    updated = db_session.query(study.Study).filter(study.Study.id == 1618).first()
+    updated = db_session.query(studyrule.StudyRule).filter(studyrule.StudyRule.id == 1618).first()
     assert updated.updated_date > updated.created_date
 
 
-def test_study__whole_programs(create_study_db, db_session):
+def test_study_rule__whole_programs(create_study_rule_db, db_session):
     """Test that study.whole_programs populate correctly.
 
     Each study should contain it's corresponding records from
-    StudyProgram.
+    StudyRuleProgram.
     """
-    db_session.add(study.Study(id=1618, name="first"))
-    db_session.add(study.Study(id=3141, name="second"))
+    db_session.add(studyrule.StudyRule(id=1618, name="first"))
+    db_session.add(studyrule.StudyRule(id=3141, name="second"))
     db_session.commit()
 
-    db_session.add(study.StudyProgram(study_id=1618, program_name="alpha"))
-    db_session.add(study.StudyProgram(study_id=1618, program_name="beta"))
+    db_session.add(studyrule.StudyRuleProgram(study_rule_id=1618, program_name="alpha"))
+    db_session.add(studyrule.StudyRuleProgram(study_rule_id=1618, program_name="beta"))
     db_session.commit()
 
-    first_study = db_session.query(study.Study).filter(study.Study.id == 1618).first()
+    first_study = db_session.query(studyrule.StudyRule).filter(studyrule.StudyRule.id == 1618).first()
     assert len(first_study.whole_programs) == 2
-    assert all([program.study_id == 1618 for program in first_study.whole_programs])
+    assert all([program.study_rule_id == 1618 for program in first_study.whole_programs])
 
-    second_study = db_session.query(study.Study).filter(study.Study.id == 3141).first()
+    second_study = db_session.query(studyrule.StudyRule).filter(studyrule.StudyRule.id == 3141).first()
     assert len(second_study.whole_programs) == 0
 
 
-def test_study__partial_programs(create_study_db, db_session):
+def test_study_rule__partial_programs(create_study_rule_db, db_session):
     """Test that study.partial_programs populate correctly.
 
     Each study should contain it's corresponding records from
-    StudyProgramProject.
+    StudyRuleProgramProject.
     """
-    db_session.add(study.Study(id=1618, name="first"))
-    db_session.add(study.Study(id=3141, name="second"))
+    db_session.add(studyrule.StudyRule(id=1618, name="first"))
+    db_session.add(studyrule.StudyRule(id=3141, name="second"))
     db_session.commit()
 
-    db_session.add(study.StudyProgramProject(study_id=1618, program_name="alpha", project_code="uno"))
-    db_session.add(study.StudyProgramProject(study_id=1618, program_name="alpha", project_code="dos"))
+    db_session.add(studyrule.StudyRuleProgramProject(study_rule_id=1618, program_name="alpha", project_code="uno"))
+    db_session.add(studyrule.StudyRuleProgramProject(study_rule_id=1618, program_name="alpha", project_code="dos"))
     db_session.commit()
 
-    first_study = db_session.query(study.Study).filter(study.Study.id == 1618).first()
+    first_study = db_session.query(studyrule.StudyRule).filter(studyrule.StudyRule.id == 1618).first()
     assert len(first_study.partial_programs) == 2
-    assert all([program.study_id == 1618 for program in first_study.partial_programs])
+    assert all([program.study_rule_id == 1618 for program in first_study.partial_programs])
 
-    second_study = db_session.query(study.Study).filter(study.Study.id == 3141).first()
+    second_study = db_session.query(studyrule.StudyRule).filter(studyrule.StudyRule.id == 3141).first()
     assert len(second_study.partial_programs) == 0
 
 
-def test_study__to_json():
-    s = study.Study(
+def test_study_rule__to_json():
+    s = studyrule.StudyRule(
         id=1618,
         name="asdf",
         created_date=datetime.datetime(
@@ -146,8 +146,8 @@ def test_study__to_json():
     assert s.to_json() == expected
 
 
-def test_study__str():
-    s = study.Study(
+def test_study_rule__str():
+    s = studyrule.StudyRule(
         id=1618,
         name="asdf",
         created_date=datetime.datetime(
@@ -170,95 +170,95 @@ def test_study__str():
             microsecond=123,
             tzinfo=pytz.utc,
         ))
-    expected = "<Study(id=1618, name='asdf', created_date=2020-04-15T12:45:21.000123+00:00, updated_date=2020-04-16T12:45:21.000123+00:00)>"
+    expected = "<StudyRule(id=1618, name='asdf', created_date=2020-04-15T12:45:21.000123+00:00, updated_date=2020-04-16T12:45:21.000123+00:00)>"
     assert str(s) == expected
 
 
-def test_study_program__study_must_exist(create_study_db, db_session):
-    with pytest.raises(exc.IntegrityError, match=r"study_program_study_id_fk"):
-        db_session.add(study.StudyProgram(study_id=1618, program_name="game_of_life"))
+def test_study_rule_program__study_rule_must_exist(create_study_rule_db, db_session):
+    with pytest.raises(exc.IntegrityError, match=r"study_rule_program_study_rule_id_fk"):
+        db_session.add(studyrule.StudyRuleProgram(study_rule_id=1618, program_name="game_of_life"))
         db_session.commit()
 
 
 @pytest.mark.filterwarnings(
-    "ignore:Column 'study_program.study_id' is marked as a member of the primary key for table 'study_program'")
-def test_study_program__study_id_must_be_defined(create_study_db, db_session):
+    "ignore:Column 'study_rule_program.study_rule_id' is marked as a member of the primary key for table 'study_rule_program'")
+def test_study_rule_program__study_rule_id_must_be_defined(create_study_rule_db, db_session):
     with pytest.raises(exc.IntegrityError, match=r"violates not-null constraint"):
-        db_session.add(study.StudyProgram(program_name="game_of_life"))
+        db_session.add(studyrule.StudyRuleProgram(program_name="game_of_life"))
         db_session.commit()
 
 
 @pytest.mark.filterwarnings(
-    "ignore:Column 'study_program.program_name' is marked as a member of the primary key for table 'study_program'")
-def test_study_program__program_name_must_be_defined(create_study_db, db_session):
+    "ignore:Column 'study_rule_program.program_name' is marked as a member of the primary key for table 'study_rule_program'")
+def test_study_rule_program__program_name_must_be_defined(create_study_rule_db, db_session):
     with pytest.raises(exc.IntegrityError, match=r"violates not-null constraint"):
-        db_session.add(study.StudyProgram(study_id=1618))
+        db_session.add(studyrule.StudyRuleProgram(study_rule_id=1618))
         db_session.commit()
 
 
-def test_study_program__study_can_contain_multiple_programs(create_study_db, db_session):
-    db_session.add(study.Study(id=1618, name="asdf"))
+def test_study_rule_program__study_rule_can_contain_multiple_programs(create_study_rule_db, db_session):
+    db_session.add(studyrule.StudyRule(id=1618, name="asdf"))
     db_session.commit()
 
-    db_session.add(study.StudyProgram(study_id=1618, program_name="alpha"))
-    db_session.add(study.StudyProgram(study_id=1618, program_name="beta"))
+    db_session.add(studyrule.StudyRuleProgram(study_rule_id=1618, program_name="alpha"))
+    db_session.add(studyrule.StudyRuleProgram(study_rule_id=1618, program_name="beta"))
     db_session.commit()
 
-    assert db_session.query(study.StudyProgram).filter(study.StudyProgram.study_id == 1618).count() == 2
+    assert db_session.query(studyrule.StudyRuleProgram).filter(studyrule.StudyRuleProgram.study_rule_id == 1618).count() == 2
 
 
-def test_study_program__uniqueness(create_study_db, db_session):
-    """Check that the table enforces uniqueness of the study_id and program_name."""
-    db_session.add(study.Study(id=1618, name="asdf"))
+def test_study_rule_program__uniqueness(create_study_rule_db, db_session):
+    """Check that the table enforces uniqueness of the study_rule_id and program_name."""
+    db_session.add(studyrule.StudyRule(id=1618, name="asdf"))
     db_session.commit()
 
-    db_session.add(study.StudyProgram(study_id=1618, program_name="dupe"))
+    db_session.add(studyrule.StudyRuleProgram(study_rule_id=1618, program_name="dupe"))
     db_session.commit()
 
-    with pytest.raises(exc.IntegrityError, match=r"study_program_pk"):
-        db_session.add(study.StudyProgram(study_id=1618, program_name="dupe"))
+    with pytest.raises(exc.IntegrityError, match=r"study_rule_program_pk"):
+        db_session.add(studyrule.StudyRuleProgram(study_rule_id=1618, program_name="dupe"))
         db_session.commit()
 
 
-def test_study_program__defaults_created_date(create_study_db, db_session):
-    db_session.add(study.Study(id=1618, name="asdf"))
+def test_study_rule_program__defaults_created_date(create_study_rule_db, db_session):
+    db_session.add(studyrule.StudyRule(id=1618, name="asdf"))
     db_session.commit()
 
-    db_session.add(study.StudyProgram(study_id=1618, program_name="alpha"))
+    db_session.add(studyrule.StudyRuleProgram(study_rule_id=1618, program_name="alpha"))
     db_session.commit()
-    s = db_session.query(study.StudyProgram).filter(
-        study.StudyProgram.study_id == 1618 and study.StudyProgram.program_name == "alpha").first()
+    s = db_session.query(studyrule.StudyRuleProgram).filter(
+        studyrule.StudyRuleProgram.study_rule_id == 1618 and studyrule.StudyRuleProgram.program_name == "alpha").first()
     assert s.created_date is not None
 
 
-def test_study_program__defaults_updated_date(create_study_db, db_session):
-    db_session.add(study.Study(id=1618, name="asdf"))
+def test_study_rule_program__defaults_updated_date(create_study_rule_db, db_session):
+    db_session.add(studyrule.StudyRule(id=1618, name="asdf"))
     db_session.commit()
 
-    db_session.add(study.StudyProgram(study_id=1618, program_name="alpha"))
+    db_session.add(studyrule.StudyRuleProgram(study_rule_id=1618, program_name="alpha"))
     db_session.commit()
-    s = db_session.query(study.StudyProgram).filter(
-        study.StudyProgram.study_id == 1618 and study.StudyProgram.program_name == "alpha").first()
+    s = db_session.query(studyrule.StudyRuleProgram).filter(
+        studyrule.StudyRuleProgram.study_rule_id == 1618 and studyrule.StudyRuleProgram.program_name == "alpha").first()
     assert s.updated_date is not None
 
 
-def test_study_program__updates_updated_date(create_study_db, db_session):
-    db_session.add(study.Study(id=1618, name="asdf"))
+def test_study_rule_program__updates_updated_date(create_study_rule_db, db_session):
+    db_session.add(studyrule.StudyRule(id=1618, name="asdf"))
     db_session.commit()
 
-    db_session.add(study.StudyProgram(study_id=1618, program_name="alpha"))
+    db_session.add(studyrule.StudyRuleProgram(study_rule_id=1618, program_name="alpha"))
     db_session.commit()
 
-    db_session.query(study.StudyProgram).filter(study.StudyProgram.study_id == 1618).update({"program_name": "updated"})
+    db_session.query(studyrule.StudyRuleProgram).filter(studyrule.StudyRuleProgram.study_rule_id == 1618).update({"program_name": "updated"})
     db_session.commit()
 
-    updated = db_session.query(study.StudyProgram).filter(study.StudyProgram.study_id == 1618).first()
+    updated = db_session.query(studyrule.StudyRuleProgram).filter(studyrule.StudyRuleProgram.study_rule_id == 1618).first()
     assert updated.updated_date > updated.created_date
 
 
-def test_study_program__to_json():
-    sp = study.StudyProgram(
-        study_id=1618,
+def test_study_rule_program__to_json():
+    sp = studyrule.StudyRuleProgram(
+        study_rule_id=1618,
         program_name="alpha",
         created_date=datetime.datetime(
             year=2020,
@@ -282,7 +282,7 @@ def test_study_program__to_json():
         )
     )
     expected = json.loads(json.dumps({
-        "study_id": 1618,
+        "study_rule_id": 1618,
         "program_name": "alpha",
         "created_date": "2020-04-15T12:45:21.000123+00:00",
         "updated_date": "2020-04-16T12:45:21.000123+00:00",
@@ -290,9 +290,9 @@ def test_study_program__to_json():
     assert sp.to_json() == expected
 
 
-def test_study_program__str():
-    sp = study.StudyProgram(
-        study_id=1618,
+def test_study_rule_program__str():
+    sp = studyrule.StudyRuleProgram(
+        study_rule_id=1618,
         program_name="alpha",
         created_date=datetime.datetime(
             year=2020,
@@ -315,110 +315,110 @@ def test_study_program__str():
             tzinfo=pytz.utc,
         )
     )
-    expected = "<StudyProgram(study_id=1618, program_name='alpha', created_date=2020-04-15T12:45:21.000123+00:00, updated_date=2020-04-16T12:45:21.000123+00:00)>"
+    expected = "<StudyRuleProgram(study_rule_id=1618, program_name='alpha', created_date=2020-04-15T12:45:21.000123+00:00, updated_date=2020-04-16T12:45:21.000123+00:00)>"
     assert str(sp) == expected
 
 
 @pytest.mark.filterwarnings(
-    "ignore:Column 'study_program_project.study_id' is marked as a member of the primary key for table 'study_program_project'")
-def test_study_program_project__study_id_must_be_defined(create_study_db, db_session):
+    "ignore:Column 'study_rule_program_project.study_rule_id' is marked as a member of the primary key for table 'study_rule_program_project'")
+def test_study_rule_program_project__study_rule_id_must_be_defined(create_study_rule_db, db_session):
     with pytest.raises(exc.IntegrityError, match=r"violates not-null constraint"):
-        db_session.add(study.StudyProgramProject(program_name="game_of_life", project_code="asdf"))
+        db_session.add(studyrule.StudyRuleProgramProject(program_name="game_of_life", project_code="asdf"))
         db_session.commit()
 
 
 @pytest.mark.filterwarnings(
-    "ignore:Column 'study_program_project.program_name' is marked as a member of the primary key for table 'study_program_project'")
-def test_study_program_project__program_name_must_be_defined(create_study_db, db_session):
+    "ignore:Column 'study_rule_program_project.program_name' is marked as a member of the primary key for table 'study_rule_program_project'")
+def test_study_rule_program_project__program_name_must_be_defined(create_study_rule_db, db_session):
     with pytest.raises(exc.IntegrityError, match=r"violates not-null constraint"):
-        db_session.add(study.StudyProgramProject(study_id=1618, project_code="asdf"))
+        db_session.add(studyrule.StudyRuleProgramProject(study_rule_id=1618, project_code="asdf"))
         db_session.commit()
 
 
 @pytest.mark.filterwarnings(
-    "ignore:Column 'study_program_project.project_code' is marked as a member of the primary key for table 'study_program_project'")
-def test_study_program_project__project_code_must_be_defined(create_study_db, db_session):
+    "ignore:Column 'study_rule_program_project.project_code' is marked as a member of the primary key for table 'study_rule_program_project'")
+def test_study_rule_program_project__project_code_must_be_defined(create_study_rule_db, db_session):
     with pytest.raises(exc.IntegrityError, match=r"violates not-null constraint"):
-        db_session.add(study.StudyProgramProject(study_id=1618, program_name="game_of_life"))
+        db_session.add(studyrule.StudyRuleProgramProject(study_rule_id=1618, program_name="game_of_life"))
         db_session.commit()
 
 
-def test_study_program_project__study_must_exist(create_study_db, db_session):
-    with pytest.raises(exc.IntegrityError, match=r"study_program_project_study_id_fk"):
-        db_session.add(study.StudyProgramProject(study_id=1618, program_name="game_of_life", project_code="asdf"))
+def test_study_rule_program_project__study_rule_must_exist(create_study_rule_db, db_session):
+    with pytest.raises(exc.IntegrityError, match=r"study_rule_program_project_study_rule_id_fk"):
+        db_session.add(studyrule.StudyRuleProgramProject(study_rule_id=1618, program_name="game_of_life", project_code="asdf"))
         db_session.commit()
 
 
-def test_study_program_project__uniqueness(create_study_db, db_session):
-    """Check that the table enforces uniqueness of the study_id, program_name, and project_code."""
-    db_session.add(study.Study(id=1618, name="asdf"))
+def test_study_rule_program_project__uniqueness(create_study_rule_db, db_session):
+    """Check that the table enforces uniqueness of the study_rule_id, program_name, and project_code."""
+    db_session.add(studyrule.StudyRule(id=1618, name="asdf"))
     db_session.commit()
 
-    with pytest.raises(exc.IntegrityError, match=r"study_program_project_pk"):
-        db_session.add(study.StudyProgramProject(study_id=1618, program_name="dupe", project_code="dupe"))
-        db_session.add(study.StudyProgramProject(study_id=1618, program_name="dupe", project_code="dupe"))
+    with pytest.raises(exc.IntegrityError, match=r"study_rule_program_project_pk"):
+        db_session.add(studyrule.StudyRuleProgramProject(study_rule_id=1618, program_name="dupe", project_code="dupe"))
+        db_session.add(studyrule.StudyRuleProgramProject(study_rule_id=1618, program_name="dupe", project_code="dupe"))
         db_session.commit()
 
 
-def test_study_program_project__study_can_have_multiple_programs_and_projects(create_study_db, db_session):
-    db_session.add(study.Study(id=1618, name="asdf"))
+def test_study_rule_program_project__study_rule_can_have_multiple_programs_and_projects(create_study_rule_db, db_session):
+    db_session.add(studyrule.StudyRule(id=1618, name="asdf"))
     db_session.commit()
 
-    db_session.add(study.StudyProgramProject(study_id=1618, program_name="alpha", project_code="uno"))
-    db_session.add(study.StudyProgramProject(study_id=1618, program_name="alpha", project_code="dos"))
-    db_session.add(study.StudyProgramProject(study_id=1618, program_name="beta", project_code="uno"))
-    db_session.add(study.StudyProgramProject(study_id=1618, program_name="beta", project_code="dos"))
+    db_session.add(studyrule.StudyRuleProgramProject(study_rule_id=1618, program_name="alpha", project_code="uno"))
+    db_session.add(studyrule.StudyRuleProgramProject(study_rule_id=1618, program_name="alpha", project_code="dos"))
+    db_session.add(studyrule.StudyRuleProgramProject(study_rule_id=1618, program_name="beta", project_code="uno"))
+    db_session.add(studyrule.StudyRuleProgramProject(study_rule_id=1618, program_name="beta", project_code="dos"))
     db_session.commit()
 
-    assert db_session.query(study.StudyProgramProject).filter(study.StudyProgramProject.study_id == 1618).count() == 4
+    assert db_session.query(studyrule.StudyRuleProgramProject).filter(studyrule.StudyRuleProgramProject.study_rule_id == 1618).count() == 4
 
 
-def test_study_program_project__defaults_created_date(create_study_db, db_session):
-    db_session.add(study.Study(id=1618, name="asdf"))
+def test_study_rule_program_project__defaults_created_date(create_study_rule_db, db_session):
+    db_session.add(studyrule.StudyRule(id=1618, name="asdf"))
     db_session.commit()
 
-    db_session.add(study.StudyProgramProject(study_id=1618, program_name="alpha", project_code="uno"))
+    db_session.add(studyrule.StudyRuleProgramProject(study_rule_id=1618, program_name="alpha", project_code="uno"))
     db_session.commit()
-    s = db_session.query(study.StudyProgramProject) \
-        .filter(study.StudyProgramProject.study_id == 1618
-                and study.StudyProgramProject.program_name == "alpha"
-                and study.StudyProgramProject.project_code == "uno") \
+    s = db_session.query(studyrule.StudyRuleProgramProject) \
+        .filter(studyrule.StudyRuleProgramProject.study_rule_id == 1618
+                and studyrule.StudyRuleProgramProject.program_name == "alpha"
+                and studyrule.StudyRuleProgramProject.project_code == "uno") \
         .first()
     assert s.created_date is not None
 
 
-def test_study_program_project__defaults_updated_date(create_study_db, db_session):
-    db_session.add(study.Study(id=1618, name="asdf"))
+def test_study_rule_program_project__defaults_updated_date(create_study_rule_db, db_session):
+    db_session.add(studyrule.StudyRule(id=1618, name="asdf"))
     db_session.commit()
 
-    db_session.add(study.StudyProgramProject(study_id=1618, program_name="alpha", project_code="uno"))
+    db_session.add(studyrule.StudyRuleProgramProject(study_rule_id=1618, program_name="alpha", project_code="uno"))
     db_session.commit()
-    s = db_session.query(study.StudyProgramProject) \
-        .filter(study.StudyProgramProject.study_id == 1618
-                and study.StudyProgramProject.program_name == "alpha"
-                and study.StudyProgramProject.project_code == "uno") \
+    s = db_session.query(studyrule.StudyRuleProgramProject) \
+        .filter(studyrule.StudyRuleProgramProject.study_rule_id == 1618
+                and studyrule.StudyRuleProgramProject.program_name == "alpha"
+                and studyrule.StudyRuleProgramProject.project_code == "uno") \
         .first()
     assert s.updated_date is not None
 
 
-def test_study_program__updates_updated_date(create_study_db, db_session):
-    db_session.add(study.Study(id=1618, name="asdf"))
+def test_study_rule_program__updates_updated_date(create_study_rule_db, db_session):
+    db_session.add(studyrule.StudyRule(id=1618, name="asdf"))
     db_session.commit()
 
-    db_session.add(study.StudyProgramProject(study_id=1618, program_name="alpha", project_code="uno"))
+    db_session.add(studyrule.StudyRuleProgramProject(study_rule_id=1618, program_name="alpha", project_code="uno"))
     db_session.commit()
 
-    db_session.query(study.StudyProgramProject).filter(study.StudyProgramProject.study_id == 1618).update(
+    db_session.query(studyrule.StudyRuleProgramProject).filter(studyrule.StudyRuleProgramProject.study_rule_id == 1618).update(
         {"project_code": "updated"})
     db_session.commit()
 
-    updated = db_session.query(study.StudyProgramProject).filter(study.StudyProgramProject.study_id == 1618).first()
+    updated = db_session.query(studyrule.StudyRuleProgramProject).filter(studyrule.StudyRuleProgramProject.study_rule_id == 1618).first()
     assert updated.updated_date > updated.created_date
 
 
-def test_study_program_project__to_json():
-    spp = study.StudyProgramProject(
-        study_id=1618,
+def test_study_rule_program_project__to_json():
+    spp = studyrule.StudyRuleProgramProject(
+        study_rule_id=1618,
         program_name="alpha",
         project_code="uno",
         created_date=datetime.datetime(
@@ -443,7 +443,7 @@ def test_study_program_project__to_json():
         )
     )
     expected = json.loads(json.dumps({
-        "study_id": 1618,
+        "study_rule_id": 1618,
         "program_name": "alpha",
         "project_code": "uno",
         "created_date": "2020-04-15T12:45:21.000123+00:00",
@@ -452,9 +452,9 @@ def test_study_program_project__to_json():
     assert spp.to_json() == expected
 
 
-def test_study_program_project__str():
-    spp = study.StudyProgramProject(
-        study_id=1618,
+def test_study_rule_program_project__str():
+    spp = studyrule.StudyRuleProgramProject(
+        study_rule_id=1618,
         program_name="alpha",
         project_code="uno",
         created_date=datetime.datetime(
@@ -478,5 +478,5 @@ def test_study_program_project__str():
             tzinfo=pytz.utc,
         )
     )
-    expected = "<StudyProgramProject(study_id=1618, program_name='alpha', project_code='uno', created_date=2020-04-15T12:45:21.000123+00:00, updated_date=2020-04-16T12:45:21.000123+00:00)>"
+    expected = "<StudyRuleProgramProject(study_rule_id=1618, program_name='alpha', project_code='uno', created_date=2020-04-15T12:45:21.000123+00:00, updated_date=2020-04-16T12:45:21.000123+00:00)>"
     assert str(spp) == expected
