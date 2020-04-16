@@ -404,8 +404,10 @@ def test_study_rule_program_project__uniqueness(create_study_rule_db, db_session
     db_session.add(studyrule.StudyRule(id=1618, name="asdf"))
     db_session.commit()
 
+    db_session.add(studyrule.StudyRuleProgramProject(study_rule_id=1618, program_name="dupe", project_code="dupe"))
+    db_session.commit()
+
     with pytest.raises(exc.IntegrityError, match=r"study_rule_program_project_pk"):
-        db_session.add(studyrule.StudyRuleProgramProject(study_rule_id=1618, program_name="dupe", project_code="dupe"))
         db_session.add(studyrule.StudyRuleProgramProject(study_rule_id=1618, program_name="dupe", project_code="dupe"))
         db_session.commit()
 
