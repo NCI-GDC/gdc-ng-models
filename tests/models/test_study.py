@@ -69,6 +69,50 @@ def test_study__updates_updated_date(create_study_db, db_session):
     assert updated.updated_date > updated.created_date
 
 
+def test_study__whole_programs(create_study_db, db_session):
+    """Test that study.whole_programs populate correctly.
+
+    Each study should contain it's corresponding records from
+    StudyProgram.
+    """
+    db_session.add(study.Study(id=1618, name="first"))
+    db_session.add(study.Study(id=3141, name="second"))
+    db_session.commit()
+
+    db_session.add(study.StudyProgram(study_id=1618, program_name="alpha"))
+    db_session.add(study.StudyProgram(study_id=1618, program_name="beta"))
+    db_session.commit()
+
+    first_study = db_session.query(study.Study).filter(study.Study.id == 1618).first()
+    assert len(first_study.whole_programs) == 2
+    assert all([program.study_id == 1618 for program in first_study.whole_programs])
+
+    second_study = db_session.query(study.Study).filter(study.Study.id == 3141).first()
+    assert len(second_study.whole_programs) == 0
+
+
+def test_study__partial_programs(create_study_db, db_session):
+    """Test that study.partial_programs populate correctly.
+
+    Each study should contain it's corresponding records from
+    StudyProgramProject.
+    """
+    db_session.add(study.Study(id=1618, name="first"))
+    db_session.add(study.Study(id=3141, name="second"))
+    db_session.commit()
+
+    db_session.add(study.StudyProgramProject(study_id=1618, program_name="alpha", project_code="uno"))
+    db_session.add(study.StudyProgramProject(study_id=1618, program_name="alpha", project_code="dos"))
+    db_session.commit()
+
+    first_study = db_session.query(study.Study).filter(study.Study.id == 1618).first()
+    assert len(first_study.partial_programs) == 2
+    assert all([program.study_id == 1618 for program in first_study.partial_programs])
+
+    second_study = db_session.query(study.Study).filter(study.Study.id == 3141).first()
+    assert len(second_study.partial_programs) == 0
+
+
 def test_study__to_json():
     s = study.Study(
         id=1618,
@@ -182,7 +226,8 @@ def test_study_program__defaults_created_date(create_study_db, db_session):
 
     db_session.add(study.StudyProgram(study_id=1618, program_name="alpha"))
     db_session.commit()
-    s = db_session.query(study.StudyProgram).filter(study.StudyProgram.study_id == 1618 and study.StudyProgram.program_name == "alpha").first()
+    s = db_session.query(study.StudyProgram).filter(
+        study.StudyProgram.study_id == 1618 and study.StudyProgram.program_name == "alpha").first()
     assert s.created_date is not None
 
 
@@ -192,7 +237,8 @@ def test_study_program__defaults_updated_date(create_study_db, db_session):
 
     db_session.add(study.StudyProgram(study_id=1618, program_name="alpha"))
     db_session.commit()
-    s = db_session.query(study.StudyProgram).filter(study.StudyProgram.study_id == 1618 and study.StudyProgram.program_name == "alpha").first()
+    s = db_session.query(study.StudyProgram).filter(
+        study.StudyProgram.study_id == 1618 and study.StudyProgram.program_name == "alpha").first()
     assert s.updated_date is not None
 
 
@@ -333,10 +379,10 @@ def test_study_program_project__defaults_created_date(create_study_db, db_sessio
 
     db_session.add(study.StudyProgramProject(study_id=1618, program_name="alpha", project_code="uno"))
     db_session.commit()
-    s = db_session.query(study.StudyProgramProject)\
+    s = db_session.query(study.StudyProgramProject) \
         .filter(study.StudyProgramProject.study_id == 1618
                 and study.StudyProgramProject.program_name == "alpha"
-                and study.StudyProgramProject.project_code == "uno")\
+                and study.StudyProgramProject.project_code == "uno") \
         .first()
     assert s.created_date is not None
 
@@ -347,10 +393,10 @@ def test_study_program_project__defaults_updated_date(create_study_db, db_sessio
 
     db_session.add(study.StudyProgramProject(study_id=1618, program_name="alpha", project_code="uno"))
     db_session.commit()
-    s = db_session.query(study.StudyProgramProject)\
+    s = db_session.query(study.StudyProgramProject) \
         .filter(study.StudyProgramProject.study_id == 1618
                 and study.StudyProgramProject.program_name == "alpha"
-                and study.StudyProgramProject.project_code == "uno")\
+                and study.StudyProgramProject.project_code == "uno") \
         .first()
     assert s.updated_date is not None
 
@@ -362,7 +408,8 @@ def test_study_program__updates_updated_date(create_study_db, db_session):
     db_session.add(study.StudyProgramProject(study_id=1618, program_name="alpha", project_code="uno"))
     db_session.commit()
 
-    db_session.query(study.StudyProgramProject).filter(study.StudyProgramProject.study_id == 1618).update({"project_code": "updated"})
+    db_session.query(study.StudyProgramProject).filter(study.StudyProgramProject.study_id == 1618).update(
+        {"project_code": "updated"})
     db_session.commit()
 
     updated = db_session.query(study.StudyProgramProject).filter(study.StudyProgramProject.study_id == 1618).first()

@@ -3,7 +3,7 @@
 Studies will be used for the single-study controlled-access feature in gdcapi.
 These models provide a way to associate programs and projects to studies.
 """
-
+from sqlalchemy import orm
 from sqlalchemy.ext import declarative
 from sqlalchemy.sql import schema, sqltypes
 
@@ -31,6 +31,9 @@ class Study(Base, audit.AuditColumnsMixin):
         schema.PrimaryKeyConstraint("id", name="study_pk"),
         schema.Index("study_name_idx", "name", unique=True),
     )
+
+    whole_programs = orm.relationship("StudyProgram")
+    partial_programs = orm.relationship("StudyProgramProject")
 
     def __repr__(self):
         return "<Study(id={id}, name='{name}', created_date={created_date}, updated_date={updated_date})>".format(
