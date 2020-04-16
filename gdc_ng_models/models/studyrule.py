@@ -39,16 +39,16 @@ class StudyRule(Base, audit.AuditColumnsMixin):
         return "<StudyRule(id={id}, name='{name}', created_date={created_date}, updated_date={updated_date})>".format(
             id=self.id,
             name=self.name,
-            created_date=self.created_date.isoformat(),
-            updated_date=self.updated_date.isoformat(),
+            created_date=self.created_date.isoformat() if self.created_date else None,
+            updated_date=self.updated_date.isoformat() if self.updated_date else None,
         )
 
     def to_json(self):
         return {
             "id": self.id,
             "name": self.name,
-            "created_date": self.created_date.isoformat(),
-            "updated_date": self.updated_date.isoformat(),
+            "created_date": self.created_date.isoformat() if self.created_date else None,
+            "updated_date": self.updated_date.isoformat() if self.updated_date else None,
         }
 
 
@@ -78,16 +78,16 @@ class StudyRuleProgram(Base, audit.AuditColumnsMixin):
         return "<StudyRuleProgram(study_rule_id={study_rule_id}, program_name='{program_name}', created_date={created_date}, updated_date={updated_date})>".format(
             study_rule_id=self.study_rule_id,
             program_name=self.program_name,
-            created_date=self.created_date.isoformat(),
-            updated_date=self.updated_date.isoformat(),
+            created_date=self.created_date.isoformat() if self.created_date else None,
+            updated_date=self.updated_date.isoformat() if self.updated_date else None,
         )
 
     def to_json(self):
         return {
             "study_rule_id": self.study_rule_id,
             "program_name": self.program_name,
-            "created_date": self.created_date.isoformat(),
-            "updated_date": self.updated_date.isoformat(),
+            "created_date": self.created_date.isoformat() if self.created_date else None,
+            "updated_date": self.updated_date.isoformat() if self.updated_date else None,
         }
 
 
@@ -123,8 +123,8 @@ class StudyRuleProgramProject(Base, audit.AuditColumnsMixin):
             study_rule_id=self.study_rule_id,
             program_name=self.program_name,
             project_code=self.project_code,
-            created_date=self.created_date.isoformat(),
-            updated_date=self.updated_date.isoformat(),
+            created_date=self.created_date.isoformat() if self.created_date else None,
+            updated_date=self.updated_date.isoformat() if self.updated_date else None,
         )
 
     def to_json(self):
@@ -132,6 +132,6 @@ class StudyRuleProgramProject(Base, audit.AuditColumnsMixin):
             "study_rule_id": self.study_rule_id,
             "program_name": self.program_name,
             "project_code": self.project_code,
-            "created_date": self.created_date.isoformat(),
-            "updated_date": self.updated_date.isoformat(),
+            "created_date": self.created_date.isoformat() if self.created_date else None,
+            "updated_date": self.updated_date.isoformat() if self.updated_date else None,
         }

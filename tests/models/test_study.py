@@ -146,6 +146,20 @@ def test_study_rule__to_json():
     assert s.to_json() == expected
 
 
+def test_study_rule__to_json_without_dates():
+    s = studyrule.StudyRule(
+        id=1618,
+        name="asdf",
+    )
+    expected = json.loads(json.dumps({
+        "id": 1618,
+        "name": "asdf",
+        "created_date": None,
+        "updated_date": None,
+    }))
+    assert s.to_json() == expected
+
+
 def test_study_rule__str():
     s = studyrule.StudyRule(
         id=1618,
@@ -171,6 +185,15 @@ def test_study_rule__str():
             tzinfo=pytz.utc,
         ))
     expected = "<StudyRule(id=1618, name='asdf', created_date=2020-04-15T12:45:21.000123+00:00, updated_date=2020-04-16T12:45:21.000123+00:00)>"
+    assert str(s) == expected
+
+
+def test_study_rule__str_without_date():
+    s = studyrule.StudyRule(
+        id=1618,
+        name="asdf",
+    )
+    expected = "<StudyRule(id=1618, name='asdf', created_date=None, updated_date=None)>"
     assert str(s) == expected
 
 
@@ -204,7 +227,8 @@ def test_study_rule_program__study_rule_can_contain_multiple_programs(create_stu
     db_session.add(studyrule.StudyRuleProgram(study_rule_id=1618, program_name="beta"))
     db_session.commit()
 
-    assert db_session.query(studyrule.StudyRuleProgram).filter(studyrule.StudyRuleProgram.study_rule_id == 1618).count() == 2
+    assert db_session.query(studyrule.StudyRuleProgram).filter(
+        studyrule.StudyRuleProgram.study_rule_id == 1618).count() == 2
 
 
 def test_study_rule_program__uniqueness(create_study_rule_db, db_session):
@@ -249,10 +273,12 @@ def test_study_rule_program__updates_updated_date(create_study_rule_db, db_sessi
     db_session.add(studyrule.StudyRuleProgram(study_rule_id=1618, program_name="alpha"))
     db_session.commit()
 
-    db_session.query(studyrule.StudyRuleProgram).filter(studyrule.StudyRuleProgram.study_rule_id == 1618).update({"program_name": "updated"})
+    db_session.query(studyrule.StudyRuleProgram).filter(studyrule.StudyRuleProgram.study_rule_id == 1618).update(
+        {"program_name": "updated"})
     db_session.commit()
 
-    updated = db_session.query(studyrule.StudyRuleProgram).filter(studyrule.StudyRuleProgram.study_rule_id == 1618).first()
+    updated = db_session.query(studyrule.StudyRuleProgram).filter(
+        studyrule.StudyRuleProgram.study_rule_id == 1618).first()
     assert updated.updated_date > updated.created_date
 
 
@@ -290,6 +316,20 @@ def test_study_rule_program__to_json():
     assert sp.to_json() == expected
 
 
+def test_study_rule_program__to_json_without_dates():
+    sp = studyrule.StudyRuleProgram(
+        study_rule_id=1618,
+        program_name="alpha",
+    )
+    expected = json.loads(json.dumps({
+        "study_rule_id": 1618,
+        "program_name": "alpha",
+        "created_date": None,
+        "updated_date": None,
+    }))
+    assert sp.to_json() == expected
+
+
 def test_study_rule_program__str():
     sp = studyrule.StudyRuleProgram(
         study_rule_id=1618,
@@ -319,6 +359,15 @@ def test_study_rule_program__str():
     assert str(sp) == expected
 
 
+def test_study_rule_program__str_without_dates():
+    sp = studyrule.StudyRuleProgram(
+        study_rule_id=1618,
+        program_name="alpha",
+    )
+    expected = "<StudyRuleProgram(study_rule_id=1618, program_name='alpha', created_date=None, updated_date=None)>"
+    assert str(sp) == expected
+
+
 @pytest.mark.filterwarnings(
     "ignore:Column 'study_rule_program_project.study_rule_id' is marked as a member of the primary key for table 'study_rule_program_project'")
 def test_study_rule_program_project__study_rule_id_must_be_defined(create_study_rule_db, db_session):
@@ -345,7 +394,8 @@ def test_study_rule_program_project__project_code_must_be_defined(create_study_r
 
 def test_study_rule_program_project__study_rule_must_exist(create_study_rule_db, db_session):
     with pytest.raises(exc.IntegrityError, match=r"study_rule_program_project_study_rule_id_fk"):
-        db_session.add(studyrule.StudyRuleProgramProject(study_rule_id=1618, program_name="game_of_life", project_code="asdf"))
+        db_session.add(
+            studyrule.StudyRuleProgramProject(study_rule_id=1618, program_name="game_of_life", project_code="asdf"))
         db_session.commit()
 
 
@@ -360,7 +410,8 @@ def test_study_rule_program_project__uniqueness(create_study_rule_db, db_session
         db_session.commit()
 
 
-def test_study_rule_program_project__study_rule_can_have_multiple_programs_and_projects(create_study_rule_db, db_session):
+def test_study_rule_program_project__study_rule_can_have_multiple_programs_and_projects(create_study_rule_db,
+        db_session):
     db_session.add(studyrule.StudyRule(id=1618, name="asdf"))
     db_session.commit()
 
@@ -370,7 +421,8 @@ def test_study_rule_program_project__study_rule_can_have_multiple_programs_and_p
     db_session.add(studyrule.StudyRuleProgramProject(study_rule_id=1618, program_name="beta", project_code="dos"))
     db_session.commit()
 
-    assert db_session.query(studyrule.StudyRuleProgramProject).filter(studyrule.StudyRuleProgramProject.study_rule_id == 1618).count() == 4
+    assert db_session.query(studyrule.StudyRuleProgramProject).filter(
+        studyrule.StudyRuleProgramProject.study_rule_id == 1618).count() == 4
 
 
 def test_study_rule_program_project__defaults_created_date(create_study_rule_db, db_session):
@@ -408,11 +460,13 @@ def test_study_rule_program__updates_updated_date(create_study_rule_db, db_sessi
     db_session.add(studyrule.StudyRuleProgramProject(study_rule_id=1618, program_name="alpha", project_code="uno"))
     db_session.commit()
 
-    db_session.query(studyrule.StudyRuleProgramProject).filter(studyrule.StudyRuleProgramProject.study_rule_id == 1618).update(
+    db_session.query(studyrule.StudyRuleProgramProject).filter(
+        studyrule.StudyRuleProgramProject.study_rule_id == 1618).update(
         {"project_code": "updated"})
     db_session.commit()
 
-    updated = db_session.query(studyrule.StudyRuleProgramProject).filter(studyrule.StudyRuleProgramProject.study_rule_id == 1618).first()
+    updated = db_session.query(studyrule.StudyRuleProgramProject).filter(
+        studyrule.StudyRuleProgramProject.study_rule_id == 1618).first()
     assert updated.updated_date > updated.created_date
 
 
@@ -452,6 +506,22 @@ def test_study_rule_program_project__to_json():
     assert spp.to_json() == expected
 
 
+def test_study_rule_program_project__to_json_without_dates():
+    spp = studyrule.StudyRuleProgramProject(
+        study_rule_id=1618,
+        program_name="alpha",
+        project_code="uno",
+    )
+    expected = json.loads(json.dumps({
+        "study_rule_id": 1618,
+        "program_name": "alpha",
+        "project_code": "uno",
+        "created_date": None,
+        "updated_date": None,
+    }))
+    assert spp.to_json() == expected
+
+
 def test_study_rule_program_project__str():
     spp = studyrule.StudyRuleProgramProject(
         study_rule_id=1618,
@@ -479,4 +549,14 @@ def test_study_rule_program_project__str():
         )
     )
     expected = "<StudyRuleProgramProject(study_rule_id=1618, program_name='alpha', project_code='uno', created_date=2020-04-15T12:45:21.000123+00:00, updated_date=2020-04-16T12:45:21.000123+00:00)>"
+    assert str(spp) == expected
+
+
+def test_study_rule_program_project__str_without_dates():
+    spp = studyrule.StudyRuleProgramProject(
+        study_rule_id=1618,
+        program_name="alpha",
+        project_code="uno",
+    )
+    expected = "<StudyRuleProgramProject(study_rule_id=1618, program_name='alpha', project_code='uno', created_date=None, updated_date=None)>"
     assert str(spp) == expected
