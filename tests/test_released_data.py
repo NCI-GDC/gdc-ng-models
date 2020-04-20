@@ -89,7 +89,7 @@ def test_release_data_log__auto_increment(db_session, fake_released_log):
         fake_released_log(release_number=str(i))
         current_id = db_session.query(
             func.max(released_data.ReleasedDataLog.id)
-        ).first()[0]
+        ).scalar()
         assert current_id > max_id
         max_id = current_id
 

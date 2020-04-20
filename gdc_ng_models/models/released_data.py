@@ -30,12 +30,8 @@ class ReleasedData(Base, audit.AuditColumnsMixin, ReleasedDataMixin):
 
     __tablename__ = "released_data"
     __table_args__ = (
-        schema.Index("released_data_project_id_idx", "program_name", "project_code"),
         schema.PrimaryKeyConstraint(
-            "program_name",
-            "project_code",
-            "data_type",
-            name="released_data_program_project_data_type_pk",
+            "program_name", "project_code", "data_type", name="released_data_pk",
         ),
     )
 
@@ -58,10 +54,14 @@ class ReleasedData(Base, audit.AuditColumnsMixin, ReleasedDataMixin):
 
 class ReleasedDataLog(Base, audit.AuditColumnsMixin, ReleasedDataMixin):
 
-    __tablename__ = "released_log"
+    __tablename__ = "released_data_log"
     __table_args__ = (
-        schema.Index("released_log_data_project_id_idx", "program_name", "project_code"),
-        schema.PrimaryKeyConstraint("id", name="released_log_id_pk"),
+        schema.Index(
+            "released_data_log_program_name_project_code_idx",
+            "program_name",
+            "project_code",
+        ),
+        schema.PrimaryKeyConstraint("id", name="released_data_log_pk"),
     )
 
     def __repr__(self):
@@ -74,7 +74,6 @@ class ReleasedDataLog(Base, audit.AuditColumnsMixin, ReleasedDataMixin):
     )
     id = schema.Column(
         sqltypes.Integer,
-        primary_key=True,
         nullable=False,
         server_default=release_data_log_id_seq.next_value(),
     )
