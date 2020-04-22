@@ -4,3 +4,5 @@ tox==3.13.2
 pytz==2019.3
 
 -e git+https://git@github.com/NCI-GDC/cdisutils.git@1.3.0#egg=cdisutils
+black==19.10b0;python_version>="3.6"
+pre-commit==2.2.0;python_version>="3.6"

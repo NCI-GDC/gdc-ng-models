@@ -24,3 +24,16 @@ ng-models -m misc --host 127.0.0.1 -d automated_test -u postgres -p postgres
 ```
 
 The examples above show how you can either: 1) supply the environment variables or 2) manually input them via parser arguments.
+
+## Install `pre-commit`
+
+This repository makes use of `pre-commit` for code formatting.
+In order to make use of it, run the following command:
+```
+pip install -r dev-requirements.txt
+pre-commit install
+```
+
+Note: This requires you dev environment to have Python 3.6 or higher.
+
+
