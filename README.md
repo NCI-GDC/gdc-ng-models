@@ -35,5 +35,3 @@ pre-commit install
 ```
 
 Note: This requires you dev environment to have Python 3.6 or higher.
-
-

@@ -9,7 +9,8 @@ from sqlalchemy import (
     String,
     Text,
     text,
-    Sequence)
+    Sequence,
+)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
@@ -23,7 +24,7 @@ class RedactionLog(Base):
     Logs a redaction event, each redacted node will be stored as a RedactionEntry
     """
 
-    __tablename__ = 'redaction_log'
+    __tablename__ = "redaction_log"
 
     id_seq = Sequence("redaction_log_id_seq", metadata=Base.metadata)
     id = Column(Integer, primary_key=True, server_default=id_seq.next_value())
@@ -45,20 +46,20 @@ class RedactionLog(Base):
     # COMPLETE => all versions are redacted
     # PREVIOUS => All previous versions are redacted
     # applicable only to files on indexd
-    redaction_type = Column(Enum("LATEST", "COMPLETE", "PREVIOUS", name="redaction_types"), default="COMPLETE")
+    redaction_type = Column(
+        Enum("LATEST", "COMPLETE", "PREVIOUS", name="redaction_types"),
+        default="COMPLETE",
+    )
 
     created_datetime = Column(
-        DateTime(timezone=True),
-        nullable=False,
-        server_default=text('now()'),
+        DateTime(timezone=True), nullable=False, server_default=text("now()"),
     )
 
-    date_rescinded = Column(
-        DateTime(timezone=True),
-        nullable=True
-    )
+    date_rescinded = Column(DateTime(timezone=True), nullable=True)
 
-    entries = relationship("RedactionEntry", back_populates="redaction_log")  # type: list[RedactionEntry]
+    entries = relationship(
+        "RedactionEntry", back_populates="redaction_log"
+    )  # type: list[RedactionEntry]
 
     @hybrid_property
     def project(self):
@@ -87,8 +88,13 @@ class RedactionLog(Base):
         return True
 
     def to_json(self):
-        json = dict(id=self.id, annotation_id=self.annotation_id,
-                    project_id=self.project_id, initiated_by=self.initiated_by, reason=self.reason)
+        json = dict(
+            id=self.id,
+            annotation_id=self.annotation_id,
+            project_id=self.project_id,
+            initiated_by=self.initiated_by,
+            reason=self.reason,
+        )
         return json
 
 
@@ -96,7 +102,8 @@ class RedactionEntry(Base):
     """
     Logs a redacted node, holds enough information to enable querying and filtering redacted nodes
     """
-    __tablename__ = 'redaction_entry'
+
+    __tablename__ = "redaction_entry"
 
     node_id = Column(String(64), nullable=False, primary_key=True)
     version = Column(String(4), index=True)
@@ -104,7 +111,9 @@ class RedactionEntry(Base):
     node_type = Column(String(128), nullable=False, index=True)
     release_number = Column(String(16), index=True)
 
-    redaction_id = Column(Integer, ForeignKey("redaction_log.id"), nullable=False, primary_key=True)
+    redaction_id = Column(
+        Integer, ForeignKey("redaction_log.id"), nullable=False, primary_key=True
+    )
     redaction_log = relationship("RedactionLog", back_populates="entries")
 
     rescinded = Column(Boolean, default=False)
@@ -113,15 +122,10 @@ class RedactionEntry(Base):
     rescinded_by = Column(String(64), nullable=True)
 
     created_datetime = Column(
-        DateTime(timezone=True),
-        nullable=False,
-        server_default=text('now()'),
+        DateTime(timezone=True), nullable=False, server_default=text("now()"),
     )
 
-    date_rescinded = Column(
-        DateTime(timezone=True),
-        nullable=True
-    )
+    date_rescinded = Column(DateTime(timezone=True), nullable=True)
 
     def rescind(self, rescinded_by):
         """Performs a rescind action on an entry"""
@@ -134,5 +138,10 @@ class RedactionEntry(Base):
         return self.file_name is not None
 
     def to_json(self):
-        return dict(node_id=self.node_id, redaction_id=self.redaction_id,
-                    is_indexed=self.is_indexed, node_type=self.node_type, rescinded=self.rescinded)
+        return dict(
+            node_id=self.node_id,
+            redaction_id=self.redaction_id,
+            is_indexed=self.is_indexed,
+            node_type=self.node_type,
+            rescinded=self.rescinded,
+        )

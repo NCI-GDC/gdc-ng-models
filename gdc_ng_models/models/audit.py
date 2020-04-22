@@ -19,11 +19,11 @@ class AuditColumnsMixin:
     created_datetime = schema.Column(
         sqltypes.DateTime(timezone=True),
         nullable=False,
-        server_default=sql.text('now()'),
+        server_default=sql.text("now()"),
     )
     updated_datetime = schema.Column(
         sqltypes.DateTime(timezone=True),
         nullable=False,
-        server_default=sql.text('now()'),
+        server_default=sql.text("now()"),
         onupdate=datetime.datetime.utcnow,
     )

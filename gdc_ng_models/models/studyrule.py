@@ -24,7 +24,9 @@ class StudyRule(Base, audit.AuditColumnsMixin):
 
     __tablename__ = "study_rule"
     id_seq = schema.Sequence(name="study_rule_id_seq", metadata=Base.metadata)
-    id = schema.Column(sqltypes.Integer, nullable=False, server_default=id_seq.next_value())
+    id = schema.Column(
+        sqltypes.Integer, nullable=False, server_default=id_seq.next_value()
+    )
     name = schema.Column(sqltypes.Text, nullable=False)
 
     __table_args__ = (
@@ -39,16 +41,24 @@ class StudyRule(Base, audit.AuditColumnsMixin):
         return "<StudyRule(id={id}, name='{name}', created_datetime={created_datetime}, updated_datetime={updated_datetime})>".format(
             id=self.id,
             name=self.name,
-            created_datetime=self.created_datetime.isoformat() if self.created_datetime else None,
-            updated_datetime=self.updated_datetime.isoformat() if self.updated_datetime else None,
+            created_datetime=self.created_datetime.isoformat()
+            if self.created_datetime
+            else None,
+            updated_datetime=self.updated_datetime.isoformat()
+            if self.updated_datetime
+            else None,
         )
 
     def to_json(self):
         return {
             "id": self.id,
             "name": self.name,
-            "created_datetime": self.created_datetime.isoformat() if self.created_datetime else None,
-            "updated_datetime": self.updated_datetime.isoformat() if self.updated_datetime else None,
+            "created_datetime": self.created_datetime.isoformat()
+            if self.created_datetime
+            else None,
+            "updated_datetime": self.updated_datetime.isoformat()
+            if self.updated_datetime
+            else None,
         }
 
 
@@ -70,24 +80,38 @@ class StudyRuleProgram(Base, audit.AuditColumnsMixin):
     program_name = schema.Column(sqltypes.Text, nullable=False)
 
     __table_args__ = (
-        schema.PrimaryKeyConstraint("study_rule_id", "program_name", name="study_rule_program_pk"),
-        schema.ForeignKeyConstraint(("study_rule_id",), ("study_rule.id",), name="study_rule_program_study_rule_id_fk")
+        schema.PrimaryKeyConstraint(
+            "study_rule_id", "program_name", name="study_rule_program_pk"
+        ),
+        schema.ForeignKeyConstraint(
+            ("study_rule_id",),
+            ("study_rule.id",),
+            name="study_rule_program_study_rule_id_fk",
+        ),
     )
 
     def __repr__(self):
         return "<StudyRuleProgram(study_rule_id={study_rule_id}, program_name='{program_name}', created_datetime={created_datetime}, updated_datetime={updated_datetime})>".format(
             study_rule_id=self.study_rule_id,
             program_name=self.program_name,
-            created_datetime=self.created_datetime.isoformat() if self.created_datetime else None,
-            updated_datetime=self.updated_datetime.isoformat() if self.updated_datetime else None,
+            created_datetime=self.created_datetime.isoformat()
+            if self.created_datetime
+            else None,
+            updated_datetime=self.updated_datetime.isoformat()
+            if self.updated_datetime
+            else None,
         )
 
     def to_json(self):
         return {
             "study_rule_id": self.study_rule_id,
             "program_name": self.program_name,
-            "created_datetime": self.created_datetime.isoformat() if self.created_datetime else None,
-            "updated_datetime": self.updated_datetime.isoformat() if self.updated_datetime else None,
+            "created_datetime": self.created_datetime.isoformat()
+            if self.created_datetime
+            else None,
+            "updated_datetime": self.updated_datetime.isoformat()
+            if self.updated_datetime
+            else None,
         }
 
 
@@ -114,8 +138,17 @@ class StudyRuleProgramProject(Base, audit.AuditColumnsMixin):
     project_code = schema.Column(sqltypes.Text, nullable=False)
 
     __table_args__ = (
-        schema.PrimaryKeyConstraint("study_rule_id", "program_name", "project_code", name="study_rule_program_project_pk"),
-        schema.ForeignKeyConstraint(("study_rule_id",), ("study_rule.id",), name="study_rule_program_project_study_rule_id_fk"),
+        schema.PrimaryKeyConstraint(
+            "study_rule_id",
+            "program_name",
+            "project_code",
+            name="study_rule_program_project_pk",
+        ),
+        schema.ForeignKeyConstraint(
+            ("study_rule_id",),
+            ("study_rule.id",),
+            name="study_rule_program_project_study_rule_id_fk",
+        ),
     )
 
     def __repr__(self):
@@ -123,8 +156,12 @@ class StudyRuleProgramProject(Base, audit.AuditColumnsMixin):
             study_rule_id=self.study_rule_id,
             program_name=self.program_name,
             project_code=self.project_code,
-            created_datetime=self.created_datetime.isoformat() if self.created_datetime else None,
-            updated_datetime=self.updated_datetime.isoformat() if self.updated_datetime else None,
+            created_datetime=self.created_datetime.isoformat()
+            if self.created_datetime
+            else None,
+            updated_datetime=self.updated_datetime.isoformat()
+            if self.updated_datetime
+            else None,
         )
 
     def to_json(self):
@@ -132,6 +169,10 @@ class StudyRuleProgramProject(Base, audit.AuditColumnsMixin):
             "study_rule_id": self.study_rule_id,
             "program_name": self.program_name,
             "project_code": self.project_code,
-            "created_datetime": self.created_datetime.isoformat() if self.created_datetime else None,
-            "updated_datetime": self.updated_datetime.isoformat() if self.updated_datetime else None,
+            "created_datetime": self.created_datetime.isoformat()
+            if self.created_datetime
+            else None,
+            "updated_datetime": self.updated_datetime.isoformat()
+            if self.updated_datetime
+            else None,
         }
