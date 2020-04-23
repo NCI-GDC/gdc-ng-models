@@ -562,3 +562,12 @@ def test_study_rule_program_project__str_without_dates():
     )
     expected = "<StudyRuleProgramProject(study_rule_id=1618, program_name='alpha', project_code='uno', created_datetime=None, updated_datetime=None)>"
     assert str(spp) == expected
+
+
+def test_study_rule_program_project__project_id():
+    spp = studyrule.StudyRuleProgramProject(
+        study_rule_id=1618,
+        program_name="alpha",
+        project_code="uno",
+    )
+    assert spp.project_id == "alpha-uno"

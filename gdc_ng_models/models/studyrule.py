@@ -135,3 +135,7 @@ class StudyRuleProgramProject(Base, audit.AuditColumnsMixin):
             "created_datetime": self.created_datetime.isoformat() if self.created_datetime else None,
             "updated_datetime": self.updated_datetime.isoformat() if self.updated_datetime else None,
         }
+
+    @property
+    def project_id(self):
+        return "{}-{}".format(self.program_name, self.project_code)
