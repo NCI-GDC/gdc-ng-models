@@ -4,3 +4,5 @@ tox==3.13.2
 pytz==2019.3
 
 -e git+https://git@github.com/NCI-GDC/cdisutils.git@1.3.0#egg=cdisutils
+pre-commit==1.21.0
+cfgv==2.0.1
