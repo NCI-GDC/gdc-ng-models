@@ -7,12 +7,25 @@ Repository for GDC models that do not have a dependency on [psqlgraph](https://g
 
 The `ng` in `gdc-ng-models` stands for _non-graph_.
 
+- [gdc-ng-models](#gdc-ng-models)
+  - [Testing](#testing)
+  - [Command-Line Scripts](#command-line-scripts)
+  - [Setup pre-commit hook to check for secrets](#setup-pre-commit-hook-to-check-for-secrets)
+
+
 ## Testing
 
 ```sh
 psql -c "create user gdc_test with superuser password 'gdc_test';" -U postgres
 psql -c 'create database automated_test with owner "gdc_test";' -U postgres
 ./service_wrapper.sh pytest tests/
+```
+
+Or we can use [tox](https://tox.readthedocs.io/en/latest/) for testing
+
+```
+pip install tox
+tox
 ```
 
 ## Command-Line Scripts
