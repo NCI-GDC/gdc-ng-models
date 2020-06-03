@@ -26,7 +26,12 @@ def fake_released_data(create_released_data_db, db_session):
 @pytest.fixture
 def fake_released_log(create_released_data_db, db_session, request):
     def helper(
-        name="name", code="code", release_number="1", data_type="cnv", is_open=False,
+        name="name",
+        code="code",
+        release_number="1",
+        data_type="cnv",
+        is_open=False,
+        action="release",
     ):
         node = released_data.ReleasedDataLog(
             program_name=name,
@@ -34,6 +39,7 @@ def fake_released_log(create_released_data_db, db_session, request):
             release_number=release_number,
             data_type=data_type,
             is_open=is_open,
+            action=action,
         )
         db_session.merge(node)
         return node
@@ -46,7 +52,7 @@ def test_released_data__sqlalchemy_model_registered():
 
 
 @pytest.mark.parametrize("data_type", ["cnv", "ssm", "case"])
-def test_released_data__good_enums(fake_released_data, db_session, data_type):
+def test_released_data__valid_data_type(fake_released_data, db_session, data_type):
     fake_released_data(data_type=data_type)
     node = db_session.query(released_data.ReleasedData).first()
 
@@ -54,8 +60,8 @@ def test_released_data__good_enums(fake_released_data, db_session, data_type):
     db_session.delete(node)
 
 
-def test_released_data__bad_enums(fake_released_data):
-    with pytest.raises(AssertionError):
+def test_released_data__invalid_data_type(fake_released_data):
+    with pytest.raises(ValueError, match=r"not a valid value for data_type"):
         fake_released_data(data_type="not-applicable")
 
 
@@ -70,7 +76,7 @@ def test_release_data_log__sqlalchemy_model_registered():
 
 
 @pytest.mark.parametrize("data_type", ["cnv", "ssm", "case"])
-def test_release_data_log__good_enums(db_session, data_type, fake_released_log):
+def test_release_data_log__valid_data_type(db_session, data_type, fake_released_log):
     fake_released_log(data_type=data_type)
     db_session.commit()
     node = db_session.query(released_data.ReleasedDataLog).first()
@@ -78,9 +84,23 @@ def test_release_data_log__good_enums(db_session, data_type, fake_released_log):
     assert node.data_type == data_type
 
 
-def test_release_data_log__bad_enums(db_session, fake_released_log):
-    with pytest.raises(AssertionError):
+def test_release_data_log__invalid_data_type(db_session, fake_released_log):
+    with pytest.raises(ValueError, match=r"not a valid value for data_type"):
         fake_released_log(data_type="not-applicable")
+
+
+@pytest.mark.parametrize("action", ["release", "unrelease"])
+def test_release_data_log__valid_action(db_session, action, fake_released_log):
+    fake_released_log(action=action)
+    db_session.commit()
+    node = db_session.query(released_data.ReleasedDataLog).first()
+
+    assert node.action == action
+
+
+def test_release_data_log__invalid_action(db_session, fake_released_log):
+    with pytest.raises(ValueError, match=r"not a valid value for action"):
+        fake_released_log(action="not-applicable")
 
 
 def test_release_data_log__auto_increment(db_session, fake_released_log):
