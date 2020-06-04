@@ -6,6 +6,9 @@ from gdc_ng_models.models import audit
 
 Base = declarative_base()
 
+RELEASED_DATA_DATA_TYPE_VALUES = frozenset({"ssm", "cnv", "case"})
+RELEASED_DATA_LOG_ACTION_VALUES = frozenset({"release", "unrelease"})
+
 
 class ReleasedDataMixin:
     program_name = schema.Column(sqltypes.Text, nullable=False)
@@ -19,7 +22,7 @@ class ReleasedDataMixin:
 
     @validates("data_type")
     def validate_data_type(self, key, data_type):
-        if data_type not in ["ssm", "cnv", "case"]:
+        if data_type not in RELEASED_DATA_DATA_TYPE_VALUES:
             raise ValueError(
                 """"{data_type}" is not a valid value for {key}""".format(
                     data_type=data_type, key=key
@@ -82,7 +85,7 @@ class ReleasedDataLog(Base, audit.AuditColumnsMixin, ReleasedDataMixin):
 
     @validates("action")
     def validate_action(self, key, action):
-        if action not in ["release", "unrelease"]:
+        if action not in RELEASED_DATA_LOG_ACTION_VALUES:
             raise ValueError(
                 """"{action}" is not a valid value for {key}""".format(action=action, key=key)
             )
