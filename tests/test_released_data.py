@@ -71,6 +71,12 @@ def test_released_data__project_id(fake_released_data, db_session):
     assert node.project_id == "{}-{}".format(node.program_name, node.project_code)
 
 
+def test_released_data__id(fake_released_data, db_session):
+    fake_released_data()
+    node = db_session.query(released_data.ReleasedData).first()
+    assert node.id == "{}_{}_{}".format(node.program_name, node.project_code, node.data_type)
+
+
 def test_release_data_log__sqlalchemy_model_registered():
     assert released_data.ReleasedDataLog
 
