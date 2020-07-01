@@ -1,4 +1,5 @@
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import validates
 from sqlalchemy.sql import schema, sqltypes
 
@@ -54,6 +55,10 @@ class ReleasedData(Base, audit.AuditColumnsMixin, ReleasedDataMixin):
             "is_controlled": self.is_controlled,
             "is_open": self.is_open,
         }
+
+    @hybrid_property
+    def id(self):
+        return "{}_{}_{}".format(self.program_name, self.project_code, self.data_type)
 
 
 class ReleasedDataLog(Base, audit.AuditColumnsMixin, ReleasedDataMixin):
