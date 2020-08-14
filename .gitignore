@@ -14,6 +14,18 @@ venv/
 
 # Tox
 .tox
+.cache
+.coverage
+coverage.xml
+htmlcov/
+test-reports/
+
+# Jenkins 
+.local/
+.eggs/
+.ssh/
+*/_version.py
+wait-for-it.sh
 
 # vim
 *.swp

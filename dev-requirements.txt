@@ -7,3 +7,5 @@ pytz==2019.3
 pre-commit==1.21.0
 cfgv==2.0.1
 detect-secrets==0.13.0
+
+pytest-cov~=2.7.1
