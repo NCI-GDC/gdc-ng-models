@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+
 from sqlalchemy import Column, Integer, String, Text, DateTime, text, Boolean, Sequence
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects.postgresql import ARRAY
