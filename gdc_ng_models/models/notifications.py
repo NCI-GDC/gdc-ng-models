@@ -26,18 +26,18 @@ class Notification(Base):
             self.id, self.level, self.message
         )
 
+    def to_dict(self):
+        """Returns a dictionary representation of :class:`Notification`"""
+
+        return {
+            "id": self.id,
+            "components": self.components,
+            "created": self.created.isoformat(),
+            "dismissible": self.dismissible,
+            "message": self.message,
+            "level": self.level,
+        }
+
     def to_json(self):
         """Returns a JSON safe representation of :class:`Notification`"""
-
-        return json.loads(
-            json.dumps(
-                {
-                    "id": self.id,
-                    "components": self.components,
-                    "created": self.created.isoformat(),
-                    "dismissible": self.dismissible,
-                    "message": self.message,
-                    "level": self.level,
-                }
-            )
-        )
+        return json.dumps(self.to_dict())
