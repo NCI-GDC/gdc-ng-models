@@ -40,4 +40,4 @@ class Notification(Base):
 
     def to_json(self):
         """Returns a JSON safe representation of :class:`Notification`"""
-        return json.dumps(self.to_dict())
+        return json.loads(json.dumps(self.to_dict()))
