@@ -1,4 +1,5 @@
 import json
+
 from sqlalchemy import Column, Integer, String, Text, DateTime, text, Boolean, Sequence
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects.postgresql import ARRAY
@@ -8,7 +9,7 @@ Base = declarative_base()
 
 
 class Notification(Base):
-    __tablename__ = 'notifications'
+    __tablename__ = "notifications"
 
     id_seq = Sequence("notifications_id_seq", metadata=Base.metadata)
     id = Column(Integer, primary_key=True, server_default=id_seq.next_value())
@@ -17,22 +18,26 @@ class Notification(Base):
     level = Column(String)
     dismissible = Column(Boolean, default=True)
     created = Column(
-        DateTime(timezone=True),
-        nullable=False,
-        server_default=text('now()'),
+        DateTime(timezone=True), nullable=False, server_default=text("now()"),
     )
 
     def __repr__(self):
         return "<Notification(id='{}', level='{}', message='{}')>".format(
-           self.id, self.level, self.message)
+            self.id, self.level, self.message
+        )
+
+    def to_dict(self):
+        """Returns a dictionary representation of :class:`Notification`"""
+
+        return {
+            "id": self.id,
+            "components": self.components,
+            "created": self.created.isoformat(),
+            "dismissible": self.dismissible,
+            "message": self.message,
+            "level": self.level,
+        }
 
     def to_json(self):
         """Returns a JSON safe representation of :class:`Notification`"""
-
-        return json.loads(json.dumps({
-            'id': self.id,
-            'components': self.components,
-            'dismissible': self.dismissible,
-            'message': self.message,
-            'level': self.level,
-        }))
+        return json.loads(json.dumps(self.to_dict()))
