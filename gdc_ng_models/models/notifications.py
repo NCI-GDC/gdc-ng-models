@@ -20,6 +20,12 @@ class Notification(Base):
     created = Column(
         DateTime(timezone=True), nullable=False, server_default=text("now()"),
     )
+    start_date = Column(
+        DateTime(timezone=True), nullable=False, server_default=text("now()")
+    )
+    end_date = Column(DateTime(timezone=True), nullable=True)
+
+    __mapper_args__ = {"eager_defaults": True}
 
     def __repr__(self):
         return "<Notification(id='{}', level='{}', message='{}')>".format(
@@ -36,6 +42,10 @@ class Notification(Base):
             "dismissible": self.dismissible,
             "message": self.message,
             "level": self.level,
+            "start_date": self.start_date.isoformat(),
+            "end_date": self.end_date.isoformat()
+            if self.end_date is not None
+            else None,
         }
 
     def to_json(self):
