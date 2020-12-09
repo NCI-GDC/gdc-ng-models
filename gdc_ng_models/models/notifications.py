@@ -20,9 +20,7 @@ class Notification(Base):
     created = Column(
         DateTime(timezone=True), nullable=False, server_default=text("now()"),
     )
-    start_date = Column(
-        DateTime(timezone=True), nullable=True, server_default=text("now()")
-    )
+    start_date = Column(DateTime(timezone=True), nullable=True)
     end_date = Column(DateTime(timezone=True), nullable=True)
 
     __mapper_args__ = {"eager_defaults": True}
