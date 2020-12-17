@@ -1,4 +1,5 @@
 from sqlalchemy import (
+    BigInteger,
     Boolean,
     Column,
     DateTime,
@@ -31,7 +32,7 @@ class TestRun(Base):
     __tablename__ = 'qc_test_runs'
 
     id_seq = Sequence("qc_test_runs_id_seq", metadata=Base.metadata)
-    id = Column(Integer, primary_key=True, server_default=id_seq.next_value())
+    id = Column(BigInteger, primary_key=True, server_default=id_seq.next_value())
     project_id = Column(String(64), nullable=False, index=True)
 
     entity_id = Column(String(64), nullable=False)

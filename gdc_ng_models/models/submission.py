@@ -16,6 +16,7 @@ from sqlalchemy.ext.declarative import declarative_base, declared_attr
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship, deferred
 from sqlalchemy import (
+    BigInteger,
     Boolean,
     Column,
     DateTime,
@@ -265,14 +266,14 @@ class TransactionDocument(Base):
 
     id_seq = Sequence("transaction_documents_id_seq", metadata=Base.metadata)
     id = Column(
-        Integer,
+        BigInteger,
         primary_key=True,
         nullable=False,
         server_default=id_seq.next_value()
     )
 
     transaction_id = Column(
-        Integer,
+        BigInteger,
         ForeignKey('transaction_logs.id'),
         primary_key=True,
     )
