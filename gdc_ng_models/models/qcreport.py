@@ -5,7 +5,6 @@ from sqlalchemy import (
     DateTime,
     Enum,
     ForeignKey,
-    Integer,
     String,
     Text,
     text,
@@ -85,7 +84,7 @@ class ValidationResult(Base):
     __tablename__ = 'qc_validation_results'
 
     id_seq = Sequence("qc_validation_results_id_seq", metadata=Base.metadata)
-    id = Column(Integer, primary_key=True, server_default=id_seq.next_value())
+    id = Column(BigInteger, primary_key=True, server_default=id_seq.next_value())
 
     node_id = Column(String(64), nullable=False)
     submitter_id = Column(String(128), nullable=False)
@@ -101,7 +100,7 @@ class ValidationResult(Base):
     related_nodes = Column(JSONB, nullable=True)
 
     test_run_id = Column(
-        Integer,
+        BigInteger,
         ForeignKey("qc_test_runs.id"),
         nullable=False,
         primary_key=True

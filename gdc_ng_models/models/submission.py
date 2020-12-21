@@ -108,7 +108,7 @@ class TransactionLog(Base):
 
     id_seq = Sequence("transaction_logs_id_seq", metadata=Base.metadata)
     id = Column(
-        Integer,
+        BigInteger,
         primary_key=True,
         server_default=id_seq.next_value()
     )
@@ -187,7 +187,6 @@ class TransactionSnapshot(Base):
             Index('idx_transaction_snapshots_transactions_id', 'transaction_id'),
         )
 
-
     def __repr__(self):
         return "<TransactionSnapshot({}, {})>".format(
             self.id, self.transaction_id)
@@ -210,7 +209,7 @@ class TransactionSnapshot(Base):
     )
 
     transaction_id = Column(
-        Integer,
+        BigInteger,
         ForeignKey('transaction_logs.id'),
         primary_key=True,
     )
