@@ -1,10 +1,14 @@
 import pytest
 
-from gdc_ng_models.models import notifications, released_data
+from gdc_ng_models.models import released_data
 
 
 @pytest.mark.usefixtures("create_released_data_db")
 def test_big_int_id(db_session):
+    """Test the BIGINT 'id' column in specific tables
+
+    For the sake of simplicity, we only tested the released_data_log table here
+    """
     large_int = 1234567890123456
 
     rdl_node = released_data.ReleasedDataLog(
