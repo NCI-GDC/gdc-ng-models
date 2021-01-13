@@ -17,8 +17,7 @@ Base = declarative_base()
 class FileReport(Base):
     __tablename__ = 'filereport'
 
-    id_seq = Sequence("filereport_id_seq", metadata=Base.metadata)
-    id = Column('id', Integer, primary_key=True, server_default=id_seq.next_value())
+    id = Column('id', BigInteger, primary_key=True, autoincrement=True)
     node_id = Column('node_id', Text, index=True)
     ip = Column('ip', String)
     country_code = Column('country_code', String, index=True)
@@ -30,5 +29,8 @@ class FileReport(Base):
     report_data = Column(JSONB, nullable=True)
 
     __table_args__ = (
+        PrimaryKeyConstraint("id","timestamp"),
         Index("filereport_report_data_idx", "report_data", postgresql_using="gin",),
+        Index("timestamp_idx", "timestamp", postgresql_using="btree",),
+        {'postgresql_partition_by': 'RANGE (timestamp)'}
     )
