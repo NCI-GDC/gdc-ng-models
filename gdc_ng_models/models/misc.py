@@ -21,7 +21,7 @@ class FileReport(Base):
     node_id = Column('node_id', Text, index=True)
     ip = Column('ip', String)
     country_code = Column('country_code', String, index=True)
-    timestamp = Column('timestamp', DateTime, server_default="now()")
+    timestamp = Column('timestamp', DateTime, server_default="now()", primary_key=True)
     streamed_bytes = Column('streamed_bytes', BigInteger)
     username = Column('username', String, index=True)
     requested_bytes = Column('requested_bytes', BigInteger)
@@ -29,8 +29,6 @@ class FileReport(Base):
     report_data = Column(JSONB, nullable=True)
 
     __table_args__ = (
-        PrimaryKeyConstraint("id","timestamp"),
         Index("filereport_report_data_idx", "report_data", postgresql_using="gin",),
-        Index("timestamp_idx", "timestamp", postgresql_using="btree",),
         {'postgresql_partition_by': 'RANGE (timestamp)'}
     )
