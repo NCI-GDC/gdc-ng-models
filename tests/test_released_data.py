@@ -124,3 +124,23 @@ def test_release_data_log__project_id(fake_released_log, db_session):
     fake_released_log()
     node = db_session.query(released_data.ReleasedDataLog).first()
     assert node.project_id == "{}-{}".format(node.program_name, node.project_code)
+
+
+@pytest.mark.usefixtures("create_released_data_db")
+def test_release_data_log__big_int_id(db_session):
+    """Test the BIGINT 'id' column in specific tables"""
+    large_int = 1234567890123456
+
+    rdl_node = released_data.ReleasedDataLog(
+        id=large_int,
+        program_name="DummyProgram",
+        project_code="DummyProject",
+        release_number="dummy",
+        data_type="cnv",
+        is_open=True,
+        action="release"
+    )
+    db_session.add(rdl_node)
+    db_session.commit()
+    node = db_session.query(released_data.ReleasedDataLog).first()
+    assert node.id == large_int
