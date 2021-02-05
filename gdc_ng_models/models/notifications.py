@@ -18,7 +18,9 @@ class Notification(Base):
     level = Column(String)
     dismissible = Column(Boolean, default=True)
     created = Column(
-        DateTime(timezone=True), nullable=False, server_default=text("now()"),
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=text("now()"),
     )
     start_date = Column(DateTime(timezone=True), nullable=True)
     end_date = Column(DateTime(timezone=True), nullable=True)
@@ -32,6 +34,10 @@ class Notification(Base):
 
     def to_dict(self):
         """Returns a dictionary representation of :class:`Notification`"""
+        start_date = (
+            self.start_date.isoformat() if self.start_date is not None else None
+        )
+        end_date = self.end_date.isoformat() if self.end_date is not None else None
 
         return {
             "id": self.id,
@@ -40,12 +46,8 @@ class Notification(Base):
             "dismissible": self.dismissible,
             "message": self.message,
             "level": self.level,
-            "start_date": self.start_date.isoformat()
-            if self.start_date is not None
-            else None,
-            "end_date": self.end_date.isoformat()
-            if self.end_date is not None
-            else None,
+            "start_date": start_date,
+            "end_date": end_date,
         }
 
     def to_json(self):
