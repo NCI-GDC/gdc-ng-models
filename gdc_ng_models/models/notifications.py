@@ -1,6 +1,6 @@
 import json
 
-from sqlalchemy import Column, Integer, String, Text, DateTime, text, Boolean, Sequence
+from sqlalchemy import BigInteger, Column, String, Text, DateTime, text, Boolean, Sequence
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects.postgresql import ARRAY
 
@@ -12,7 +12,7 @@ class Notification(Base):
     __tablename__ = "notifications"
 
     id_seq = Sequence("notifications_id_seq", metadata=Base.metadata)
-    id = Column(Integer, primary_key=True, server_default=id_seq.next_value())
+    id = Column(BigInteger, primary_key=True, server_default=id_seq.next_value())
     components = Column(ARRAY(Text), default=list())
     message = Column(String)
     level = Column(String)

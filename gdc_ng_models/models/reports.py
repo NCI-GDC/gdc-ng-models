@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Text, DateTime, text, Integer, Index, func, Sequence
+from sqlalchemy import BigInteger, Column, Text, DateTime, text, Index, func, Sequence
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.dialects.postgresql import JSONB
@@ -28,7 +28,7 @@ class GDCReport(Base):
         return "<Report({}, {})>".format(self.id, self.report_type)
 
     id_seq = Sequence("gdc_reports_id_seq", metadata=Base.metadata)
-    id = Column(Integer, primary_key=True, server_default=id_seq.next_value())
+    id = Column(BigInteger, primary_key=True, server_default=id_seq.next_value())
     program = Column(Text)
     project = Column(Text)
     report = Column(JSONB)

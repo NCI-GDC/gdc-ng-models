@@ -4,7 +4,6 @@ from sqlalchemy import (
     Column,
     DateTime,
     Index,
-    Integer,
     String,
     Text,
     Sequence)
@@ -18,7 +17,7 @@ class FileReport(Base):
     __tablename__ = 'filereport'
 
     id_seq = Sequence("filereport_id_seq", metadata=Base.metadata)
-    id = Column('id', Integer, primary_key=True, server_default=id_seq.next_value())
+    id = Column('id', BigInteger, primary_key=True, server_default=id_seq.next_value())
     node_id = Column('node_id', Text, index=True)
     ip = Column('ip', String)
     country_code = Column('country_code', String, index=True)
