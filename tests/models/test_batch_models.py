@@ -71,6 +71,36 @@ def test_batch__updated_datetime(create_batch_db, db_session):
     assert updated_b.updated_datetime > updated_b.created_datetime
 
 
+def test_batch__repr():
+    b = batch.Batch(
+        id=1000,
+        name="a",
+        project_id="GDC-MISC",
+        created_datetime=datetime.datetime(
+            year=2021,
+            month=1,
+            day=18,
+            hour=9,
+            minute=30,
+            second=10,
+            microsecond=123,
+            tzinfo=pytz.utc,
+        ),
+        updated_datetime=datetime.datetime(
+            year=2021,
+            month=1,
+            day=18,
+            hour=9,
+            minute=30,
+            second=10,
+            microsecond=123,
+            tzinfo=pytz.utc,
+        ),
+    )
+    expected = "<Batch(id='1000', name='a', project_id='GDC-MISC', created_datetime='2021-01-18T09:30:10.000123+00:00', updated_datetime='2021-01-18T09:30:10.000123+00:00')>"
+    assert repr(b) == expected
+
+
 def test_batch__primary_key_constraint(create_batch_db, db_session):
     db_session.add(batch.Batch(id=1000, name="a", project_id="GDC-MISC"))
     db_session.commit()
@@ -234,6 +264,36 @@ def test_batch_membership__updated_datetime(
     )
 
     assert updated_b.updated_datetime > updated_b.created_datetime
+
+
+def test_batch_membership__repr():
+    b = batch.BatchMembership(
+        batch_id=1000,
+        node_id="node_1",
+        node_type="rma",
+        created_datetime=datetime.datetime(
+            year=2021,
+            month=1,
+            day=18,
+            hour=9,
+            minute=30,
+            second=10,
+            microsecond=123,
+            tzinfo=pytz.utc,
+        ),
+        updated_datetime=datetime.datetime(
+            year=2021,
+            month=1,
+            day=18,
+            hour=9,
+            minute=30,
+            second=10,
+            microsecond=123,
+            tzinfo=pytz.utc,
+        ),
+    )
+    expected = "<BatchMembership(batch_id='1000', node_id='node_1', node_type='rma', created_datetime='2021-01-18T09:30:10.000123+00:00', updated_datetime='2021-01-18T09:30:10.000123+00:00')>"
+    assert repr(b) == expected
 
 
 def test_batch_membership__primary_key_constraint(
