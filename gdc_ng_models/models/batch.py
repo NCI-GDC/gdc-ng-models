@@ -2,6 +2,7 @@ import json
 import sqlalchemy
 from sqlalchemy import orm
 from sqlalchemy.ext import declarative
+from sqlalchemy.sql import schema
 
 Base = declarative.declarative_base()
 
@@ -18,6 +19,11 @@ class Batch(Base):
 
     __tablename__ = "batch"
     __mapper_args__ = {"eager_defaults": True}
+    __table_args__ = (
+        schema.PrimaryKeyConstraint("id", name="batch_pk"),
+        schema.Index("batch_name_idx", "name"),
+        schema.Index("batch_project_id_idx", "project_id"),
+    )
 
     # start sequence at high number to avoid collisions with existing batch_id
     id_seq = sqlalchemy.Sequence("batch_id_seq", metadata=Base.metadata, start=1000)
@@ -25,11 +31,10 @@ class Batch(Base):
     id = sqlalchemy.Column(
         sqlalchemy.BigInteger,
         nullable=False,
-        primary_key=True,
         server_default=id_seq.next_value(),
     )
     name = sqlalchemy.Column(sqlalchemy.Text, nullable=False)
-    project_id = sqlalchemy.Column(sqlalchemy.String(64), nullable=False, index=True)
+    project_id = sqlalchemy.Column(sqlalchemy.String(64), nullable=False)
     created_datetime = sqlalchemy.Column(
         sqlalchemy.DateTime(timezone=True),
         nullable=False,
@@ -86,15 +91,19 @@ class BatchMembership(Base):
     """
 
     __tablename__ = "batch_membership"
-
-    batch_id = sqlalchemy.Column(
-        sqlalchemy.BigInteger,
-        sqlalchemy.ForeignKey("batch.id", ondelete="CASCADE"),
-        nullable=False,
-        primary_key=True,
+    __table_args__ = (
+        schema.PrimaryKeyConstraint("batch_id", "node_id", name="batch_membership_pk"),
+        schema.ForeignKeyConstraint(
+            ("batch_id",),
+            ("batch.id",),
+            name="batch_membership_batch_id_fk",
+            ondelete="CASCADE",
+        ),
     )
-    node_id = sqlalchemy.Column(sqlalchemy.String(64), nullable=False, primary_key=True)
-    node_type = sqlalchemy.Column(sqlalchemy.String(64), nullable=False, index=True)
+
+    batch_id = sqlalchemy.Column(sqlalchemy.BigInteger, nullable=False)
+    node_id = sqlalchemy.Column(sqlalchemy.String(64), nullable=False)
+    node_type = sqlalchemy.Column(sqlalchemy.String(64), nullable=False)
 
     batch = orm.relationship("Batch", back_populates="members")
 

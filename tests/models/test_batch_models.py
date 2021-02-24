@@ -202,7 +202,7 @@ def test_batch_membership__primary_key_constraint(
         batch.BatchMembership(batch_id=b.id, node_id="node_1", node_type="rma")
     )
     db_session.commit()
-    with pytest.raises(exc.IntegrityError, match=r"batch_membership_pkey"):
+    with pytest.raises(exc.IntegrityError, match=r"batch_membership_pk"):
         db_session.add(
             batch.BatchMembership(batch_id=b.id, node_id="node_1", node_type="sur")
         )
@@ -210,7 +210,7 @@ def test_batch_membership__primary_key_constraint(
 
 
 def test_batch_membership__foreign_key_constraint(create_batch_db, db_session):
-    with pytest.raises(exc.IntegrityError, match=r"batch_membership_batch_id_fkey"):
+    with pytest.raises(exc.IntegrityError, match=r"batch_membership_batch_id_fk"):
         db_session.add(
             batch.BatchMembership(batch_id=1, node_id="node_1", node_type="sur")
         )
