@@ -12,7 +12,6 @@ class Batch(Base):
     Attributes:
         id: unique identifier for the batch
         name: name given to the batch
-        description: optional description for the batch
         project_id: project the batch is a part of
         created_datetime: the date and time when the batch is created
     """
@@ -30,7 +29,6 @@ class Batch(Base):
         server_default=id_seq.next_value(),
     )
     name = sqlalchemy.Column(sqlalchemy.Text, nullable=False)
-    description = sqlalchemy.Column(sqlalchemy.Text, nullable=True)
     project_id = sqlalchemy.Column(sqlalchemy.String(64), nullable=False, index=True)
     created_datetime = sqlalchemy.Column(
         sqlalchemy.DateTime(timezone=True),
@@ -46,10 +44,9 @@ class Batch(Base):
     )
 
     def __repr__(self):
-        return "<Batch(id='{}', name='{}', description='{}', project_id='{}', created_datetime='{}')>".format(
+        return "<Batch(id='{}', name='{}', project_id='{}', created_datetime='{}')>".format(
             self.id,
             self.name,
-            self.description,
             self.project_id,
             self.created_datetime.isoformat(),
         )
@@ -59,7 +56,6 @@ class Batch(Base):
             isinstance(other, self.__class__)
             and self.id == other.id
             and self.name == other.name
-            and self.description == other.description
             and self.project_id == other.project_id
             and self.created_datetime == other.created_datetime
         )
@@ -71,7 +67,6 @@ class Batch(Base):
         return {
             "id": self.id,
             "name": self.name,
-            "description": self.description,
             "project_id": self.project_id,
             "created_datetime": self.created_datetime.isoformat(),
         }

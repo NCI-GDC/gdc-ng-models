@@ -24,8 +24,8 @@ def assert_db_state_after_delete(session, b1, b2):
 
 @pytest.fixture(scope="function")
 def test_batches(create_batch_db, db_session):
-    b1 = batch.Batch(name="a", description="batch a", project_id="GDC-MISC")
-    b2 = batch.Batch(name="b", description="batch b", project_id="GDC-INTERNAL")
+    b1 = batch.Batch(name="a", project_id="GDC-MISC")
+    b2 = batch.Batch(name="b", project_id="GDC-INTERNAL")
     db_session.add(b1)
     db_session.add(b2)
     db_session.commit()
@@ -35,8 +35,8 @@ def test_batches(create_batch_db, db_session):
 
 @pytest.fixture(scope="function")
 def test_batches_with_members(create_batch_db, db_session):
-    b1 = batch.Batch(name="a", description="batch a", project_id="GDC-MISC")
-    b2 = batch.Batch(name="b", description="batch b", project_id="GDC-INTERNAL")
+    b1 = batch.Batch(name="a", project_id="GDC-MISC")
+    b2 = batch.Batch(name="b", project_id="GDC-INTERNAL")
     db_session.add(b1)
     db_session.add(b2)
     db_session.commit()
@@ -51,8 +51,8 @@ def test_batches_with_members(create_batch_db, db_session):
 
 
 def test_batch__defaults_unique_ids(create_batch_db, db_session):
-    db_session.add(batch.Batch(name="a", description="batch a", project_id="GDC-MISC"))
-    db_session.add(batch.Batch(name="b", description="batch b", project_id="GDC-MISC"))
+    db_session.add(batch.Batch(name="a", project_id="GDC-MISC"))
+    db_session.add(batch.Batch(name="b", project_id="GDC-MISC"))
     db_session.commit()
 
     first = db_session.query(batch.Batch).filter(batch.Batch.name == "a").one()
@@ -63,30 +63,26 @@ def test_batch__defaults_unique_ids(create_batch_db, db_session):
 
 
 def test_batch__defaults_created_datetime(create_batch_db, db_session):
-    db_session.add(batch.Batch(name="a", description="batch a", project_id="GDC-MISC"))
+    db_session.add(batch.Batch(name="a", project_id="GDC-MISC"))
     db_session.commit()
     b = db_session.query(batch.Batch).filter(batch.Batch.name == "a").one()
     assert b.created_datetime is not None
 
 
 def test_batch__primary_key_constraint(create_batch_db, db_session):
-    db_session.add(
-        batch.Batch(id=1000, name="a", description="batch a", project_id="GDC-MISC")
-    )
+    db_session.add(batch.Batch(id=1000, name="a", project_id="GDC-MISC"))
     db_session.commit()
 
     with pytest.raises(exc.IntegrityError, match=r"batch_pk"):
-        db_session.add(
-            batch.Batch(id=1000, name="a", description="batch a", project_id="GDC-MISC")
-        )
+        db_session.add(batch.Batch(id=1000, name="a", project_id="GDC-MISC"))
         db_session.commit()
 
 
 @pytest.mark.parametrize(
     "contents",
     [
-        {"description": "batch a", "project_id": "GDC-MISC"},
-        {"name": "a", "description": "batch a"},
+        {"project_id": "GDC-MISC"},
+        {"name": "a"},
     ],
     ids=["name_must_be_defined", "project_id_must_be_defined"],
 )
@@ -96,14 +92,6 @@ def test_batch__required_fields(create_batch_db, db_session, contents):
         db_session.commit()
 
 
-def test_batch__description_optional(create_batch_db, db_session):
-    db_session.add(batch.Batch(name="a", project_id="GDC-MISC"))
-    db_session.commit()
-
-    b = db_session.query(batch.Batch).filter(batch.Batch.name == "a").one()
-    assert b.description is None
-
-
 @pytest.mark.parametrize(
     "contents, expected",
     [
@@ -111,7 +99,6 @@ def test_batch__description_optional(create_batch_db, db_session):
             {
                 "id": 1000,
                 "name": "a",
-                "description": "batch a",
                 "project_id": "GDC-MISC",
                 "created_datetime": datetime.datetime(
                     year=2021,
@@ -129,7 +116,6 @@ def test_batch__description_optional(create_batch_db, db_session):
                     {
                         "id": 1000,
                         "name": "a",
-                        "description": "batch a",
                         "project_id": "GDC-MISC",
                         "created_datetime": "2021-01-18T09:30:10.000123+00:00",
                     }
@@ -157,7 +143,6 @@ def test_batch__description_optional(create_batch_db, db_session):
                     {
                         "id": 1000,
                         "name": "a",
-                        "description": None,
                         "project_id": "GDC-MISC",
                         "created_datetime": "2021-01-18T09:30:10.000123+00:00",
                     }
