@@ -75,6 +75,17 @@ def test_batch__default_datetimes(create_batch_db, db_session, attribute):
     assert date is not None
 
 
+def test_batch__updated_datetime(create_batch_db, db_session):
+    b = batch.Batch(name="a", project_id="GDC-MISC")
+    db_session.add(b)
+    db_session.commit()
+    b.project_id = "GDC-INTERNAL"
+    db_session.commit()
+
+    updated_b = db_session.query(batch.Batch).filter(batch.Batch.name == "a").one()
+    assert updated_b.updated_datetime > updated_b.created_datetime
+
+
 def test_batch__primary_key_constraint(create_batch_db, db_session):
     db_session.add(batch.Batch(id=1000, name="a", project_id="GDC-MISC"))
     db_session.commit()
@@ -218,6 +229,22 @@ def test_batch_membership__default_datetimes(
     b = db_session.query(batch.Batch).filter(batch.Batch.name == "a").one()
     date = getattr(b, attribute)
     assert date is not None
+
+
+def test_batch_membership__updated_datetime(
+    create_batch_db, db_session, test_batches_with_members
+):
+    b = test_batches_with_members[0]
+    b.members[0].node_type = "sar"
+    db_session.commit()
+
+    updated_b = (
+        db_session.query(batch.BatchMembership)
+        .filter(batch.BatchMembership.node_id == "node_1")
+        .one()
+    )
+
+    assert updated_b.updated_datetime > updated_b.created_datetime
 
 
 def test_batch_membership__primary_key_constraint(
