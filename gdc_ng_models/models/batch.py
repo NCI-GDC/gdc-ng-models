@@ -4,10 +4,12 @@ from sqlalchemy import orm
 from sqlalchemy.ext import declarative
 from sqlalchemy.sql import schema
 
+from gdc_ng_models.models import audit
+
 Base = declarative.declarative_base()
 
 
-class Batch(Base):
+class Batch(Base, audit.AuditColumnsMixin):
     """Batch class to represent a collection of nodes.
 
     Attributes:
@@ -15,6 +17,7 @@ class Batch(Base):
         name: name given to the batch
         project_id: project the batch is a part of
         created_datetime: the date and time when the batch is created
+        updated_datetime: the date and time when the batch was last updated
     """
 
     __tablename__ = "batch"
@@ -35,20 +38,19 @@ class Batch(Base):
     )
     name = sqlalchemy.Column(sqlalchemy.Text, nullable=False)
     project_id = sqlalchemy.Column(sqlalchemy.String(64), nullable=False)
-    created_datetime = sqlalchemy.Column(
-        sqlalchemy.DateTime(timezone=True),
-        nullable=False,
-        server_default=sqlalchemy.text("now()"),
-    )
 
     members = orm.relationship("BatchMembership", back_populates="batch")
 
     def __repr__(self):
-        return "<Batch(id='{}', name='{}', project_id='{}', created_datetime='{}')>".format(
-            self.id,
-            self.name,
-            self.project_id,
-            self.created_datetime.isoformat(),
+        created_datetime = (
+            self.created_datetime.isoformat() if self.created_datetime else None
+        )
+        updated_datetime = (
+            self.updated_datetime.isoformat() if self.updated_datetime else None
+        )
+
+        return "<Batch(id='{}', name='{}', project_id='{}', created_datetime='{}', updated_datetime='{}')>".format(
+            self.id, self.name, self.project_id, created_datetime, updated_datetime
         )
 
     def __eq__(self, other):
@@ -58,17 +60,26 @@ class Batch(Base):
             and self.name == other.name
             and self.project_id == other.project_id
             and self.created_datetime == other.created_datetime
+            and self.updated_datetime == other.updated_datetime
         )
 
     def __ne__(self, other):
         return not self.__eq__(other)
 
     def to_dict(self):
+        created_datetime = (
+            self.created_datetime.isoformat() if self.created_datetime else None
+        )
+        updated_datetime = (
+            self.updated_datetime.isoformat() if self.updated_datetime else None
+        )
+
         return {
             "id": self.id,
             "name": self.name,
             "project_id": self.project_id,
-            "created_datetime": self.created_datetime.isoformat(),
+            "created_datetime": created_datetime,
+            "updated_datetime": updated_datetime,
         }
 
     def to_json(self):
@@ -76,13 +87,15 @@ class Batch(Base):
         return json.loads(json.dumps(self.to_dict()))
 
 
-class BatchMembership(Base):
+class BatchMembership(Base, audit.AuditColumnsMixin):
     """Membership class to represent which nodes belong in a batch.
 
     Attributes:
         batch_id: id of the batch
         node_id: id of the node
         node_type: type of the node
+        created_datetime: the date and time when node was added to batch
+        updated_datetime: the date and time when node membership was last updated
     """
 
     __tablename__ = "batch_membership"
@@ -102,8 +115,19 @@ class BatchMembership(Base):
     batch = orm.relationship("Batch", back_populates="members")
 
     def __repr__(self):
-        return "<BatchMembership(batch_id='{}', node_id='{}', node_type='{}'>".format(
-            self.batch_id, self.node_id, self.node_type
+        created_datetime = (
+            self.created_datetime.isoformat() if self.created_datetime else None
+        )
+        updated_datetime = (
+            self.updated_datetime.isoformat() if self.updated_datetime else None
+        )
+
+        return "<BatchMembership(batch_id='{}', node_id='{}', node_type='{}', created_datetime='{}', updated_datetime='{}')>".format(
+            self.batch_id,
+            self.node_id,
+            self.node_type,
+            created_datetime,
+            updated_datetime,
         )
 
     def __eq__(self, other):
@@ -112,16 +136,27 @@ class BatchMembership(Base):
             and self.batch_id == other.batch_id
             and self.node_id == other.node_id
             and self.node_type == other.node_type
+            and self.created_datetime == other.created_datetime
+            and self.updated_datetime == other.updated_datetime
         )
 
     def __ne__(self, other):
         return not self.__eq__(other)
 
     def to_dict(self):
+        created_datetime = (
+            self.created_datetime.isoformat() if self.created_datetime else None
+        )
+        updated_datetime = (
+            self.updated_datetime.isoformat() if self.updated_datetime else None
+        )
+
         return {
             "batch_id": self.batch_id,
             "node_id": self.node_id,
             "node_type": self.node_type,
+            "created_datetime": created_datetime,
+            "updated_datetime": updated_datetime,
         }
 
     def to_json(self):
