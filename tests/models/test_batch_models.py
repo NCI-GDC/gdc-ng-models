@@ -268,13 +268,13 @@ def test_batch_membership__node_in_multiple_batches(
 def test_batch_membership__delete_parent(
     create_batch_db, db_session, test_batches_with_members
 ):
-    b1 = test_batches_with_members[0]
-    b2 = test_batches_with_members[1]
-    db_session.delete(b1)
-    db_session.commit()
-
-    assert db_session.query(batch.Batch).filter(batch.Batch.id == b1.id).first() == None
-    assert_db_state_after_delete(db_session, b1, b2)
+    with pytest.raises(
+        AssertionError,
+        match=r"Dependency rule tried to blank-out primary key column",
+    ):
+        b = test_batches_with_members[0]
+        db_session.delete(b)
+        db_session.commit()
 
 
 def test_batch_membership__delete_members(
@@ -295,11 +295,9 @@ def test_batch_membership__delete_members(
 def test_batch_membership__delete_orphan(
     create_batch_db, db_session, test_batches_with_members
 ):
-    b1 = test_batches_with_members[0]
-    b2 = test_batches_with_members[1]
-    b1.members.pop()
-    b1.members.pop()
-    db_session.commit()
-
-    assert db_session.query(batch.Batch).filter(batch.Batch.id == b1.id).one() == b1
-    assert_db_state_after_delete(db_session, b1, b2)
+    with pytest.raises(
+        AssertionError, match=r"Dependency rule tried to blank-out primary key column"
+    ):
+        b = test_batches_with_members[0]
+        b.members.pop()
+        db_session.commit()

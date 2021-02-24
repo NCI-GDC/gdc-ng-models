@@ -41,12 +41,7 @@ class Batch(Base):
         server_default=sqlalchemy.text("now()"),
     )
 
-    members = orm.relationship(
-        "BatchMembership",
-        back_populates="batch",
-        cascade="all, delete, delete-orphan",
-        passive_deletes=True,
-    )
+    members = orm.relationship("BatchMembership", back_populates="batch")
 
     def __repr__(self):
         return "<Batch(id='{}', name='{}', project_id='{}', created_datetime='{}')>".format(
@@ -97,7 +92,6 @@ class BatchMembership(Base):
             ("batch_id",),
             ("batch.id",),
             name="batch_membership_batch_id_fk",
-            ondelete="CASCADE",
         ),
     )
 
