@@ -7,21 +7,6 @@ from gdc_ng_models.models import batch
 from sqlalchemy import exc
 
 
-def assert_db_state_after_delete(session, b1, b2):
-    assert (
-        len(
-            session.query(batch.BatchMembership)
-            .filter(batch.BatchMembership.batch_id == b1.id)
-            .all()
-        )
-        == 0
-    )
-    b = session.query(batch.Batch).filter(batch.Batch.id == b2.id).one()
-    assert b == b2
-    bms = session.query(batch.BatchMembership).filter(batch.Batch.id == b2.id).all()
-    assert len(bms) == 2
-
-
 @pytest.fixture(scope="function")
 def test_batches(create_batch_db, db_session):
     b1 = batch.Batch(name="a", project_id="GDC-MISC")
@@ -190,10 +175,12 @@ def test_batch_membership__direct_create(create_batch_db, db_session, test_batch
         .one()
     )
 
+    assert bm.batch_id == b.id
     assert bm.node_id == "node_1"
     assert bm.node_type == "rma"
+    assert bm.created_datetime is not None
+    assert bm.updated_datetime is not None
     assert len(b.members) == 1
-    assert bm == b.members[0]
 
 
 def test_batch_membership__indirect_create(create_batch_db, db_session, test_batches):
@@ -207,10 +194,12 @@ def test_batch_membership__indirect_create(create_batch_db, db_session, test_bat
         .one()
     )
 
+    assert bm.batch_id == b.id
     assert bm.node_id == "node_1"
     assert bm.node_type == "rma"
+    assert bm.created_datetime is not None
+    assert bm.updated_datetime is not None
     assert len(b.members) == 1
-    assert bm == b.members[0]
 
 
 @pytest.mark.parametrize(
@@ -374,8 +363,10 @@ def test_batch_membership__node_in_multiple_batches(
         .one()
     )
 
-    assert b1.members[0] == bm1
-    assert b2.members[0] == bm2
+    assert b1.members[0].node_id == bm1.node_id
+    assert b1.members[0].node_type == bm1.node_type
+    assert b2.members[0].node_id == bm2.node_id
+    assert b2.members[0].node_type == bm2.node_type
 
 
 def test_batch_membership__delete_parent(
@@ -402,7 +393,23 @@ def test_batch_membership__delete_members(
     db_session.commit()
 
     assert db_session.query(batch.Batch).filter(batch.Batch.id == b1.id).one() == b1
-    assert_db_state_after_delete(db_session, b1, b2)
+    assert (
+        len(
+            db_session.query(batch.BatchMembership)
+            .filter(batch.BatchMembership.batch_id == b1.id)
+            .all()
+        )
+        == 0
+    )
+    assert db_session.query(batch.Batch).filter(batch.Batch.id == b2.id).one() == b2
+    assert (
+        len(
+            db_session.query(batch.BatchMembership)
+            .filter(batch.BatchMembership.batch_id == b2.id)
+            .all()
+        )
+        == 2
+    )
 
 
 def test_batch_membership__delete_orphan(
