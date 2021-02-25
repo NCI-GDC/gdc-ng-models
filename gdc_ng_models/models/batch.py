@@ -37,7 +37,7 @@ class Batch(Base, audit.AuditColumnsMixin):
         server_default=id_seq.next_value(),
     )
     name = sqlalchemy.Column(sqlalchemy.Text, nullable=False)
-    project_id = sqlalchemy.Column(sqlalchemy.String(64), nullable=False)
+    project_id = sqlalchemy.Column(sqlalchemy.Text, nullable=False)
 
     members = orm.relationship("BatchMembership", back_populates="batch")
 
@@ -109,8 +109,8 @@ class BatchMembership(Base, audit.AuditColumnsMixin):
     )
 
     batch_id = sqlalchemy.Column(sqlalchemy.BigInteger, nullable=False)
-    node_id = sqlalchemy.Column(sqlalchemy.String(64), nullable=False)
-    node_type = sqlalchemy.Column(sqlalchemy.String(64), nullable=False)
+    node_id = sqlalchemy.Column(sqlalchemy.Text, nullable=False)
+    node_type = sqlalchemy.Column(sqlalchemy.Text, nullable=False)
 
     batch = orm.relationship("Batch", back_populates="members")
 
