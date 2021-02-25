@@ -64,19 +64,6 @@ class Batch(Base, audit.AuditColumnsMixin):
             updated_datetime,
         )
 
-    def __eq__(self, other):
-        return (
-            isinstance(other, self.__class__)
-            and self.id == other.id
-            and self.name == other.name
-            and self.project_id == other.project_id
-            and self.created_datetime == other.created_datetime
-            and self.updated_datetime == other.updated_datetime
-        )
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
-
     def to_dict(self):
         created_datetime = (
             self.created_datetime.isoformat() if self.created_datetime else None
@@ -141,19 +128,6 @@ class BatchMembership(Base, audit.AuditColumnsMixin):
             created_datetime,
             updated_datetime,
         )
-
-    def __eq__(self, other):
-        return (
-            isinstance(other, self.__class__)
-            and self.batch_id == other.batch_id
-            and self.node_id == other.node_id
-            and self.node_type == other.node_type
-            and self.created_datetime == other.created_datetime
-            and self.updated_datetime == other.updated_datetime
-        )
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
 
     def to_dict(self):
         created_datetime = (
