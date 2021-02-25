@@ -26,10 +26,10 @@ def test_batches_with_members(create_batch_db, db_session):
     db_session.add(b2)
     db_session.commit()
 
-    b1.members.append(batch.BatchMembership(node_id="node_1", node_type="rma"))
-    b1.members.append(batch.BatchMembership(node_id="node_2", node_type="rma"))
-    b2.members.append(batch.BatchMembership(node_id="node_3", node_type="sur"))
-    b2.members.append(batch.BatchMembership(node_id="node_4", node_type="sur"))
+    b1.members.append(batch.BatchMembership(node_id="node_1"))
+    b1.members.append(batch.BatchMembership(node_id="node_2"))
+    b2.members.append(batch.BatchMembership(node_id="node_3"))
+    b2.members.append(batch.BatchMembership(node_id="node_4"))
     db_session.commit()
 
     yield (b1, b2)
@@ -205,9 +205,7 @@ def test_batch__to_json(contents, expected):
 
 def test_batch_membership__direct_create(create_batch_db, db_session, test_batches):
     b = test_batches[0]
-    db_session.add(
-        batch.BatchMembership(batch_id=b.id, node_id="node_1", node_type="rma")
-    )
+    db_session.add(batch.BatchMembership(batch_id=b.id, node_id="node_1"))
     db_session.commit()
 
     bm = (
@@ -218,7 +216,6 @@ def test_batch_membership__direct_create(create_batch_db, db_session, test_batch
 
     assert bm.batch_id == b.id
     assert bm.node_id == "node_1"
-    assert bm.node_type == "rma"
     assert bm.created_datetime is not None
     assert bm.updated_datetime is not None
     assert len(b.members) == 1
@@ -226,7 +223,7 @@ def test_batch_membership__direct_create(create_batch_db, db_session, test_batch
 
 def test_batch_membership__indirect_create(create_batch_db, db_session, test_batches):
     b = test_batches[0]
-    b.members.append(batch.BatchMembership(node_id="node_1", node_type="rma"))
+    b.members.append(batch.BatchMembership(node_id="node_1"))
     db_session.commit()
 
     bm = (
@@ -237,7 +234,6 @@ def test_batch_membership__indirect_create(create_batch_db, db_session, test_bat
 
     assert bm.batch_id == b.id
     assert bm.node_id == "node_1"
-    assert bm.node_type == "rma"
     assert bm.created_datetime is not None
     assert bm.updated_datetime is not None
     assert len(b.members) == 1
@@ -252,9 +248,7 @@ def test_batch_membership__default_datetimes(
     create_batch_db, db_session, test_batches, attribute
 ):
     b = test_batches[0]
-    db_session.add(
-        batch.BatchMembership(batch_id=b.id, node_id="node_1", node_type="rma")
-    )
+    db_session.add(batch.BatchMembership(batch_id=b.id, node_id="node_1"))
     db_session.commit()
     b = db_session.query(batch.Batch).filter(batch.Batch.name == "a").one()
     date = getattr(b, attribute)
@@ -264,24 +258,40 @@ def test_batch_membership__default_datetimes(
 def test_batch_membership__updated_datetime(
     create_batch_db, db_session, test_batches_with_members
 ):
-    b = test_batches_with_members[0]
-    b.members[0].node_type = "sar"
+    b1 = test_batches_with_members[0]
+    b2 = test_batches_with_members[1]
+
+    db_session.query(batch.BatchMembership).filter(
+        batch.BatchMembership.node_id == "node_1"
+    ).update({"batch_id": b2.id})
     db_session.commit()
 
-    updated_b = (
+    bm = (
         db_session.query(batch.BatchMembership)
         .filter(batch.BatchMembership.node_id == "node_1")
         .one()
     )
+    assert bm.updated_datetime > bm.created_datetime
 
-    assert updated_b.updated_datetime > updated_b.created_datetime
+
+def test_batch_membership__move_node_between_batches(
+    create_batch_db, db_session, test_batches_with_members
+):
+    b1 = test_batches_with_members[0]
+    b2 = test_batches_with_members[1]
+    db_session.query(batch.BatchMembership).filter(
+        batch.BatchMembership.node_id == "node_1"
+    ).update({"batch_id": b2.id})
+    db_session.commit()
+
+    assert len(b1.members) == 1
+    assert len(b2.members) == 3
 
 
 def test_batch_membership__repr():
     b = batch.BatchMembership(
         batch_id=1000,
         node_id="node_1",
-        node_type="rma",
         created_datetime=datetime.datetime(
             year=2021,
             month=1,
@@ -303,7 +313,7 @@ def test_batch_membership__repr():
             tzinfo=pytz.utc,
         ),
     )
-    expected = "<BatchMembership(batch_id='1000', node_id='node_1', node_type='rma', created_datetime='2021-01-18T09:30:10.000123+00:00', updated_datetime='2021-01-18T09:30:10.000123+00:00')>"
+    expected = "<BatchMembership(batch_id='1000', node_id='node_1', created_datetime='2021-01-18T09:30:10.000123+00:00', updated_datetime='2021-01-18T09:30:10.000123+00:00')>"
     assert repr(b) == expected
 
 
@@ -311,36 +321,23 @@ def test_batch_membership__primary_key_constraint(
     create_batch_db, db_session, test_batches
 ):
     b = test_batches[0]
-    db_session.add(
-        batch.BatchMembership(batch_id=b.id, node_id="node_1", node_type="rma")
-    )
+    db_session.add(batch.BatchMembership(batch_id=b.id, node_id="node_1"))
     db_session.commit()
     with pytest.raises(exc.IntegrityError, match=r"batch_membership_pk"):
-        db_session.add(
-            batch.BatchMembership(batch_id=b.id, node_id="node_1", node_type="sur")
-        )
+        db_session.add(batch.BatchMembership(batch_id=b.id, node_id="node_1"))
         db_session.commit()
 
 
 def test_batch_membership__foreign_key_constraint(create_batch_db, db_session):
     with pytest.raises(exc.IntegrityError, match=r"batch_membership_batch_id_fk"):
-        db_session.add(
-            batch.BatchMembership(batch_id=1, node_id="node_1", node_type="sur")
-        )
+        db_session.add(batch.BatchMembership(batch_id=1, node_id="node_1"))
         db_session.commit()
 
 
-@pytest.mark.parametrize(
-    "contents",
-    [{"node_type": "rma"}, {"node_id": "node_1"}],
-    ids=["node_id_is_required", "node_type_is_required"],
-)
-def test_batch_membership__required_fields(
-    create_batch_db, db_session, test_batches, contents
-):
+def test_batch_membership__node_id_required(create_batch_db, db_session, test_batches):
     b = test_batches[0]
     with pytest.raises(exc.IntegrityError, match="violates not-null constraint"):
-        db_session.add(batch.BatchMembership(batch_id=b.id, **contents))
+        db_session.add(batch.BatchMembership(batch_id=b.id))
         db_session.commit()
 
 
@@ -351,7 +348,6 @@ def test_batch_membership__required_fields(
             {
                 "batch_id": 1000,
                 "node_id": "node_1",
-                "node_type": "rma",
                 "created_datetime": datetime.datetime(
                     year=2021,
                     month=1,
@@ -378,7 +374,6 @@ def test_batch_membership__required_fields(
                     {
                         "batch_id": 1000,
                         "node_id": "node_1",
-                        "node_type": "rma",
                         "created_datetime": "2021-01-18T09:30:10.000123+00:00",
                         "updated_datetime": "2021-01-18T10:30:10.000123+00:00",
                     }
@@ -389,14 +384,12 @@ def test_batch_membership__required_fields(
             {
                 "batch_id": 1000,
                 "node_id": "node_1",
-                "node_type": "rma",
             },
             json.loads(
                 json.dumps(
                     {
                         "batch_id": 1000,
                         "node_id": "node_1",
-                        "node_type": "rma",
                         "created_datetime": None,
                         "updated_datetime": None,
                     }
@@ -418,8 +411,8 @@ def test_batch_membership__node_in_multiple_batches(
     b1 = test_batches[0]
     b2 = test_batches[1]
 
-    b1.members.append(batch.BatchMembership(node_id="node_1", node_type="rma"))
-    b2.members.append(batch.BatchMembership(node_id="node_1", node_type="rma"))
+    b1.members.append(batch.BatchMembership(node_id="node_1"))
+    b2.members.append(batch.BatchMembership(node_id="node_1"))
     db_session.commit()
 
     bm1 = (
@@ -435,9 +428,7 @@ def test_batch_membership__node_in_multiple_batches(
     )
 
     assert b1.members[0].node_id == bm1.node_id
-    assert b1.members[0].node_type == bm1.node_type
     assert b2.members[0].node_id == bm2.node_id
-    assert b2.members[0].node_type == bm2.node_type
 
 
 def test_batch_membership__delete_parent(

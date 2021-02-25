@@ -92,7 +92,6 @@ class BatchMembership(Base, audit.AuditColumnsMixin):
     Attributes:
         batch_id: id of the batch
         node_id: id of the node
-        node_type: type of the node
         created_datetime: the date and time when node was added to batch
         updated_datetime: the date and time when node membership was last updated
     """
@@ -109,7 +108,6 @@ class BatchMembership(Base, audit.AuditColumnsMixin):
 
     batch_id = sqlalchemy.Column(sqlalchemy.BigInteger, nullable=False)
     node_id = sqlalchemy.Column(sqlalchemy.Text, nullable=False)
-    node_type = sqlalchemy.Column(sqlalchemy.Text, nullable=False)
 
     batch = orm.relationship("Batch", back_populates="members")
 
@@ -121,10 +119,9 @@ class BatchMembership(Base, audit.AuditColumnsMixin):
             self.updated_datetime.isoformat() if self.updated_datetime else None
         )
 
-        return "<BatchMembership(batch_id='{}', node_id='{}', node_type='{}', created_datetime='{}', updated_datetime='{}')>".format(
+        return "<BatchMembership(batch_id='{}', node_id='{}', created_datetime='{}', updated_datetime='{}')>".format(
             self.batch_id,
             self.node_id,
-            self.node_type,
             created_datetime,
             updated_datetime,
         )
@@ -140,7 +137,6 @@ class BatchMembership(Base, audit.AuditColumnsMixin):
         return {
             "batch_id": self.batch_id,
             "node_id": self.node_id,
-            "node_type": self.node_type,
             "created_datetime": created_datetime,
             "updated_datetime": updated_datetime,
         }
