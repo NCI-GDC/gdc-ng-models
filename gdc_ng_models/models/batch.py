@@ -26,6 +26,7 @@ class Batch(Base, audit.AuditColumnsMixin):
         schema.PrimaryKeyConstraint("id", name="batch_pk"),
         schema.Index("batch_name_idx", "name"),
         schema.Index("batch_project_id_idx", "project_id"),
+        schema.Index("batch_status_idx", "status"),
     )
 
     # start sequence at high number to avoid collisions with existing batch_id
@@ -38,6 +39,11 @@ class Batch(Base, audit.AuditColumnsMixin):
     )
     name = sqlalchemy.Column(sqlalchemy.Text, nullable=False)
     project_id = sqlalchemy.Column(sqlalchemy.Text, nullable=False)
+    status = sqlalchemy.Column(
+        sqlalchemy.Enum("OPEN", "CLOSED", name="batch_status"),
+        default="OPEN",
+        nullable=False,
+    )
 
     members = orm.relationship("BatchMembership", back_populates="batch")
 
@@ -49,8 +55,13 @@ class Batch(Base, audit.AuditColumnsMixin):
             self.updated_datetime.isoformat() if self.updated_datetime else None
         )
 
-        return "<Batch(id='{}', name='{}', project_id='{}', created_datetime='{}', updated_datetime='{}')>".format(
-            self.id, self.name, self.project_id, created_datetime, updated_datetime
+        return "<Batch(id='{}', name='{}', project_id='{}', status='{}', created_datetime='{}', updated_datetime='{}')>".format(
+            self.id,
+            self.name,
+            self.project_id,
+            self.status,
+            created_datetime,
+            updated_datetime,
         )
 
     def __eq__(self, other):
@@ -78,6 +89,7 @@ class Batch(Base, audit.AuditColumnsMixin):
             "id": self.id,
             "name": self.name,
             "project_id": self.project_id,
+            "status": self.status,
             "created_datetime": created_datetime,
             "updated_datetime": updated_datetime,
         }

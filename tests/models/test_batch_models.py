@@ -60,6 +60,13 @@ def test_batch__default_datetimes(create_batch_db, db_session, attribute):
     assert date is not None
 
 
+def test_batch__default_status(create_batch_db, db_session):
+    db_session.add(batch.Batch(name="a", project_id="GDC-MISC"))
+    db_session.commit()
+    b = db_session.query(batch.Batch).filter(batch.Batch.name == "a").one()
+    assert b.status == "OPEN"
+
+
 def test_batch__updated_datetime(create_batch_db, db_session):
     b = batch.Batch(name="a", project_id="GDC-MISC")
     db_session.add(b)
@@ -76,6 +83,7 @@ def test_batch__repr():
         id=1000,
         name="a",
         project_id="GDC-MISC",
+        status="CLOSED",
         created_datetime=datetime.datetime(
             year=2021,
             month=1,
@@ -97,7 +105,7 @@ def test_batch__repr():
             tzinfo=pytz.utc,
         ),
     )
-    expected = "<Batch(id='1000', name='a', project_id='GDC-MISC', created_datetime='2021-01-18T09:30:10.000123+00:00', updated_datetime='2021-01-18T09:30:10.000123+00:00')>"
+    expected = "<Batch(id='1000', name='a', project_id='GDC-MISC', status='CLOSED', created_datetime='2021-01-18T09:30:10.000123+00:00', updated_datetime='2021-01-18T09:30:10.000123+00:00')>"
     assert repr(b) == expected
 
 
@@ -132,6 +140,7 @@ def test_batch__required_fields(create_batch_db, db_session, contents):
                 "id": 1000,
                 "name": "a",
                 "project_id": "GDC-MISC",
+                "status": "CLOSED",
                 "created_datetime": datetime.datetime(
                     year=2021,
                     month=1,
@@ -159,6 +168,7 @@ def test_batch__required_fields(create_batch_db, db_session, contents):
                         "id": 1000,
                         "name": "a",
                         "project_id": "GDC-MISC",
+                        "status": "CLOSED",
                         "created_datetime": "2021-01-18T09:30:10.000123+00:00",
                         "updated_datetime": "2021-01-18T10:30:10.000123+00:00",
                     }
@@ -177,6 +187,7 @@ def test_batch__required_fields(create_batch_db, db_session, contents):
                         "id": 1000,
                         "name": "a",
                         "project_id": "GDC-MISC",
+                        "status": None,
                         "created_datetime": None,
                         "updated_datetime": None,
                     }
