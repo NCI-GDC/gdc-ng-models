@@ -45,7 +45,9 @@ class Batch(Base, audit.AuditColumnsMixin):
         nullable=False,
     )
 
-    members = orm.relationship("BatchMembership", back_populates="batch")
+    members = orm.relationship(
+        "BatchMembership", back_populates="batch", lazy="selectin"
+    )
 
     def __repr__(self):
         created_datetime = (
