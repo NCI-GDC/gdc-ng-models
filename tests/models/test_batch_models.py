@@ -1,10 +1,11 @@
 import datetime
-import pytz
 import json
+
 import pytest
+import pytz
+from sqlalchemy import exc
 
 from gdc_ng_models.models import batch
-from sqlalchemy import exc
 
 
 @pytest.fixture(scope="function")
