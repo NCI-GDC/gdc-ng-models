@@ -68,7 +68,7 @@ def test_batch__default_status(create_batch_db, db_session):
     assert b.status == "OPEN"
 
 
-def test_batch__updated_datetime(create_batch_db, db_session):
+def test_batch__updates(create_batch_db, db_session):
     b = batch.Batch(name="a", project_id="GDC-MISC")
     db_session.add(b)
     db_session.commit()
@@ -76,6 +76,7 @@ def test_batch__updated_datetime(create_batch_db, db_session):
     db_session.commit()
 
     updated_b = db_session.query(batch.Batch).filter(batch.Batch.name == "a").one()
+    assert updated_b.project_id == "GDC-INTERNAL"
     assert updated_b.updated_datetime > updated_b.created_datetime
 
 
@@ -115,7 +116,7 @@ def test_batch__primary_key_constraint(create_batch_db, db_session):
     db_session.commit()
 
     with pytest.raises(exc.IntegrityError, match=r"batch_pk"):
-        db_session.add(batch.Batch(id=1000, name="a", project_id="GDC-MISC"))
+        db_session.add(batch.Batch(id=1000, name="b", project_id="GDC-INTERNAL"))
         db_session.commit()
 
 
