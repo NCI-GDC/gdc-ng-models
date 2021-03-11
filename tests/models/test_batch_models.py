@@ -496,4 +496,3 @@ def test_batch_membership__delete_orphan(
         b = test_batches_with_members[0]
         b.members.pop()
         db_session.commit()
-        i
