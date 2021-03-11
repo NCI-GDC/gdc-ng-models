@@ -40,15 +40,23 @@ class Batch(Base, audit.AuditColumnsMixin):
     )
     name = sqlalchemy.Column(sqlalchemy.Text, nullable=False)
     project_id = sqlalchemy.Column(sqlalchemy.Text, nullable=False)
-    status = sqlalchemy.Column(
-        sqlalchemy.Enum("OPEN", "CLOSED", name="batch_status"),
-        default="OPEN",
-        nullable=False,
-    )
+    status = sqlalchemy.Column(sqlalchemy.Text, default="OPEN", nullable=False)
 
     members = orm.relationship(
         "BatchMembership", back_populates="batch", lazy="selectin"
     )
+
+    @orm.validates("status")
+    def validate_status(self, key, status):
+        if not status:
+            raise ValueError("status is required")
+
+        status = status.upper()
+
+        if status not in ["OPEN", "CLOSED"]:
+            raise ValueError("invalid status specified")
+
+        return status
 
     def __repr__(self):
         created_datetime = (

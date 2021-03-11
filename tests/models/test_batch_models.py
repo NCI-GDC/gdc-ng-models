@@ -68,6 +68,17 @@ def test_batch__default_status(create_batch_db, db_session):
     assert b.status == "OPEN"
 
 
+@pytest.mark.parametrize(
+    "status, expected",
+    [("PENDING", "invalid status specified"), ("", "status is required")],
+    ids=["incorrect_status", "empty_status"],
+)
+def test_batch__status_values(create_batch_db, db_session, status, expected):
+    with pytest.raises(ValueError, match=r"{}".format(expected)):
+        db_session.add(batch.Batch(name="a", project_id="GDC-MISC", status=status))
+        db_session.commit()
+
+
 def test_batch__updates(create_batch_db, db_session):
     b = batch.Batch(name="a", project_id="GDC-MISC")
     db_session.add(b)
@@ -485,3 +496,4 @@ def test_batch_membership__delete_orphan(
         b = test_batches_with_members[0]
         b.members.pop()
         db_session.commit()
+        i
