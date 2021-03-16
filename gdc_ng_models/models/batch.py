@@ -30,6 +30,8 @@ class Batch(Base, audit.AuditColumnsMixin):
         schema.Index("batch_status_idx", "status"),
     )
 
+    VALID_STATUSES = ("OPEN", "CLOSED")
+
     # start sequence at high number to avoid collisions with existing batch_id
     id_seq = sqlalchemy.Sequence("batch_id_seq", metadata=Base.metadata, start=1000)
 
@@ -53,7 +55,7 @@ class Batch(Base, audit.AuditColumnsMixin):
 
         status = status.upper()
 
-        if status not in ["OPEN", "CLOSED"]:
+        if status not in self.VALID_STATUSES:
             raise ValueError("invalid status specified")
 
         return status
