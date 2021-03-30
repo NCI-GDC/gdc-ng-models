@@ -1,10 +1,10 @@
 from logging.config import fileConfig
 
+from alembic import context
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
-from alembic import context
-
+import gdc_ng_models.models.batch as batch_models
 import gdc_ng_models.models.download_reports as download_reports_models
 import gdc_ng_models.models.misc as misc_models
 import gdc_ng_models.models.notifications as notifications_models
@@ -30,6 +30,7 @@ fileConfig(config.config_file_name)
 # target_metadata = mymodel.Base.metadata
 
 target_metadata = [
+    batch_models.Base.metadata,
     download_reports_models.Base.metadata,
     misc_models.Base.metadata,
     notifications_models.Base.metadata,
