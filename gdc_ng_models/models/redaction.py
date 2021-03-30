@@ -1,11 +1,11 @@
 from datetime import datetime
 from sqlalchemy import (
     Boolean,
+    BigInteger,
     Column,
     DateTime,
     Enum,
     ForeignKey,
-    Integer,
     String,
     Text,
     text,
@@ -26,7 +26,7 @@ class RedactionLog(Base):
     __tablename__ = 'redaction_log'
 
     id_seq = Sequence("redaction_log_id_seq", metadata=Base.metadata)
-    id = Column(Integer, primary_key=True, server_default=id_seq.next_value())
+    id = Column(BigInteger, primary_key=True, server_default=id_seq.next_value())
     annotation_id = Column(String(64), nullable=False, unique=True)
 
     # who initiated the redaction
@@ -104,7 +104,7 @@ class RedactionEntry(Base):
     node_type = Column(String(128), nullable=False, index=True)
     release_number = Column(String(16), index=True)
 
-    redaction_id = Column(Integer, ForeignKey("redaction_log.id"), nullable=False, primary_key=True)
+    redaction_id = Column(BigInteger, ForeignKey("redaction_log.id"), nullable=False, primary_key=True)
     redaction_log = relationship("RedactionLog", back_populates="entries")
 
     rescinded = Column(Boolean, default=False)
