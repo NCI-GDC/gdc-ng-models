@@ -9,4 +9,4 @@ cfgv==2.0.1
 detect-secrets==0.13.0
 
 pytest-cov~=2.7.1
-alembic==1.5.8
+alembic==1.4.3 # once we remove py35, we can use more recent versions (1.5.8)
