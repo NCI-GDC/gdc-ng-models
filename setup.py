@@ -7,7 +7,7 @@ setup(
     description="Non-graph GDC models",
     license="Apache",
     packages=find_packages(),
-    package_data={"gdc_ng_models": "alembic/*"},
+    package_data={"gdc_ng_models": ["alembic/*"]},
     include_package_data=True,
     install_requires=["alembic~=1.4"],
     scripts=[
