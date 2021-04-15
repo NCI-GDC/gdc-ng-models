@@ -9,7 +9,7 @@ setup(
     packages=find_packages(),
     package_data={"gdc_ng_models": ["alembic/*"]},
     include_package_data=True,
-    install_requires=["alembic~=1.4"],
+    extras_require={"alembic": ["alembic~=1.4"]},
     scripts=[
         "bin/ng-models",
     ],
