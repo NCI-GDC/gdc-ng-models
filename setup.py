@@ -12,6 +12,9 @@ setup(
     ],
     license="Apache",
     packages=find_packages(),
+    package_data={"gdc_ng_models": ["alembic/*"]},
+    include_package_data=True,
+    extras_require={"alembic": ["alembic~=1.4"]},
     scripts=[
         "bin/ng-models",
     ],
