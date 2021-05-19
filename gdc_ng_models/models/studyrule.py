@@ -24,7 +24,7 @@ class StudyRule(Base, audit.AuditColumnsMixin):
 
     __tablename__ = "study_rule"
     id_seq = schema.Sequence(name="study_rule_id_seq", metadata=Base.metadata)
-    id = schema.Column(sqltypes.Integer, nullable=False, server_default=id_seq.next_value())
+    id = schema.Column(sqltypes.BigInteger, nullable=False, server_default=id_seq.next_value())
     name = schema.Column(sqltypes.Text, nullable=False)
 
     __table_args__ = (
@@ -66,7 +66,7 @@ class StudyRuleProgram(Base, audit.AuditColumnsMixin):
     """
 
     __tablename__ = "study_rule_program"
-    study_rule_id = schema.Column(sqltypes.Integer, nullable=False)
+    study_rule_id = schema.Column(sqltypes.BigInteger, nullable=False)
     program_name = schema.Column(sqltypes.Text, nullable=False)
 
     __table_args__ = (
@@ -109,7 +109,7 @@ class StudyRuleProgramProject(Base, audit.AuditColumnsMixin):
     """
 
     __tablename__ = "study_rule_program_project"
-    study_rule_id = schema.Column(sqltypes.Integer, nullable=False)
+    study_rule_id = schema.Column(sqltypes.BigInteger, nullable=False)
     program_name = schema.Column(sqltypes.Text, nullable=False)
     project_code = schema.Column(sqltypes.Text, nullable=False)
 

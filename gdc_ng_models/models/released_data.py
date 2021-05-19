@@ -81,7 +81,7 @@ class ReleasedDataLog(Base, audit.AuditColumnsMixin, ReleasedDataMixin):
         name="release_data_log_id_seq", metadata=Base.metadata
     )
     id = schema.Column(
-        sqltypes.Integer,
+        sqltypes.BigInteger,
         nullable=False,
         server_default=release_data_log_id_seq.next_value(),
     )

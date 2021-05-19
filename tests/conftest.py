@@ -6,10 +6,10 @@ gdcdatamodel.test.conftest
 pytest setup for gdcdatamodel tests
 """
 import pytest
-import sqlalchemy
 from sqlalchemy.orm import sessionmaker
 
 from gdc_ng_models.models import (
+    batch,
     download_reports,
     qcreport,
     redaction,
@@ -64,6 +64,13 @@ def create_released_data_db(db_engine):
     released_data.Base.metadata.create_all(db_engine)
     yield
     released_data.Base.metadata.drop_all(db_engine)
+
+
+@pytest.fixture(scope="session")
+def create_batch_db(db_engine):
+    batch.Base.metadata.create_all(db_engine)
+    yield
+    batch.Base.metadata.drop_all(db_engine)
 
 
 @pytest.fixture(scope="function")
