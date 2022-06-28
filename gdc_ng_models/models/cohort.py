@@ -7,15 +7,48 @@ clinical or other relevant data points in a case.
 
 This model defines the properties necessary to persist cohorts.
 """
+import uuid
 
 from sqlalchemy.ext import declarative
+from sqlalchemy.sql import schema, sqltypes
+from sqlalchemy.dialects.postgresql import UUID
 from gdc_ng_models.models import audit
 
 Base = declarative.declarative_base()
 
 
 class AnonymousContext(Base, audit.AuditColumnsMixin):
-    pass
+    """An anonymous context to drive authorization for cohort manipulation.
+
+    The anonymous context provides authorization capabilities in lieu of a
+    login (something the GDC data portal does not and cannot implement). When
+    a cohort is created, it is associated with a context ID that establishes
+    identity. When a request is made to manipulate a cohort, the context ID
+    must be provided as part of that request to authorize a change.
+
+    Attributes:
+        id: A UUID identifier for the context.
+        name: A human-readable name for the context.
+        created_datetime: The date and time when the record is created.
+        updated_datetime: The date and time when the record is updated.
+    """
+    __tablename__ = "anonymous_context"
+    id = schema.Column(UUID(as_uuid=True), nullable=False, primary_key=True, default=uuid.uuid4())
+    name = schema.Column(sqltypes.Text, nullable=False)
+
+    def __repr__(self):
+        return f"<AnonymousContext(id={self.id}, " \
+               f"name='{self.name}', " \
+               f"created_datetime={self.created_datetime}, " \
+               f"updated_datetime={self.updated_datetime})>"
+
+    def to_json(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "created_datetime": self.created_datetime.isoformat() if self.created_datetime else None,
+            "updated_datetime": self.updated_datetime.isoformat() if self.updated_datetime else None,
+        }
 
 
 class Cohort(Base, audit.AuditColumnsMixin):
