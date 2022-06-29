@@ -37,6 +37,9 @@ class AnonymousContext(Base, audit.AuditColumnsMixin):
     id = Column(UUID(as_uuid=True), nullable=False, primary_key=True, default=uuid.uuid4)
     name = Column(Text, nullable=False)
 
+    # establishes a one-to-many relationship with Cohort
+    cohorts = orm.relationship("Cohort")
+
     def __repr__(self):
         return (
             "<AnonymousContext("
@@ -60,10 +63,56 @@ class AnonymousContext(Base, audit.AuditColumnsMixin):
         }
 
 
-# class Cohort(Base, audit.AuditColumnsMixin):
-#     pass
-#
-#
+class Cohort(Base, audit.AuditColumnsMixin):
+    """A base definition for a cohort entity.
+
+    Provides the basic properties to define a cohort, including a link to the
+    latest cohort filter.
+
+    Attributes:
+        id: A UUID identifier for the cohort.
+        context_id: The UUID of the associated context.
+        current_filter_id: The ID of the current filter defined for the cohort
+        name: A user defined name for the cohort.
+        created_datetime: The date and time when the record is created.
+        updated_datetime: The date and time when the record is updated.
+    """
+
+    __tablename__ = "cohort"
+    id = Column(UUID(as_uuid=True), nullable=False, primary_key=True, default=uuid.uuid4())
+    name = Column(Text, nullable=False)
+    context_id = Column(UUID(as_uuid=True), ForeignKey("anonymous_context.id"), nullable=False, default=uuid.uuid4())
+    current_filter_id = Column(BigInteger, nullable=False)
+
+    def __repr__(self):
+        return (
+            "<Cohort("
+            "id={id}, "
+            "name='{name}', "
+            "context_id={context_id}, "
+            "current_filter_id={current_filter_id}, "
+            "created_datetime={created_datetime}, "
+            "updated_datetime={updated_datetime})>".format(
+                id=self.id,
+                name=self.name,
+                context_id=self.context_id,
+                current_filter_id=self.current_filter_id,
+                created_datetime=self.created_datetime.isoformat() if self.created_datetime else None,
+                updated_datetime=self.updated_datetime.isoformat() if self.updated_datetime else None,
+            )
+        )
+
+    def to_json(self):
+        return {
+            "id": str(self.id),
+            "name": self.name,
+            "context_id": str(self.context_id),
+            "current_filter_id": self.current_filter_id,
+            "created_datetime": self.created_datetime.isoformat() if self.created_datetime else None,
+            "updated_datetime": self.updated_datetime.isoformat() if self.updated_datetime else None,
+        }
+
+
 # class CohortFilter(Base, audit.AuditColumnsMixin):
 #     pass
 #
