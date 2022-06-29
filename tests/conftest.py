@@ -10,6 +10,7 @@ from sqlalchemy.orm import sessionmaker
 
 from gdc_ng_models.models import (
     batch,
+    cohort,
     download_reports,
     qcreport,
     redaction,
@@ -71,6 +72,13 @@ def create_batch_db(db_engine):
     batch.Base.metadata.create_all(db_engine)
     yield
     batch.Base.metadata.drop_all(db_engine)
+
+
+@pytest.fixture(scope="session")
+def create_cohort_db(db_engine):
+    cohort.Base.metadata.create_all(db_engine)
+    yield
+    cohort.Base.metadata.drop_all(db_engine)
 
 
 @pytest.fixture(scope="function")
