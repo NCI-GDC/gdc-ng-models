@@ -32,16 +32,24 @@ class AnonymousContext(Base, audit.AuditColumnsMixin):
         created_datetime: The date and time when the record is created.
         updated_datetime: The date and time when the record is updated.
     """
+
     __tablename__ = "anonymous_context"
     id = Column(UUID(as_uuid=True), nullable=False, primary_key=True, default=uuid.uuid4)
     name = Column(Text, nullable=False)
 
     def __repr__(self):
-        return f"<AnonymousContext(" \
-               f"id={self.id}, " \
-               f"name='{self.name}', " \
-               f"created_datetime={self.created_datetime}, " \
-               f"updated_datetime={self.updated_datetime})>"
+        return (
+            "<AnonymousContext("
+            "id={id}, "
+            "name='{name}', "
+            "created_datetime={created_datetime}, "
+            "updated_datetime={updated_datetime})>".format(
+                id=self.id,
+                name=self.name,
+                created_datetime=self.created_datetime.isoformat() if self.created_datetime else None,
+                updated_datetime=self.updated_datetime.isoformat() if self.updated_datetime else None,
+            )
+        )
 
     def to_json(self):
         return {
