@@ -79,7 +79,7 @@ class Cohort(Base, audit.AuditColumnsMixin):
     """
 
     __tablename__ = "cohort"
-    id = Column(UUID(as_uuid=True), nullable=False, primary_key=True, default=uuid.uuid4())
+    id = Column(UUID(as_uuid=True), nullable=False, primary_key=True, default=uuid.uuid4)
     name = Column(Text, nullable=False)
     context_id = Column(UUID(as_uuid=True), ForeignKey("anonymous_context.id"), nullable=False, default=uuid.uuid4())
     current_filter_id = Column(BigInteger, nullable=False)
