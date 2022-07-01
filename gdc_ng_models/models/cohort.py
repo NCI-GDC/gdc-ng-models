@@ -9,7 +9,7 @@ This model defines the properties necessary to persist cohorts.
 """
 import uuid
 
-from sqlalchemy import orm, BigInteger, Boolean, Column, ForeignKey, Text
+from sqlalchemy import orm, ARRAY, BigInteger, Boolean, Column, ForeignKey, Text
 from sqlalchemy.ext import declarative
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from gdc_ng_models.models import audit
@@ -133,6 +133,9 @@ class CohortFilter(Base, audit.AuditColumnsMixin):
     filters = Column(JSONB, nullable=False)
     static = Column(Boolean, nullable=False, default=False)
 
+    # establishes a one-to-many relationship with CohortSnapshot
+    snapshots = orm.relationship("CohortSnapshot")
+
     # establishes an adjacency relationship (i.e. self-referential key)
     # TODO: do we actually need make this to be one-to-one as per the design?
     parent = orm.relationship("CohortFilter")
@@ -169,5 +172,48 @@ class CohortFilter(Base, audit.AuditColumnsMixin):
         }
 
 
-# class CohortSnapshot(Base, audit.AuditColumnsMixin):
-#     pass
+class CohortSnapshot(Base, audit.AuditColumnsMixin):
+    """A static snapshot of cases associated with a cohort filter.
+
+    Attributes:
+        id: A bigint identifier for the snapshot.
+        filter_id: The ID of the filter associated with the snapshot.
+        data_release: The ID of the data release when the snapshot was created.
+        case_ids: A UUID array containing the set of case IDs.
+        created_datetime: The date and time when the record is created.
+        updated_datetime: The date and time when the record is updated.
+    """
+
+    __tablename__ = "cohort_snapshot"
+    id = Column(BigInteger, primary_key=True)
+    filter_id = Column(BigInteger, ForeignKey("cohort_filter.id"), nullable=False)
+    data_release = Column(UUID(as_uuid=True), nullable=False)
+    case_ids = Column(ARRAY(UUID(as_uuid=True)), nullable=False)
+
+    def __repr__(self):
+        return (
+            "<CohortSnapshot("
+            "id={id}, "
+            "filter_id={filter_id}, "
+            "data_release={data_release}, "
+            "case_ids={case_ids}, "
+            "created_datetime={created_datetime}, "
+            "updated_datetime={updated_datetime})>".format(
+                id=self.id,
+                filter_id=self.filter_id,
+                data_release=self.data_release,
+                case_ids=self.case_ids,
+                created_datetime=self.created_datetime.isoformat() if self.created_datetime else None,
+                updated_datetime=self.updated_datetime.isoformat() if self.updated_datetime else None,
+            )
+        )
+
+    def to_json(self):
+        return {
+            "id": self.id,
+            "filter_id": self.filter_id,
+            "data_release": str(self.data_release),
+            "case_ids": self.case_ids,
+            "created_datetime": self.created_datetime.isoformat() if self.created_datetime else None,
+            "updated_datetime": self.updated_datetime.isoformat() if self.updated_datetime else None,
+        }
