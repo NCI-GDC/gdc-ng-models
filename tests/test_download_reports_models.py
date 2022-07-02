@@ -1,10 +1,21 @@
 from datetime import date
+from typing import TypeVar
 
-from cdisutils.dictionary import sort_dict
-from gdc_ng_models.models.download_reports import (
-    DataDownloadReport,
-    DataUsageReport,
-)
+from gdc_ng_models.models.download_reports import DataDownloadReport, DataUsageReport
+
+TTree = TypeVar("TTree")
+
+
+def sort_dict(tree: TTree) -> TTree:
+    """
+    Recursively sorts dictionary tree
+    """
+    if isinstance(tree, dict):
+        return {key: sort_dict(tree[key]) for key in tree}
+    elif isinstance(tree, list):
+        return sorted([sort_dict(element) for element in tree])
+    else:
+        return tree
 
 
 def test_create_usage_reports(create_reports_db, db_session):
@@ -20,10 +31,11 @@ def test_create_usage_reports(create_reports_db, db_session):
     db_session.commit()
 
     # check if persisted
-    rp = db_session\
-        .query(DataUsageReport)\
-        .filter(DataUsageReport.report_period == report.report_period)\
+    rp = (
+        db_session.query(DataUsageReport)
+        .filter(DataUsageReport.report_period == report.report_period)
         .first()
+    )
 
     assert rp.api_report == report.api_report
     assert rp.report_period == report.report_period
@@ -50,20 +62,21 @@ def test_create_download_report(create_reports_db, db_session):
     db_session.commit()
 
     # check if persisted
-    rp = db_session\
-        .query(DataDownloadReport)\
-        .filter(DataDownloadReport.report_period == report.report_period)\
+    rp = (
+        db_session.query(DataDownloadReport)
+        .filter(DataDownloadReport.report_period == report.report_period)
         .first()
+    )
 
     assert rp.report_period == report.report_period
-    assert sort_dict(rp.project_id_report) == \
-        sort_dict(report.project_id_report)
-    assert sort_dict(rp.experimental_strategy_report) == \
-        sort_dict(report.experimental_strategy_report)
-    assert sort_dict(rp.access_type_report) == \
-        sort_dict(report.access_type_report)
-    assert sort_dict(rp.access_location_report) == \
-        sort_dict(report.access_location_report)
+    assert sort_dict(rp.project_id_report) == sort_dict(report.project_id_report)
+    assert sort_dict(rp.experimental_strategy_report) == sort_dict(
+        report.experimental_strategy_report
+    )
+    assert sort_dict(rp.access_type_report) == sort_dict(report.access_type_report)
+    assert sort_dict(rp.access_location_report) == sort_dict(
+        report.access_location_report
+    )
     assert rp.project_id_report == report.project_id_report
     assert rp.date_created == report.date_created
     assert rp.last_updated == report.last_updated
