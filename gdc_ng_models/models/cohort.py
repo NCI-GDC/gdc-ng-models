@@ -1,12 +1,14 @@
 """Data model to describe cohorts.
 
 A cohort defines a set of cases that are of interest to a user. The concept
-of a cohort is central to the user experience in the next-gen data portal. A
-cohort is defined by a filter that filters eligible cases based on demographic,
-clinical or other relevant data points in a case.
-
-This model defines the properties necessary to persist cohorts.
+of a cohort is central to the user experience in the next-gen data portal. The
+cohort data model includes the following entities:
+    AnonymousContext: Used to authorize changes to a cohort
+    Cohort: Defines the basic properties (name, id, context) of a cohort
+    CohortFilter: Defines the filter used to generate a cohort case set
+    CohortSnapshot: Defines the set of cases for a static cohort
 """
+
 import uuid
 
 from sqlalchemy import orm, ARRAY, BigInteger, Boolean, Column, ForeignKey, Text
@@ -88,7 +90,6 @@ class Cohort(Base, audit.AuditColumnsMixin):
             "id={id}, "
             "name='{name}', "
             "context_id={context_id}, "
-            # "current_filter_id={current_filter_id}, "
             "created_datetime={created_datetime}, "
             "updated_datetime={updated_datetime})>".format(
                 id=self.id,
@@ -137,7 +138,6 @@ class CohortFilter(Base, audit.AuditColumnsMixin):
     snapshots = orm.relationship("CohortSnapshot")
 
     # establishes an adjacency relationship (i.e. self-referential key)
-    # TODO: do we actually need make this to be one-to-one as per the design?
     parent = orm.relationship("CohortFilter")
 
     def __repr__(self):
@@ -175,10 +175,13 @@ class CohortFilter(Base, audit.AuditColumnsMixin):
 class CohortSnapshot(Base, audit.AuditColumnsMixin):
     """A static snapshot of cases associated with a cohort filter.
 
+    In the event a cohort is static, this provides a list of cases associated
+    with the cohort and the data release in which they were generated.
+
     Attributes:
         id: A bigint identifier for the snapshot.
         filter_id: The ID of the filter associated with the snapshot.
-        data_release: The ID of the data release when the snapshot was created.
+        data_release: The UUID of the data release when the snapshot was created.
         case_ids: A UUID array containing the set of case IDs.
         created_datetime: The date and time when the record is created.
         updated_datetime: The date and time when the record is updated.
