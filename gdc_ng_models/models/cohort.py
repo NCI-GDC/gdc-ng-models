@@ -213,7 +213,7 @@ class CohortSnapshot(Base, audit.AuditColumnsMixin):
             "id": self.id,
             "filter_id": self.filter_id,
             "data_release": str(self.data_release),
-            "case_ids": self.case_ids,
+            "case_ids": [str(case_id) for case_id in self.case_ids],
             "created_datetime": self.created_datetime.isoformat() if self.created_datetime else None,
             "updated_datetime": self.updated_datetime.isoformat() if self.updated_datetime else None,
         }
