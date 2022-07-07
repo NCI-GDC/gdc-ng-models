@@ -35,7 +35,11 @@ class AnonymousContext(Base, audit.AuditColumnsMixin):
     """
 
     __tablename__ = "anonymous_context"
-    id = sqlalchemy.Column(postgresql.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = sqlalchemy.Column(
+        postgresql.UUID(as_uuid=True),
+        primary_key=True,
+        default=uuid.uuid4,
+    )
     name = sqlalchemy.Column(sqlalchemy.Text, nullable=False)
 
     # establishes a one-to-many relationship with Cohort
@@ -50,8 +54,12 @@ class AnonymousContext(Base, audit.AuditColumnsMixin):
             "updated_datetime={updated_datetime})>".format(
                 id=self.id,
                 name=self.name,
-                created_datetime=self.created_datetime.isoformat() if self.created_datetime else None,
-                updated_datetime=self.updated_datetime.isoformat() if self.updated_datetime else None,
+                created_datetime=self.created_datetime.isoformat()
+                if self.created_datetime
+                else None,
+                updated_datetime=self.updated_datetime.isoformat()
+                if self.updated_datetime
+                else None,
             )
         )
 
@@ -59,8 +67,12 @@ class AnonymousContext(Base, audit.AuditColumnsMixin):
         return {
             "id": str(self.id),
             "name": self.name,
-            "created_datetime": self.created_datetime.isoformat() if self.created_datetime else None,
-            "updated_datetime": self.updated_datetime.isoformat() if self.updated_datetime else None,
+            "created_datetime": self.created_datetime.isoformat()
+            if self.created_datetime
+            else None,
+            "updated_datetime": self.updated_datetime.isoformat()
+            if self.updated_datetime
+            else None,
         }
 
 
@@ -76,9 +88,17 @@ class Cohort(Base, audit.AuditColumnsMixin):
     """
 
     __tablename__ = "cohort"
-    id = sqlalchemy.Column(postgresql.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = sqlalchemy.Column(
+        postgresql.UUID(as_uuid=True),
+        primary_key=True,
+        default=uuid.uuid4,
+    )
     name = sqlalchemy.Column(sqlalchemy.Text, nullable=False)
-    context_id = sqlalchemy.Column(postgresql.UUID(as_uuid=True), sqlalchemy.ForeignKey("anonymous_context.id"), nullable=False)
+    context_id = sqlalchemy.Column(
+        postgresql.UUID(as_uuid=True),
+        sqlalchemy.ForeignKey("anonymous_context.id"),
+        nullable=False,
+    )
 
     # establishes a one-to-many relationship with CohortFilter
     filters = sqlalchemy.orm.relationship("CohortFilter")
@@ -94,8 +114,12 @@ class Cohort(Base, audit.AuditColumnsMixin):
                 id=self.id,
                 name=self.name,
                 context_id=self.context_id,
-                created_datetime=self.created_datetime.isoformat() if self.created_datetime else None,
-                updated_datetime=self.updated_datetime.isoformat() if self.updated_datetime else None,
+                created_datetime=self.created_datetime.isoformat()
+                if self.created_datetime
+                else None,
+                updated_datetime=self.updated_datetime.isoformat()
+                if self.updated_datetime
+                else None,
             )
         )
 
@@ -104,8 +128,12 @@ class Cohort(Base, audit.AuditColumnsMixin):
             "id": str(self.id),
             "name": self.name,
             "context_id": str(self.context_id),
-            "created_datetime": self.created_datetime.isoformat() if self.created_datetime else None,
-            "updated_datetime": self.updated_datetime.isoformat() if self.updated_datetime else None,
+            "created_datetime": self.created_datetime.isoformat()
+            if self.created_datetime
+            else None,
+            "updated_datetime": self.updated_datetime.isoformat()
+            if self.updated_datetime
+            else None,
         }
 
 
@@ -128,8 +156,15 @@ class CohortFilter(Base, audit.AuditColumnsMixin):
 
     __tablename__ = "cohort_filter"
     id = sqlalchemy.Column(sqlalchemy.BigInteger, primary_key=True)
-    parent_id = sqlalchemy.Column(sqlalchemy.BigInteger, sqlalchemy.ForeignKey("cohort_filter.id"))
-    cohort_id = sqlalchemy.Column(postgresql.UUID(as_uuid=True), sqlalchemy.ForeignKey("cohort.id"), nullable=False)
+    parent_id = sqlalchemy.Column(
+        sqlalchemy.BigInteger,
+        sqlalchemy.ForeignKey("cohort_filter.id"),
+    )
+    cohort_id = sqlalchemy.Column(
+        postgresql.UUID(as_uuid=True),
+        sqlalchemy.ForeignKey("cohort.id"),
+        nullable=False,
+    )
     filters = sqlalchemy.Column(postgresql.JSONB, nullable=False)
     static = sqlalchemy.Column(sqlalchemy.Boolean, nullable=False, default=False)
 
@@ -154,8 +189,12 @@ class CohortFilter(Base, audit.AuditColumnsMixin):
                 cohort_id=self.cohort_id,
                 filters=self.filters,
                 static=self.static,
-                created_datetime=self.created_datetime.isoformat() if self.created_datetime else None,
-                updated_datetime=self.updated_datetime.isoformat() if self.updated_datetime else None,
+                created_datetime=self.created_datetime.isoformat()
+                if self.created_datetime
+                else None,
+                updated_datetime=self.updated_datetime.isoformat()
+                if self.updated_datetime
+                else None,
             )
         )
 
@@ -166,8 +205,12 @@ class CohortFilter(Base, audit.AuditColumnsMixin):
             "cohort_id": str(self.cohort_id),
             "filters": self.filters,
             "static": self.static,
-            "created_datetime": self.created_datetime.isoformat() if self.created_datetime else None,
-            "updated_datetime": self.updated_datetime.isoformat() if self.updated_datetime else None,
+            "created_datetime": self.created_datetime.isoformat()
+            if self.created_datetime
+            else None,
+            "updated_datetime": self.updated_datetime.isoformat()
+            if self.updated_datetime
+            else None,
         }
 
 
@@ -188,9 +231,16 @@ class CohortSnapshot(Base, audit.AuditColumnsMixin):
 
     __tablename__ = "cohort_snapshot"
     id = sqlalchemy.Column(sqlalchemy.BigInteger, primary_key=True)
-    filter_id = sqlalchemy.Column(sqlalchemy.BigInteger, sqlalchemy.ForeignKey("cohort_filter.id"), nullable=False)
+    filter_id = sqlalchemy.Column(
+        sqlalchemy.BigInteger,
+        sqlalchemy.ForeignKey("cohort_filter.id"),
+        nullable=False,
+    )
     data_release = sqlalchemy.Column(postgresql.UUID(as_uuid=True), nullable=False)
-    case_ids = sqlalchemy.Column(postgresql.ARRAY(postgresql.UUID(as_uuid=True)), nullable=False)
+    case_ids = sqlalchemy.Column(
+        postgresql.ARRAY(postgresql.UUID(as_uuid=True)),
+        nullable=False,
+    )
 
     def __repr__(self):
         return (
@@ -205,8 +255,12 @@ class CohortSnapshot(Base, audit.AuditColumnsMixin):
                 filter_id=self.filter_id,
                 data_release=self.data_release,
                 case_ids=self.case_ids,
-                created_datetime=self.created_datetime.isoformat() if self.created_datetime else None,
-                updated_datetime=self.updated_datetime.isoformat() if self.updated_datetime else None,
+                created_datetime=self.created_datetime.isoformat()
+                if self.created_datetime
+                else None,
+                updated_datetime=self.updated_datetime.isoformat()
+                if self.updated_datetime
+                else None,
             )
         )
 
@@ -216,6 +270,10 @@ class CohortSnapshot(Base, audit.AuditColumnsMixin):
             "filter_id": self.filter_id,
             "data_release": str(self.data_release),
             "case_ids": [str(case_id) for case_id in self.case_ids],
-            "created_datetime": self.created_datetime.isoformat() if self.created_datetime else None,
-            "updated_datetime": self.updated_datetime.isoformat() if self.updated_datetime else None,
+            "created_datetime": self.created_datetime.isoformat()
+            if self.created_datetime
+            else None,
+            "updated_datetime": self.updated_datetime.isoformat()
+            if self.updated_datetime
+            else None,
         }
