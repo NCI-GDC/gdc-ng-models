@@ -28,7 +28,7 @@ class AnonymousContext(Base, audit.AuditColumnsMixin):
     must be provided as part of that request to authorize a change.
 
     Attributes:
-        id: A UUID identifier for the context.
+        id: A unique identifier for the context.
         name: A human-readable name for the context.
         created_datetime: The date and time when the record is created.
         updated_datetime: The date and time when the record is updated.
@@ -80,8 +80,8 @@ class Cohort(Base, audit.AuditColumnsMixin):
     """A base definition for a cohort entity.
 
     Attributes:
-        id: A UUID identifier for the cohort.
-        context_id: The UUID of the associated context.
+        id: A unique identifier for the cohort.
+        context_id: The ID of the associated context.
         name: A user defined name for the cohort.
         created_datetime: The date and time when the record is created.
         updated_datetime: The date and time when the record is updated.
@@ -145,11 +145,11 @@ class CohortFilter(Base, audit.AuditColumnsMixin):
     a history of changes.
 
     Attributes:
-        id: A bigint identifier for the cohort.
+        id: A unique identifier for the cohort.
         parent_id: A self-referential key to maintain parent-child history.
         cohort_id: The ID of the cohort associated with the filter.
-        filters: A JSONB representation of the filter defining the case set
-        static: A boolean indicator to designate a filter as static.
+        filters: A representation of the filters defining the case set
+        static: An indicator to designate a filter as static.
         created_datetime: The date and time when the record is created.
         updated_datetime: The date and time when the record is updated.
     """
@@ -221,10 +221,10 @@ class CohortSnapshot(Base, audit.AuditColumnsMixin):
     with the cohort and the data release in which they were generated.
 
     Attributes:
-        id: A bigint identifier for the snapshot.
+        id: A unique identifier for the snapshot.
         filter_id: The ID of the filter associated with the snapshot.
-        data_release: The UUID of the data release when the snapshot was created.
-        case_ids: A UUID array containing the set of case IDs.
+        data_release: The ID of the data release when the snapshot was created.
+        case_ids: A set of case IDs.
         created_datetime: The date and time when the record is created.
         updated_datetime: The date and time when the record is updated.
     """
