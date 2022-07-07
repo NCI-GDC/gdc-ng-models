@@ -6,6 +6,7 @@ gdcdatamodel.test.conftest
 pytest setup for gdcdatamodel tests
 """
 import pytest
+import sqlalchemy
 from sqlalchemy.orm import sessionmaker
 
 from gdc_ng_models.models import (
@@ -76,6 +77,16 @@ def create_batch_db(db_engine):
 
 @pytest.fixture(scope="session")
 def create_cohort_db(db_engine):
+    # type: (sqlalchemy.engine.base.Engine) -> None
+    """Provides capabilities for setup and teardown of a test cohort database.
+
+    This function relies on a side effect of yield to setup and teardown a
+    cohort database for use with test cases. The function creates a cohort
+    database on invocation and then pauses execution with a yield that returns
+    no value but instead returns control to the calling function. Once the
+    calling function exits, control is returned to this fixture and the
+    database is dropped.
+    """
     cohort.Base.metadata.create_all(db_engine)
     yield
     cohort.Base.metadata.drop_all(db_engine)
