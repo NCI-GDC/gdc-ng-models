@@ -10,10 +10,9 @@ cohort data model includes the following entities:
 """
 
 import uuid
-
-from sqlalchemy import orm, ARRAY, BigInteger, Boolean, Column, ForeignKey, Text
+import sqlalchemy
+from sqlalchemy.dialects import postgresql
 from sqlalchemy.ext import declarative
-from sqlalchemy.dialects.postgresql import JSONB, UUID
 from gdc_ng_models.models import audit
 
 Base = declarative.declarative_base()
@@ -36,11 +35,11 @@ class AnonymousContext(Base, audit.AuditColumnsMixin):
     """
 
     __tablename__ = "anonymous_context"
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    name = Column(Text, nullable=False)
+    id = sqlalchemy.Column(postgresql.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    name = sqlalchemy.Column(sqlalchemy.Text, nullable=False)
 
     # establishes a one-to-many relationship with Cohort
-    cohorts = orm.relationship("Cohort")
+    cohorts = sqlalchemy.orm.relationship("Cohort")
 
     def __repr__(self):
         return (
@@ -77,12 +76,12 @@ class Cohort(Base, audit.AuditColumnsMixin):
     """
 
     __tablename__ = "cohort"
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    name = Column(Text, nullable=False)
-    context_id = Column(UUID(as_uuid=True), ForeignKey("anonymous_context.id"), nullable=False)
+    id = sqlalchemy.Column(postgresql.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    name = sqlalchemy.Column(sqlalchemy.Text, nullable=False)
+    context_id = sqlalchemy.Column(postgresql.UUID(as_uuid=True), sqlalchemy.ForeignKey("anonymous_context.id"), nullable=False)
 
     # establishes a one-to-many relationship with CohortFilter
-    filters = orm.relationship("CohortFilter")
+    filters = sqlalchemy.orm.relationship("CohortFilter")
 
     def __repr__(self):
         return (
@@ -128,17 +127,17 @@ class CohortFilter(Base, audit.AuditColumnsMixin):
     """
 
     __tablename__ = "cohort_filter"
-    id = Column(BigInteger, primary_key=True)
-    parent_id = Column(BigInteger, ForeignKey("cohort_filter.id"))
-    cohort_id = Column(UUID(as_uuid=True), ForeignKey("cohort.id"), nullable=False)
-    filters = Column(JSONB, nullable=False)
-    static = Column(Boolean, nullable=False, default=False)
+    id = sqlalchemy.Column(sqlalchemy.BigInteger, primary_key=True)
+    parent_id = sqlalchemy.Column(sqlalchemy.BigInteger, sqlalchemy.ForeignKey("cohort_filter.id"))
+    cohort_id = sqlalchemy.Column(postgresql.UUID(as_uuid=True), sqlalchemy.ForeignKey("cohort.id"), nullable=False)
+    filters = sqlalchemy.Column(postgresql.JSONB, nullable=False)
+    static = sqlalchemy.Column(sqlalchemy.Boolean, nullable=False, default=False)
 
     # establishes a one-to-many relationship with CohortSnapshot
-    snapshots = orm.relationship("CohortSnapshot")
+    snapshots = sqlalchemy.orm.relationship("CohortSnapshot")
 
     # establishes an adjacency relationship (i.e. self-referential key)
-    parent = orm.relationship("CohortFilter")
+    parent = sqlalchemy.orm.relationship("CohortFilter")
 
     def __repr__(self):
         return (
@@ -188,10 +187,10 @@ class CohortSnapshot(Base, audit.AuditColumnsMixin):
     """
 
     __tablename__ = "cohort_snapshot"
-    id = Column(BigInteger, primary_key=True)
-    filter_id = Column(BigInteger, ForeignKey("cohort_filter.id"), nullable=False)
-    data_release = Column(UUID(as_uuid=True), nullable=False)
-    case_ids = Column(ARRAY(UUID(as_uuid=True)), nullable=False)
+    id = sqlalchemy.Column(sqlalchemy.BigInteger, primary_key=True)
+    filter_id = sqlalchemy.Column(sqlalchemy.BigInteger, sqlalchemy.ForeignKey("cohort_filter.id"), nullable=False)
+    data_release = sqlalchemy.Column(postgresql.UUID(as_uuid=True), nullable=False)
+    case_ids = sqlalchemy.Column(postgresql.ARRAY(postgresql.UUID(as_uuid=True)), nullable=False)
 
     def __repr__(self):
         return (
