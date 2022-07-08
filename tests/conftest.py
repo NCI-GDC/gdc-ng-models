@@ -80,12 +80,18 @@ def create_cohort_db(db_engine):
     # type: (sqlalchemy.engine.base.Engine) -> None
     """Provides capabilities for setup and teardown of a test cohort database.
 
-    This function relies on a side effect of yield to setup and teardown a
-    cohort database for use with test cases. The function creates a cohort
-    database on invocation and then pauses execution with a yield that returns
-    no value but instead returns control to the calling function. Once the
-    calling function exits, control is returned to this fixture and the
-    database is dropped.
+    Creates a database using the declarations in the cohort module in the
+    gdc_ng_models/models package. This includes the following tables:
+        anonymous_context: Used to authorize changes to a cohort.
+        cohort: Defines the basic properties (name, id, context) of a cohort.
+        cohort_filter: Defines the filter used to generate a cohort case set.
+        cohort_snapshot: Defines the set of cases for a static cohort.
+
+    Args:
+        db_engine: A sqlalchemy database engine.
+
+    Yields:
+        None.
     """
     cohort.Base.metadata.create_all(db_engine)
     yield
