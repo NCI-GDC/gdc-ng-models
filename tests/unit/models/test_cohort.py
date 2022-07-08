@@ -153,6 +153,24 @@ def test_cohort__valid_create(create_cohort_db, db_session, fixture_context):
     assert test_cohort.context_id == expected_context_id
 
 
+def test_cohort__anonymous_context_bidirectional_relationship(create_cohort_db, db_session, fixture_context):
+    """Tests bidirectional relationship between cohort and anonymous context."""
+    expected_name = "test_cohort"
+
+    # create and retrieve cohort
+    db_session.add(cohort.Cohort(
+        name=expected_name,
+        context_id=fixture_context.id,
+    ))
+    db_session.commit()
+
+    test_cohort = db_session.query(cohort.Cohort).filter(
+        cohort.Cohort.name == expected_name).one()
+
+    assert test_cohort.context == fixture_context
+    assert test_cohort in fixture_context.cohorts
+
+
 def test_cohort__context_fkey_constraint(create_cohort_db, db_session):
     """Tests cohort foreign key constraint on context_id."""
 
@@ -274,6 +292,26 @@ def test_cohort_filter__valid_create(create_cohort_db, db_session, fixture_cohor
     assert test_filter.cohort_id == expected_cohort_id
     assert test_filter.filters == expected_filters
     assert test_filter.static == expected_static
+
+
+def test_cohort_filter__cohort_bidirectional_relationship(create_cohort_db, db_session, fixture_cohort):
+    """Tests bidirectional relationship between cohort filter and cohort."""
+    expected_id = 1
+
+    # create and retrieve cohort filter
+    db_session.add(cohort.CohortFilter(
+        id=expected_id,
+        parent_id=None,
+        cohort_id=fixture_cohort.id,
+        filters=[],
+        static=False,
+    ))
+    db_session.commit()
+    test_filter = db_session.query(cohort.CohortFilter).filter(
+        cohort.CohortFilter.id == expected_id).one()
+
+    assert test_filter.cohort == fixture_cohort
+    assert test_filter in fixture_cohort.filters
 
 
 def test_cohort_filter__cohort_fkey_constraint(create_cohort_db, db_session):
@@ -470,6 +508,26 @@ def test_cohort_snapshot__valid_create(create_cohort_db, db_session, fixture_sta
     assert test_snapshot.filter_id == expected_filter_id
     assert test_snapshot.data_release == expected_data_release
     assert test_snapshot.case_ids == expected_case_ids
+
+
+def test_cohort_snapshot__cohort_filter_bidirectional_relationship(create_cohort_db, db_session, fixture_static_filter):
+    """Tests bidirectional relationship between cohort snapshot and cohort filter."""
+    # define expected values
+    expected_id = 1
+
+    # create and retrieve snapshot
+    db_session.add(cohort.CohortSnapshot(
+        id=expected_id,
+        filter_id=fixture_static_filter.id,
+        data_release=uuid.uuid4(),
+        case_ids=[uuid.uuid4() for i in range(10)],
+    ))
+    db_session.commit()
+    test_snapshot = db_session.query(cohort.CohortSnapshot).filter(
+        cohort.CohortSnapshot.id == expected_id).one()
+
+    assert test_snapshot.filter == fixture_static_filter
+    assert test_snapshot in fixture_static_filter.snapshots
 
 
 def test_cohort_snapshot__cohort_filter_fkey_constraint(create_cohort_db, db_session):

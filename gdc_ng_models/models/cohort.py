@@ -43,7 +43,7 @@ class AnonymousContext(Base, audit.AuditColumnsMixin):
     name = sqlalchemy.Column(sqlalchemy.Text, nullable=False)
 
     # establishes a one-to-many relationship with Cohort
-    cohorts = sqlalchemy.orm.relationship("Cohort")
+    cohorts = sqlalchemy.orm.relationship("Cohort", back_populates="context", lazy="selectin")
 
     def __repr__(self):
         return (
@@ -100,8 +100,11 @@ class Cohort(Base, audit.AuditColumnsMixin):
         nullable=False,
     )
 
+    # establishes a many-to-one relationship with AnonymousContext
+    context = sqlalchemy.orm.relationship("AnonymousContext", back_populates="cohorts")
+
     # establishes a one-to-many relationship with CohortFilter
-    filters = sqlalchemy.orm.relationship("CohortFilter")
+    filters = sqlalchemy.orm.relationship("CohortFilter", back_populates="cohort", lazy="selectin")
 
     def __repr__(self):
         return (
@@ -168,8 +171,11 @@ class CohortFilter(Base, audit.AuditColumnsMixin):
     filters = sqlalchemy.Column(postgresql.JSONB, nullable=False)
     static = sqlalchemy.Column(sqlalchemy.Boolean, nullable=False, default=False)
 
+    # establishes a many-to-one relationship with Cohort
+    cohort = sqlalchemy.orm.relationship("Cohort", back_populates="filters")
+
     # establishes a one-to-many relationship with CohortSnapshot
-    snapshots = sqlalchemy.orm.relationship("CohortSnapshot")
+    snapshots = sqlalchemy.orm.relationship("CohortSnapshot", back_populates="filter", lazy="selectin")
 
     # establishes an adjacency relationship (i.e. self-referential key)
     parent = sqlalchemy.orm.relationship("CohortFilter")
@@ -241,6 +247,9 @@ class CohortSnapshot(Base, audit.AuditColumnsMixin):
         postgresql.ARRAY(postgresql.UUID(as_uuid=True)),
         nullable=False,
     )
+
+    # establishes a many-to-one relationship with CohortFilter
+    filter = sqlalchemy.orm.relationship("CohortFilter", back_populates="snapshots")
 
     def __repr__(self):
         return (
