@@ -48,6 +48,38 @@ def fixture_static_filter(create_cohort_db, db_session, fixture_cohort):
     return db_session.query(cohort.CohortFilter).filter().one()
 
 
+@pytest.fixture(scope="function", params=(1,2))
+def fixture_static_filter_parent_child(create_cohort_db, db_session, fixture_cohort):
+    """Create a static cohort filter hierarchy consisting of a parent and child."""
+
+    db_session.add(cohort.CohortFilter(
+        cohort_id=fixture_cohort.id,
+        filters=[
+            {
+              "field": "cases.primary_site",
+              "value": ["breast"]
+            }
+        ],
+        static=True,
+    ))
+    db_session.commit()
+
+    db_session.add(cohort.CohortFilter(
+        parent_id=db_session.query(cohort.CohortFilter).filter().one().id,
+        cohort_id=fixture_cohort.id,
+        filters=[
+            {
+              "field": "cases.primary_site",
+              "value": ["bronchus and lung"]
+            }
+        ],
+        static=True,
+    ))
+    db_session.commit()
+
+    return db_session.query(cohort.CohortFilter).filter().all()
+
+
 def test_anonymous_context__valid_create(create_cohort_db, db_session):
     """Tests creation of a valid anonymous context entity."""
 
@@ -557,7 +589,7 @@ def test_cohort_snapshot__cohort_filter_bidirectional_relationship(create_cohort
         cohort.CohortSnapshot.id == expected_id).one()
 
     assert test_snapshot.filter == fixture_static_filter
-    assert test_snapshot in fixture_static_filter.snapshots
+    assert test_snapshot == fixture_static_filter.snapshot
 
 
 def test_cohort_snapshot__cohort_filter_fkey_constraint(create_cohort_db, db_session):
@@ -578,22 +610,20 @@ def test_cohort_snapshot__cohort_filter_fkey_constraint(create_cohort_db, db_ses
         db_session.commit()
 
 
-def test_cohort_snapshot__unique_ids(create_cohort_db, db_session, fixture_static_filter):
-    """Tests unique constraint on cohort snapshot ID."""
+def test_cohort_snapshot__filter_id_unique_constraint(create_cohort_db, db_session, fixture_static_filter):
+    """Tests unique constraint on filter ID."""
 
-    target_id = 1
-
+    # create snapshot
     db_session.add(cohort.CohortSnapshot(
-        id=target_id,
         filter_id=fixture_static_filter.id,
         data_release=uuid.uuid4(),
         case_ids=[uuid.uuid4() for i in range(10)],
     ))
     db_session.commit()
 
-    with pytest.raises(exc.IntegrityError, match=r"cohort_snapshot_pkey"):
+    # attempt to create a second snapshot using the same filter ID
+    with pytest.raises(exc.IntegrityError, match=r"cohort_snapshot_filter_id_key"):
         db_session.add(cohort.CohortSnapshot(
-            id=target_id,
             filter_id=fixture_static_filter.id,
             data_release=uuid.uuid4(),
             case_ids=[uuid.uuid4() for i in range(10)],
@@ -601,16 +631,50 @@ def test_cohort_snapshot__unique_ids(create_cohort_db, db_session, fixture_stati
         db_session.commit()
 
 
-def test_cohort_filter__snapshot_unique_ids(create_cohort_db, db_session, fixture_static_filter):
+def test_cohort_snapshot__unique_ids(create_cohort_db, db_session, fixture_static_filter_parent_child):
+    """Tests unique constraint on cohort snapshot ID."""
+
+    target_id = 1
+
+    # due to unique constraint, each snapshot must have a unique filter
+    cohort_1 = fixture_static_filter_parent_child[0]
+    cohort_2 = fixture_static_filter_parent_child[1]
+
+    # create snapshot
+    db_session.add(cohort.CohortSnapshot(
+        id=target_id,
+        filter_id=cohort_1.id,
+        data_release=uuid.uuid4(),
+        case_ids=[uuid.uuid4() for i in range(10)],
+    ))
+    db_session.commit()
+
+    # attempt to create a second snapshot with duplicate ID
+    with pytest.raises(exc.IntegrityError, match=r"cohort_snapshot_pkey"):
+        db_session.add(cohort.CohortSnapshot(
+            id=target_id,
+            filter_id=cohort_2.id,
+            data_release=uuid.uuid4(),
+            case_ids=[uuid.uuid4() for i in range(10)],
+        ))
+        db_session.commit()
+
+
+def test_cohort_snapshot__default_unique_ids(create_cohort_db, db_session, fixture_static_filter_parent_child):
     """Tests default generated IDs on cohort snapshot are unique."""
 
+    # due to unique constraint, each snapshot must have a unique filter
+    cohort_1 = fixture_static_filter_parent_child[0]
+    cohort_2 = fixture_static_filter_parent_child[1]
+
+    # create snapshots
     db_session.add(cohort.CohortSnapshot(
-        filter_id=fixture_static_filter.id,
+        filter_id=cohort_1.id,
         data_release=uuid.uuid4(),
         case_ids=[uuid.uuid4() for i in range(10)],
     ))
     db_session.add(cohort.CohortSnapshot(
-        filter_id=fixture_static_filter.id,
+        filter_id=cohort_2.id,
         data_release=uuid.uuid4(),
         case_ids=[uuid.uuid4() for i in range(10)],
     ))

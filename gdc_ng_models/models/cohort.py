@@ -184,8 +184,13 @@ class CohortFilter(Base, audit.AuditColumnsMixin):
     # establishes a many-to-one relationship with Cohort
     cohort = sqlalchemy.orm.relationship("Cohort", back_populates="filters")
 
-    # establishes a one-to-many relationship with CohortSnapshot
-    snapshots = sqlalchemy.orm.relationship("CohortSnapshot", back_populates="filter", lazy="selectin")
+    # establishes a one-to-one relationship with CohortSnapshot
+    snapshot = sqlalchemy.orm.relationship(
+        "CohortSnapshot",
+        back_populates="filter",
+        lazy="selectin",
+        uselist=False,
+    )
 
     # establishes an adjacency relationship (i.e. self-referential key)
     parent = sqlalchemy.orm.relationship("CohortFilter")
@@ -251,6 +256,7 @@ class CohortSnapshot(Base, audit.AuditColumnsMixin):
         sqlalchemy.BigInteger,
         sqlalchemy.ForeignKey("cohort_filter.id"),
         nullable=False,
+        unique=True,
     )
     data_release = sqlalchemy.Column(postgresql.UUID(as_uuid=True), nullable=False)
     case_ids = sqlalchemy.Column(
@@ -258,8 +264,8 @@ class CohortSnapshot(Base, audit.AuditColumnsMixin):
         nullable=False,
     )
 
-    # establishes a many-to-one relationship with CohortFilter
-    filter = sqlalchemy.orm.relationship("CohortFilter", back_populates="snapshots")
+    # establishes a one-to-one relationship with CohortFilter
+    filter = sqlalchemy.orm.relationship("CohortFilter", back_populates="snapshot")
 
     def __repr__(self):
         return (
