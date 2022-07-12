@@ -104,7 +104,17 @@ class Cohort(Base, audit.AuditColumnsMixin):
     context = sqlalchemy.orm.relationship("AnonymousContext", back_populates="cohorts")
 
     # establishes a one-to-many relationship with CohortFilter
-    filters = sqlalchemy.orm.relationship("CohortFilter", back_populates="cohort", lazy="selectin")
+    filters = sqlalchemy.orm.relationship(
+        "CohortFilter",
+        order_by="desc(CohortFilter.id)",
+        back_populates="cohort",
+        lazy="selectin",
+    )
+
+    def get_current_filter(self):
+        # type: (self) -> CohortFilter
+        """Retrieves the latest filter associated with the cohort."""
+        return self.filters[0]
 
     def __repr__(self):
         return (

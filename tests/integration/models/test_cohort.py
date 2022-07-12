@@ -171,6 +171,36 @@ def test_cohort__anonymous_context_bidirectional_relationship(create_cohort_db, 
     assert test_cohort in fixture_context.cohorts
 
 
+def test_cohort__current_filter(create_cohort_db, db_session, fixture_cohort):
+    """Tests the current filter function is retrieving the latest filter."""
+
+    # create and retrieve the first cohort filter
+    db_session.add(cohort.CohortFilter(
+        parent_id=None,
+        cohort_id=fixture_cohort.id,
+        filters=[],
+        static=False,
+    ))
+    db_session.commit()
+    filter_1 = db_session.query(cohort.CohortFilter).filter(cohort.CohortFilter.cohort_id == fixture_cohort.id).order_by(cohort.CohortFilter.id.desc()).first()
+
+    assert fixture_cohort.get_current_filter() == filter_1
+
+    # create and retrieve the second cohortfilter
+    db_session.add(cohort.CohortFilter(
+        parent_id=filter_1.id,
+        cohort_id=fixture_cohort.id,
+        filters=[],
+        static=False,
+    ))
+    db_session.commit()
+    filter_2 = db_session.query(cohort.CohortFilter).filter(
+        cohort.CohortFilter.cohort_id == fixture_cohort.id).order_by(cohort.CohortFilter.id.desc()).first()
+
+    assert filter_1 != filter_2
+    assert fixture_cohort.get_current_filter() == filter_2
+
+
 def test_cohort__context_fkey_constraint(create_cohort_db, db_session):
     """Tests cohort foreign key constraint on context_id."""
 
