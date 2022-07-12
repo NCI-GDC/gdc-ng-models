@@ -48,7 +48,7 @@ def fixture_static_filter(create_cohort_db, db_session, fixture_cohort):
     return db_session.query(cohort.CohortFilter).filter().one()
 
 
-@pytest.fixture(scope="function", params=(1,2))
+@pytest.fixture(scope="function")
 def fixture_static_filter_parent_child(create_cohort_db, db_session, fixture_cohort):
     """Create a static cohort filter hierarchy consisting of a parent and child."""
 
