@@ -43,7 +43,9 @@ class AnonymousContext(Base, audit.AuditColumnsMixin):
     name = sqlalchemy.Column(sqlalchemy.Text, nullable=False)
 
     # establishes a one-to-many relationship with Cohort
-    cohorts = sqlalchemy.orm.relationship("Cohort", back_populates="context", lazy="selectin")
+    cohorts = sqlalchemy.orm.relationship(
+        "Cohort", back_populates="context", lazy="selectin"
+    )
 
     def __repr__(self):
         return (
