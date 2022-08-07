@@ -34,7 +34,7 @@ def fixture_static_filter(create_cohort_db, db_session, fixture_cohort):
         filters=[
             {"field": "cases.primary_site", "value": ["breast", "bronchus and lung"]}
         ],
-        static=True,
+        type=cohort.CohortType.static,
     )
     db_session.add(test_filter)
     db_session.commit()
@@ -49,7 +49,7 @@ def fixture_static_filter_parent_child(create_cohort_db, db_session, fixture_coh
     parent_filter = cohort.CohortFilter(
         cohort_id=fixture_cohort.id,
         filters=[{"field": "cases.primary_site", "value": ["breast"]}],
-        static=True,
+        type=cohort.CohortType.static,
     )
     db_session.add(parent_filter)
     db_session.commit()
@@ -59,7 +59,7 @@ def fixture_static_filter_parent_child(create_cohort_db, db_session, fixture_coh
         parent_id=parent_filter.id,
         cohort_id=fixture_cohort.id,
         filters=[{"field": "cases.primary_site", "value": ["bronchus and lung"]}],
-        static=True,
+        type=cohort.CohortType.static,
     )
     db_session.add(child_filter)
     db_session.commit()
@@ -234,7 +234,7 @@ def test_cohort__current_filter(create_cohort_db, db_session, fixture_cohort):
         parent_id=None,
         cohort_id=fixture_cohort.id,
         filters=[],
-        static=False,
+        type=cohort.CohortType.dynamic,
     )
     db_session.add(filter_1)
     db_session.commit()
@@ -245,7 +245,7 @@ def test_cohort__current_filter(create_cohort_db, db_session, fixture_cohort):
         parent_id=filter_1.id,
         cohort_id=fixture_cohort.id,
         filters=[],
-        static=False,
+        type=cohort.CohortType.dynamic,
     )
     db_session.add(filter_2)
     db_session.commit()
@@ -315,7 +315,7 @@ def test_cohort_filter__valid_create(create_cohort_db, db_session, fixture_cohor
     expected_filters = [
         {"field": "cases.primary_site", "value": ["breast", "bronchus and lung"]}
     ]
-    expected_static = False
+    expected_type = cohort.CohortType.static
 
     # create cohort filter
     test_filter = cohort.CohortFilter(
@@ -323,7 +323,7 @@ def test_cohort_filter__valid_create(create_cohort_db, db_session, fixture_cohor
         parent_id=None,
         cohort_id=expected_cohort_id,
         filters=expected_filters,
-        static=expected_static,
+        type=expected_type,
     )
     db_session.add(test_filter)
     db_session.commit()
@@ -333,7 +333,7 @@ def test_cohort_filter__valid_create(create_cohort_db, db_session, fixture_cohor
     assert test_filter.parent_id is None
     assert test_filter.cohort_id == expected_cohort_id
     assert test_filter.filters == expected_filters
-    assert test_filter.static == expected_static
+    assert test_filter.type == expected_type
 
 
 def test_cohort_filter__unique_ids(create_cohort_db, db_session, fixture_cohort):
@@ -386,7 +386,7 @@ def test_cohort_filter__cohort_bidirectional_relationship(
         parent_id=None,
         cohort_id=fixture_cohort.id,
         filters=[],
-        static=False,
+        type=cohort.CohortType.dynamic,
     )
     db_session.add(test_filter)
     db_session.commit()
@@ -430,7 +430,7 @@ def test_cohort_filter__static_default(create_cohort_db, db_session, fixture_coh
     db_session.add(test_filter)
     db_session.commit()
 
-    assert test_filter.static is False
+    assert test_filter.type == cohort.CohortType.static
 
 
 def test_cohort_filter__parent_id_history(create_cohort_db, db_session, fixture_cohort):
@@ -486,7 +486,7 @@ def test_cohort_filter__to_json(create_cohort_db, db_session, fixture_cohort):
                 "parent_id": None,
                 "cohort_id": str(test_filter.cohort_id),
                 "filters": test_filter.filters,
-                "static": test_filter.static,
+                "type": str(test_filter.type),
                 "created_datetime": test_filter.created_datetime.isoformat(),
                 "updated_datetime": test_filter.updated_datetime.isoformat(),
             }

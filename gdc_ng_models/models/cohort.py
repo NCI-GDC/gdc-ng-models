@@ -9,6 +9,7 @@ cohort data model includes the following entities:
     CohortSnapshot: Defines the set of cases for a static cohort
 """
 
+import enum
 import uuid
 import sqlalchemy
 from sqlalchemy.dialects import postgresql
@@ -16,6 +17,12 @@ from sqlalchemy.ext import declarative
 from gdc_ng_models.models import audit
 
 Base = declarative.declarative_base()
+
+
+class CohortType(enum.Enum):
+    """Enumeration to define a cohort type."""
+    static = 1
+    dynamic = 2
 
 
 class AnonymousContext(Base, audit.AuditColumnsMixin):
@@ -156,7 +163,7 @@ class CohortFilter(Base, audit.AuditColumnsMixin):
     """A filter defining the set of cases in a cohort.
 
     Provides the properties for defining a cohort filter, including the filter
-    itself, a static indicator, and a self-referential foreign key to maintain
+    itself, a type indicator, and a self-referential foreign key to maintain
     a history of changes.
 
     Attributes:
@@ -164,7 +171,7 @@ class CohortFilter(Base, audit.AuditColumnsMixin):
         parent_id: A self-referential key to maintain parent-child history.
         cohort_id: The ID of the cohort associated with the filter.
         filters: A representation of the filters defining the case set
-        static: An indicator to designate a filter as static.
+        type: A cohort type designation.
         created_datetime: The date and time when the record is created.
         updated_datetime: The date and time when the record is updated.
     """
@@ -181,7 +188,11 @@ class CohortFilter(Base, audit.AuditColumnsMixin):
         nullable=False,
     )
     filters = sqlalchemy.Column(postgresql.JSONB, nullable=False)
-    static = sqlalchemy.Column(sqlalchemy.Boolean, nullable=False, default=False)
+    type = sqlalchemy.Column(
+        sqlalchemy.Enum(CohortType),
+        nullable=False,
+        default=CohortType.static,
+    )
 
     # establishes a many-to-one relationship with Cohort
     cohort = sqlalchemy.orm.relationship("Cohort", back_populates="filters")
@@ -204,14 +215,14 @@ class CohortFilter(Base, audit.AuditColumnsMixin):
             "parent_id={parent_id}, "
             "cohort_id={cohort_id}, "
             "filters={filters}, "
-            "static={static}, "
+            "type={type}, "
             "created_datetime={created_datetime}, "
             "updated_datetime={updated_datetime})>".format(
                 id=self.id,
                 parent_id=self.parent_id,
                 cohort_id=self.cohort_id,
                 filters=self.filters,
-                static=self.static,
+                type=self.type,
                 created_datetime=self.created_datetime.isoformat()
                 if self.created_datetime
                 else None,
@@ -227,7 +238,7 @@ class CohortFilter(Base, audit.AuditColumnsMixin):
             "parent_id": self.parent_id,
             "cohort_id": str(self.cohort_id),
             "filters": self.filters,
-            "static": self.static,
+            "type": str(self.type),
             "created_datetime": self.created_datetime.isoformat()
             if self.created_datetime
             else None,
