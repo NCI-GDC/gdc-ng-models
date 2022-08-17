@@ -9,7 +9,6 @@ cohort data model includes the following entities:
     CohortSnapshot: Defines the set of cases for a static cohort
 """
 
-import enum
 import uuid
 import sqlalchemy
 from sqlalchemy.dialects import postgresql
