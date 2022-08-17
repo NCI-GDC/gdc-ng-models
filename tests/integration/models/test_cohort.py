@@ -1,8 +1,14 @@
+import enum
 import json
 import uuid
 import pytest
 from gdc_ng_models.models import cohort
 from sqlalchemy import exc
+
+
+class CohortType(enum.Enum):
+    static = enum.auto()
+    dynamic = enum.auto()
 
 
 @pytest.fixture(scope="function")
@@ -34,7 +40,7 @@ def fixture_static_filter(create_cohort_db, db_session, fixture_cohort):
         filters=[
             {"field": "cases.primary_site", "value": ["breast", "bronchus and lung"]}
         ],
-        cohort_type="static",
+        cohort_type=CohortType.static.name,
     )
     db_session.add(test_filter)
     db_session.commit()
@@ -49,7 +55,7 @@ def fixture_static_filter_parent_child(create_cohort_db, db_session, fixture_coh
     parent_filter = cohort.CohortFilter(
         cohort_id=fixture_cohort.id,
         filters=[{"field": "cases.primary_site", "value": ["breast"]}],
-        cohort_type="static",
+        cohort_type=CohortType.static.name,
     )
     db_session.add(parent_filter)
     db_session.commit()
@@ -59,7 +65,7 @@ def fixture_static_filter_parent_child(create_cohort_db, db_session, fixture_coh
         parent_id=parent_filter.id,
         cohort_id=fixture_cohort.id,
         filters=[{"field": "cases.primary_site", "value": ["bronchus and lung"]}],
-        cohort_type="static",
+        cohort_type=CohortType.static.name,
     )
     db_session.add(child_filter)
     db_session.commit()
@@ -264,7 +270,7 @@ def test_cohort__current_filter(create_cohort_db, db_session, fixture_cohort):
         parent_id=None,
         cohort_id=fixture_cohort.id,
         filters=[],
-        cohort_type="dynamic",
+        cohort_type=CohortType.dynamic.name,
     )
     db_session.add(filter_1)
     db_session.commit()
@@ -275,7 +281,7 @@ def test_cohort__current_filter(create_cohort_db, db_session, fixture_cohort):
         parent_id=filter_1.id,
         cohort_id=fixture_cohort.id,
         filters=[],
-        cohort_type="dynamic",
+        cohort_type=CohortType.dynamic.name,
     )
     db_session.add(filter_2)
     db_session.commit()
@@ -345,7 +351,7 @@ def test_cohort_filter__valid_create(create_cohort_db, db_session, fixture_cohor
     expected_filters = [
         {"field": "cases.primary_site", "value": ["breast", "bronchus and lung"]}
     ]
-    expected_type = "static"
+    expected_type = CohortType.static.name
 
     # create cohort filter
     test_filter = cohort.CohortFilter(
@@ -416,7 +422,7 @@ def test_cohort_filter__cohort_bidirectional_relationship(
         parent_id=None,
         cohort_id=fixture_cohort.id,
         filters=[],
-        cohort_type="dynamic",
+        cohort_type=CohortType.dynamic.name,
     )
     db_session.add(test_filter)
     db_session.commit()
@@ -460,7 +466,7 @@ def test_cohort_filter__static_default(create_cohort_db, db_session, fixture_coh
     db_session.add(test_filter)
     db_session.commit()
 
-    assert test_filter.cohort_type == "static"
+    assert test_filter.cohort_type == CohortType.static.name
 
 
 def test_cohort_filter__parent_id_history(create_cohort_db, db_session, fixture_cohort):
