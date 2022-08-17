@@ -67,6 +67,36 @@ def fixture_static_filter_parent_child(create_cohort_db, db_session, fixture_coh
     return parent_filter, child_filter
 
 
+@pytest.fixture(scope="function")
+def fixture_cohort_static_full(
+        create_cohort_db,
+        db_session,
+        fixture_static_filter_parent_child
+):
+    """Create a static cohort with a full relationship hierarchy.
+
+    This returns a static cohort with multiple filters, each including a snapshot
+    """
+    filter_1 = fixture_static_filter_parent_child[0]
+    snapshot_1 = cohort.CohortSnapshot(
+        filter_id=filter_1.id,
+        data_release=uuid.uuid4(),
+        case_ids=[uuid.uuid4() for i in range(10)],
+    )
+    db_session.add(snapshot_1)
+
+    filter_2 = fixture_static_filter_parent_child[1]
+    snapshot_2 = cohort.CohortSnapshot(
+        filter_id=filter_2.id,
+        data_release=uuid.uuid4(),
+        case_ids=[uuid.uuid4() for i in range(10)],
+    )
+    db_session.add(snapshot_2)
+    db_session.commit()
+
+    return filter_1.cohort
+
+
 def test_anonymous_context__valid_create(create_cohort_db, db_session):
     """Tests creation of a valid anonymous context entity."""
 
@@ -705,3 +735,39 @@ def test_cohort_snapshot__to_json(create_cohort_db, db_session, fixture_static_f
     )
 
     assert test_snapshot.to_json() == expected_json
+
+
+def test_cohort_cascade_delete(
+        create_cohort_db,
+        db_session,
+        fixture_cohort_static_full,
+):
+    # record ids to delete
+    test_cohort = fixture_cohort_static_full
+    cohort_id = test_cohort.id
+    filter_ids = [cohort_filter.id for cohort_filter in test_cohort.filters]
+    snapshot_ids = [cohort_filter.snapshot.id for cohort_filter in test_cohort.filters]
+
+    # validate test cohort details
+    assert test_cohort is not None
+    assert filter_ids is not None
+    assert len(filter_ids) == 2
+    assert len(snapshot_ids) == 2
+
+    # validate database objects exist
+    assert db_session.query(cohort.Cohort).get(cohort_id) is not None
+    for filter_id in filter_ids:
+        assert db_session.query(cohort.CohortFilter).get(filter_id) is not None
+    for snapshot_id in snapshot_ids:
+        assert db_session.query(cohort.CohortSnapshot).get(snapshot_id) is not None
+
+    # delete cohort
+    db_session.delete(test_cohort)
+    db_session.commit()
+
+    # verify cohort is deleted and cascades to related filters and snapshots
+    assert db_session.query(cohort.Cohort).get(cohort_id) is None
+    for filter_id in filter_ids:
+        assert db_session.query(cohort.CohortFilter).get(filter_id) is None
+    for snapshot_id in snapshot_ids:
+        assert db_session.query(cohort.CohortSnapshot).get(snapshot_id) is None

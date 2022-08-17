@@ -112,6 +112,7 @@ class Cohort(Base, audit.AuditColumnsMixin):
         order_by="desc(CohortFilter.id)",
         back_populates="cohort",
         lazy="selectin",
+        cascade="all, delete-orphan",
     )
 
     def get_current_filter(self):
@@ -193,6 +194,7 @@ class CohortFilter(Base, audit.AuditColumnsMixin):
         back_populates="filter",
         lazy="selectin",
         uselist=False,
+        cascade="all, delete-orphan",
     )
 
     # establishes an adjacency relationship (i.e. self-referential key)
