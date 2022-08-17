@@ -7,8 +7,8 @@ from sqlalchemy import exc
 
 
 class CohortType(enum.Enum):
-    static = enum.auto()
-    dynamic = enum.auto()
+    static = 1
+    dynamic = 2
 
 
 @pytest.fixture(scope="function")
