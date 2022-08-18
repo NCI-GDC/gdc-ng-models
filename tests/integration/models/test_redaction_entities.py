@@ -8,11 +8,9 @@ from gdc_ng_models.models.redaction import (
 )
 
 
-@pytest.fixture(scope='function')
-def redacted_fixture(
-        create_redaction_log_db,
-        db_session):
-    """ Creates a redacted log entry"""
+@pytest.fixture(scope="function")
+def redacted_fixture(create_redaction_log_db, db_session):
+    """Creates a redacted log entry"""
 
     log = RedactionLog()
     log.initiated_by = "TEST"
@@ -24,10 +22,7 @@ def redacted_fixture(
     count = 0
     for i in range(random.randint(2, 5)):
         count += 1
-        entry = RedactionEntry(
-            node_id=str(uuid.uuid4()),
-            node_type="Aligned Reads"
-        )
+        entry = RedactionEntry(node_id=str(uuid.uuid4()), node_type="Aligned Reads")
         log.entries.append(entry)
 
     db_session.add(log)

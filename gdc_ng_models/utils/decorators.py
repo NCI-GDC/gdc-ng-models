@@ -9,5 +9,7 @@ def try_or_log_error(logger):
                 return func(*args, **kwargs)
             except Exception as e:
                 logger.error(e)
+
         return func_wrapper
+
     return try_or_log_error_decorator

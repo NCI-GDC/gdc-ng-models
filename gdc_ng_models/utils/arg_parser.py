@@ -6,39 +6,39 @@ def get_parser():
     parser = ArgumentParser()
 
     parser.add_argument(
-        '-m',
-        '--module',
+        "-m",
+        "--module",
         type=str,
-        help='The non-graph modules to be created',
+        help="The non-graph modules to be created",
         required=True,
     )
 
     parser.add_argument(
-        '-H',
-        '--host',
+        "-H",
+        "--host",
         type=str,
-        help='The database host',
+        help="The database host",
         required=False,
     )
 
     parser.add_argument(
-        '-d',
-        '--database',
+        "-d",
+        "--database",
         type=str,
-        help='The name of the database',
+        help="The name of the database",
         required=False,
     )
 
     parser.add_argument(
-        '-u',
-        '--admin_user',
+        "-u",
+        "--admin_user",
         type=str,
         required=False,
     )
 
     parser.add_argument(
-        '-p',
-        '--admin_password',
+        "-p",
+        "--admin_password",
         type=str,
         required=False,
     )
@@ -48,14 +48,16 @@ def get_parser():
     create_parser = sub_parser.add_parser("create", help="Create tables")
     create_parser.set_defaults(action="create")
 
-    grant_parser = sub_parser.add_parser("grant", help="Grants privileges in module tables")
+    grant_parser = sub_parser.add_parser(
+        "grant", help="Grants privileges in module tables"
+    )
 
     grant_parser.add_argument(
         "-r",
         "--role",
         type=str,
         required=True,
-        help="User role to grant permissions to"
+        help="User role to grant permissions to",
     )
 
     grant_parser.add_argument(
@@ -63,18 +65,20 @@ def get_parser():
         "--permission",
         required=True,
         choices=["read", "write"],
-        help="Permission to grand to user"
+        help="Permission to grand to user",
     )
     grant_parser.set_defaults(action="grant")
 
-    revoke_parser = sub_parser.add_parser("revoke", help="Revokes privileges in module tables")
+    revoke_parser = sub_parser.add_parser(
+        "revoke", help="Revokes privileges in module tables"
+    )
 
     revoke_parser.add_argument(
         "-r",
         "--role",
         type=str,
         required=True,
-        help="User role to grant permissions to"
+        help="User role to grant permissions to",
     )
 
     revoke_parser.add_argument(
@@ -82,7 +86,7 @@ def get_parser():
         "--permission",
         required=True,
         choices=["read", "write"],
-        help="User permission to revoke"
+        help="User permission to revoke",
     )
     revoke_parser.set_defaults(action="revoke")
     return parser
