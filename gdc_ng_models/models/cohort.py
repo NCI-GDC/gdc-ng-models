@@ -111,6 +111,7 @@ class Cohort(Base, audit.AuditColumnsMixin):
         order_by="desc(CohortFilter.id)",
         back_populates="cohort",
         lazy="selectin",
+        cascade="all, delete-orphan",
     )
 
     def get_current_filter(self):
@@ -156,7 +157,7 @@ class CohortFilter(Base, audit.AuditColumnsMixin):
     """A filter defining the set of cases in a cohort.
 
     Provides the properties for defining a cohort filter, including the filter
-    itself, a static indicator, and a self-referential foreign key to maintain
+    itself, a cohort type indicator, and a self-referential foreign key to maintain
     a history of changes.
 
     Attributes:
@@ -164,7 +165,7 @@ class CohortFilter(Base, audit.AuditColumnsMixin):
         parent_id: A self-referential key to maintain parent-child history.
         cohort_id: The ID of the cohort associated with the filter.
         filters: A representation of the filters defining the case set
-        static: An indicator to designate a filter as static.
+        cohort_type: A cohort type designation.
         created_datetime: The date and time when the record is created.
         updated_datetime: The date and time when the record is updated.
     """
@@ -181,7 +182,7 @@ class CohortFilter(Base, audit.AuditColumnsMixin):
         nullable=False,
     )
     filters = sqlalchemy.Column(postgresql.JSONB, nullable=False)
-    static = sqlalchemy.Column(sqlalchemy.Boolean, nullable=False, default=False)
+    cohort_type = sqlalchemy.Column(sqlalchemy.Text, nullable=False, default="static")
 
     # establishes a many-to-one relationship with Cohort
     cohort = sqlalchemy.orm.relationship("Cohort", back_populates="filters")
@@ -192,6 +193,7 @@ class CohortFilter(Base, audit.AuditColumnsMixin):
         back_populates="filter",
         lazy="selectin",
         uselist=False,
+        cascade="all, delete-orphan",
     )
 
     # establishes an adjacency relationship (i.e. self-referential key)
@@ -204,14 +206,14 @@ class CohortFilter(Base, audit.AuditColumnsMixin):
             "parent_id={parent_id}, "
             "cohort_id={cohort_id}, "
             "filters={filters}, "
-            "static={static}, "
+            "cohort_type={cohort_type}, "
             "created_datetime={created_datetime}, "
             "updated_datetime={updated_datetime})>".format(
                 id=self.id,
                 parent_id=self.parent_id,
                 cohort_id=self.cohort_id,
                 filters=self.filters,
-                static=self.static,
+                cohort_type=self.cohort_type,
                 created_datetime=self.created_datetime.isoformat()
                 if self.created_datetime
                 else None,
@@ -227,7 +229,7 @@ class CohortFilter(Base, audit.AuditColumnsMixin):
             "parent_id": self.parent_id,
             "cohort_id": str(self.cohort_id),
             "filters": self.filters,
-            "static": self.static,
+            "cohort_type": self.cohort_type,
             "created_datetime": self.created_datetime.isoformat()
             if self.created_datetime
             else None,
