@@ -6,9 +6,10 @@ setup(
     use_scm_version={"local_scheme": "dirty-tag", "fallback_version": "local"},
     description="Non-graph GDC models",
     install_requires=[
+        "cryptography~=3.2.1",
         "psycopg2-binary~=2.8.2",
+        "pytz~=2019.3",
         "sqlalchemy~=1.3.3",
-        "cryptography~=3.2.1 "
     ],
     license="Apache",
     packages=find_packages(),
