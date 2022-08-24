@@ -10,7 +10,7 @@ logger = getLogger(__name__)
 
 PERMISSIONS = dict(
     READ="SELECT",
-    WRITE="SELECT, INSERT, UPDATE, DELETE"
+    WRITE="USAGE, SELECT, INSERT, UPDATE, DELETE"
 )
 
 
