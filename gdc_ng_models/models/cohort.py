@@ -171,7 +171,15 @@ class CohortFilter(Base, audit.AuditColumnsMixin):
     """
 
     __tablename__ = "cohort_filter"
-    id = sqlalchemy.Column(sqlalchemy.BigInteger, primary_key=True)
+    id_seq = sqlalchemy.schema.Sequence(
+        name="cohort_filter_id_seq",
+        metadata=Base.metadata,
+    )
+    id = sqlalchemy.Column(
+        sqlalchemy.BigInteger,
+        primary_key=True,
+        server_default=id_seq.next_value(),
+    )
     parent_id = sqlalchemy.Column(
         sqlalchemy.BigInteger,
         sqlalchemy.ForeignKey("cohort_filter.id"),
@@ -255,7 +263,15 @@ class CohortSnapshot(Base, audit.AuditColumnsMixin):
     """
 
     __tablename__ = "cohort_snapshot"
-    id = sqlalchemy.Column(sqlalchemy.BigInteger, primary_key=True)
+    id_seq = sqlalchemy.schema.Sequence(
+        name="cohort_snapshot_id_seq",
+        metadata=Base.metadata,
+    )
+    id = sqlalchemy.Column(
+        sqlalchemy.BigInteger,
+        primary_key=True,
+        server_default=id_seq.next_value(),
+    )
     filter_id = sqlalchemy.Column(
         sqlalchemy.BigInteger,
         sqlalchemy.ForeignKey("cohort_filter.id"),
