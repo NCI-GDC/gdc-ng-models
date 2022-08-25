@@ -8,7 +8,7 @@ setup(
     install_requires=[
         "psycopg2-binary~=2.8.2",
         "sqlalchemy~=1.3.3",
-        "cryptography~=3.2.1 "
+        "cryptography~=3.2.1 ",
     ],
     license="Apache",
     packages=find_packages(),
