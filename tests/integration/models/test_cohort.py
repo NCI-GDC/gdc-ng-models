@@ -1,8 +1,14 @@
+import enum
 import json
 import uuid
 import pytest
 from gdc_ng_models.models import cohort
 from sqlalchemy import exc
+
+
+class CohortType(enum.Enum):
+    static = 1
+    dynamic = 2
 
 
 @pytest.fixture(scope="function")
@@ -34,7 +40,7 @@ def fixture_static_filter(create_cohort_db, db_session, fixture_cohort):
         filters=[
             {"field": "cases.primary_site", "value": ["breast", "bronchus and lung"]}
         ],
-        static=True,
+        cohort_type=CohortType.static.name,
     )
     db_session.add(test_filter)
     db_session.commit()
@@ -49,7 +55,7 @@ def fixture_static_filter_parent_child(create_cohort_db, db_session, fixture_coh
     parent_filter = cohort.CohortFilter(
         cohort_id=fixture_cohort.id,
         filters=[{"field": "cases.primary_site", "value": ["breast"]}],
-        static=True,
+        cohort_type=CohortType.static.name,
     )
     db_session.add(parent_filter)
     db_session.commit()
@@ -59,12 +65,42 @@ def fixture_static_filter_parent_child(create_cohort_db, db_session, fixture_coh
         parent_id=parent_filter.id,
         cohort_id=fixture_cohort.id,
         filters=[{"field": "cases.primary_site", "value": ["bronchus and lung"]}],
-        static=True,
+        cohort_type=CohortType.static.name,
     )
     db_session.add(child_filter)
     db_session.commit()
 
     return parent_filter, child_filter
+
+
+@pytest.fixture(scope="function")
+def fixture_cohort_static_full(
+        create_cohort_db,
+        db_session,
+        fixture_static_filter_parent_child
+):
+    """Create a static cohort with a full relationship hierarchy.
+
+    This returns a static cohort with multiple filters, each including a snapshot
+    """
+    filter_1 = fixture_static_filter_parent_child[0]
+    snapshot_1 = cohort.CohortSnapshot(
+        filter_id=filter_1.id,
+        data_release=uuid.uuid4(),
+        case_ids=[uuid.uuid4() for i in range(10)],
+    )
+    db_session.add(snapshot_1)
+
+    filter_2 = fixture_static_filter_parent_child[1]
+    snapshot_2 = cohort.CohortSnapshot(
+        filter_id=filter_2.id,
+        data_release=uuid.uuid4(),
+        case_ids=[uuid.uuid4() for i in range(10)],
+    )
+    db_session.add(snapshot_2)
+    db_session.commit()
+
+    return filter_1.cohort
 
 
 def test_anonymous_context__valid_create(create_cohort_db, db_session):
@@ -234,7 +270,7 @@ def test_cohort__current_filter(create_cohort_db, db_session, fixture_cohort):
         parent_id=None,
         cohort_id=fixture_cohort.id,
         filters=[],
-        static=False,
+        cohort_type=CohortType.dynamic.name,
     )
     db_session.add(filter_1)
     db_session.commit()
@@ -245,7 +281,7 @@ def test_cohort__current_filter(create_cohort_db, db_session, fixture_cohort):
         parent_id=filter_1.id,
         cohort_id=fixture_cohort.id,
         filters=[],
-        static=False,
+        cohort_type=CohortType.dynamic.name,
     )
     db_session.add(filter_2)
     db_session.commit()
@@ -315,7 +351,7 @@ def test_cohort_filter__valid_create(create_cohort_db, db_session, fixture_cohor
     expected_filters = [
         {"field": "cases.primary_site", "value": ["breast", "bronchus and lung"]}
     ]
-    expected_static = False
+    expected_type = CohortType.static.name
 
     # create cohort filter
     test_filter = cohort.CohortFilter(
@@ -323,7 +359,7 @@ def test_cohort_filter__valid_create(create_cohort_db, db_session, fixture_cohor
         parent_id=None,
         cohort_id=expected_cohort_id,
         filters=expected_filters,
-        static=expected_static,
+        cohort_type=expected_type,
     )
     db_session.add(test_filter)
     db_session.commit()
@@ -333,7 +369,7 @@ def test_cohort_filter__valid_create(create_cohort_db, db_session, fixture_cohor
     assert test_filter.parent_id is None
     assert test_filter.cohort_id == expected_cohort_id
     assert test_filter.filters == expected_filters
-    assert test_filter.static == expected_static
+    assert test_filter.cohort_type == expected_type
 
 
 def test_cohort_filter__unique_ids(create_cohort_db, db_session, fixture_cohort):
@@ -386,7 +422,7 @@ def test_cohort_filter__cohort_bidirectional_relationship(
         parent_id=None,
         cohort_id=fixture_cohort.id,
         filters=[],
-        static=False,
+        cohort_type=CohortType.dynamic.name,
     )
     db_session.add(test_filter)
     db_session.commit()
@@ -430,7 +466,7 @@ def test_cohort_filter__static_default(create_cohort_db, db_session, fixture_coh
     db_session.add(test_filter)
     db_session.commit()
 
-    assert test_filter.static is False
+    assert test_filter.cohort_type == CohortType.static.name
 
 
 def test_cohort_filter__parent_id_history(create_cohort_db, db_session, fixture_cohort):
@@ -486,7 +522,7 @@ def test_cohort_filter__to_json(create_cohort_db, db_session, fixture_cohort):
                 "parent_id": None,
                 "cohort_id": str(test_filter.cohort_id),
                 "filters": test_filter.filters,
-                "static": test_filter.static,
+                "cohort_type": test_filter.cohort_type,
                 "created_datetime": test_filter.created_datetime.isoformat(),
                 "updated_datetime": test_filter.updated_datetime.isoformat(),
             }
@@ -705,3 +741,39 @@ def test_cohort_snapshot__to_json(create_cohort_db, db_session, fixture_static_f
     )
 
     assert test_snapshot.to_json() == expected_json
+
+
+def test_cohort_cascade_delete(
+        create_cohort_db,
+        db_session,
+        fixture_cohort_static_full,
+):
+    # record ids to delete
+    test_cohort = fixture_cohort_static_full
+    cohort_id = test_cohort.id
+    filter_ids = [cohort_filter.id for cohort_filter in test_cohort.filters]
+    snapshot_ids = [cohort_filter.snapshot.id for cohort_filter in test_cohort.filters]
+
+    # validate test cohort details
+    assert test_cohort is not None
+    assert filter_ids is not None
+    assert len(filter_ids) == 2
+    assert len(snapshot_ids) == 2
+
+    # validate database objects exist
+    assert db_session.query(cohort.Cohort).get(cohort_id) is not None
+    for filter_id in filter_ids:
+        assert db_session.query(cohort.CohortFilter).get(filter_id) is not None
+    for snapshot_id in snapshot_ids:
+        assert db_session.query(cohort.CohortSnapshot).get(snapshot_id) is not None
+
+    # delete cohort
+    db_session.delete(test_cohort)
+    db_session.commit()
+
+    # verify cohort is deleted and cascades to related filters and snapshots
+    assert db_session.query(cohort.Cohort).get(cohort_id) is None
+    for filter_id in filter_ids:
+        assert db_session.query(cohort.CohortFilter).get(filter_id) is None
+    for snapshot_id in snapshot_ids:
+        assert db_session.query(cohort.CohortSnapshot).get(snapshot_id) is None

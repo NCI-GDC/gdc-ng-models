@@ -36,13 +36,19 @@ class ReleasedData(Base, audit.AuditColumnsMixin, ReleasedDataMixin):
     __tablename__ = "released_data"
     __table_args__ = (
         schema.PrimaryKeyConstraint(
-            "program_name", "project_code", "data_type", name="released_data_pk",
+            "program_name",
+            "project_code",
+            "data_type",
+            name="released_data_pk",
         ),
     )
 
     def __repr__(self):
         return "<ReleasedData(project_id='{}', data_type='{}', is_controlled={}, is_open={})>".format(
-            self.project_id, self.data_type, self.is_controlled, self.is_open,
+            self.project_id,
+            self.data_type,
+            self.is_controlled,
+            self.is_open,
         )
 
     is_controlled = schema.Column(sqltypes.Boolean, nullable=False)
@@ -74,7 +80,11 @@ class ReleasedDataLog(Base, audit.AuditColumnsMixin, ReleasedDataMixin):
 
     def __repr__(self):
         return "<ReleasedDataLog(project_id='{}', release_number={}, data_type='{}', is_open={}, action='{}')>".format(
-            self.project_id, self.release_number, self.data_type, self.is_open, self.action,
+            self.project_id,
+            self.release_number,
+            self.data_type,
+            self.is_open,
+            self.action,
         )
 
     release_data_log_id_seq = schema.Sequence(
@@ -92,7 +102,9 @@ class ReleasedDataLog(Base, audit.AuditColumnsMixin, ReleasedDataMixin):
     def validate_action(self, key, action):
         if action not in RELEASED_DATA_LOG_ACTION_VALUES:
             raise ValueError(
-                """"{action}" is not a valid value for {key}""".format(action=action, key=key)
+                """"{action}" is not a valid value for {key}""".format(
+                    action=action, key=key
+                )
             )
         return action
 

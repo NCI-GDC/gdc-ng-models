@@ -7,7 +7,11 @@ from gdc_ng_models.models import released_data
 @pytest.fixture
 def fake_released_data(create_released_data_db, db_session):
     def helper(
-        name="name", code="code", is_controlled=False, data_type="cnv", is_open=False,
+        name="name",
+        code="code",
+        is_controlled=False,
+        data_type="cnv",
+        is_open=False,
     ):
         node = released_data.ReleasedData(
             program_name=name,
@@ -138,7 +142,7 @@ def test_release_data_log__big_int_id(db_session):
         release_number="dummy",
         data_type="cnv",
         is_open=True,
-        action="release"
+        action="release",
     )
     db_session.add(rdl_node)
     db_session.commit()

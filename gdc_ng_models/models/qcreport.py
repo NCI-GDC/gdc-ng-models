@@ -8,7 +8,8 @@ from sqlalchemy import (
     String,
     Text,
     text,
-    Sequence)
+    Sequence,
+)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, validates
 from sqlalchemy.dialects.postgresql import JSONB
@@ -17,18 +18,13 @@ from sqlalchemy.dialects.postgresql import JSONB
 Base = declarative_base()
 SEVERITY = Enum("CRITICAL", "WARNING", "PASSED", name="error_severity")
 TEST_RUN_STATUS = Enum(
-    "PENDING",
-    "RUNNING",
-    "SUCCESS",
-    "ERROR",
-    "FAILED",
-    name="test_run_status"
+    "PENDING", "RUNNING", "SUCCESS", "ERROR", "FAILED", name="test_run_status"
 )
 
 
 class TestRun(Base):
 
-    __tablename__ = 'qc_test_runs'
+    __tablename__ = "qc_test_runs"
 
     id_seq = Sequence("qc_test_runs_id_seq", metadata=Base.metadata)
     id = Column(BigInteger, primary_key=True, server_default=id_seq.next_value())
@@ -39,49 +35,48 @@ class TestRun(Base):
     is_stale = Column(Boolean(64), nullable=False, default=False)
 
     # e.g. pending/running/finished
-    status = Column(
-        TEST_RUN_STATUS,
-        default="PENDING",
-        nullable=False,
-        index=True
-    )
+    status = Column(TEST_RUN_STATUS, default="PENDING", nullable=False, index=True)
 
-    test_results = relationship('ValidationResult',
-                                back_populates='test_run',
-                                cascade='all, delete, delete-orphan')
+    test_results = relationship(
+        "ValidationResult",
+        back_populates="test_run",
+        cascade="all, delete, delete-orphan",
+    )
 
     date_created = Column(
         DateTime(timezone=True),
         nullable=False,
-        server_default=text('now()'),
+        server_default=text("now()"),
     )
 
     last_updated = Column(
         DateTime(timezone=True),
         nullable=False,
-        server_default=text('now()'),
+        server_default=text("now()"),
     )
 
     def __repr__(self):
         return "<TestRun(id='%d', test_type='%s', status='%s')>" % (
-            self.id, self.test_type, self.status
+            self.id,
+            self.test_type,
+            self.status,
         )
 
     def to_json(self):
         return {
-            'id': self.id,
-            'project_id': self.project_id,
-            'entity_id': self.entity_id,
-            'test_type': self.test_type,
-            'status': self.status,
-            'date_created': self.date_created.isoformat(),
-            'last_updated': self.last_updated.isoformat()
+            "id": self.id,
+            "project_id": self.project_id,
+            "entity_id": self.entity_id,
+            "test_type": self.test_type,
+            "status": self.status,
+            "date_created": self.date_created.isoformat(),
+            "last_updated": self.last_updated.isoformat(),
         }
 
 
 class ValidationResult(Base):
 
-    __tablename__ = 'qc_validation_results'
+    __tablename__ = "qc_validation_results"
 
     id_seq = Sequence("qc_validation_results_id_seq", metadata=Base.metadata)
     id = Column(BigInteger, primary_key=True, server_default=id_seq.next_value())
@@ -89,7 +84,7 @@ class ValidationResult(Base):
     node_id = Column(String(64), nullable=False)
     submitter_id = Column(String(128), nullable=False)
 
-    error_type = Column(String(128), nullable=True, default='', index=True)
+    error_type = Column(String(128), nullable=True, default="", index=True)
 
     # from Node.label
     node_type = Column(String(128), nullable=False, index=True)
@@ -100,23 +95,20 @@ class ValidationResult(Base):
     related_nodes = Column(JSONB, nullable=True)
 
     test_run_id = Column(
-        BigInteger,
-        ForeignKey("qc_test_runs.id"),
-        nullable=False,
-        primary_key=True
+        BigInteger, ForeignKey("qc_test_runs.id"), nullable=False, primary_key=True
     )
-    test_run = relationship('TestRun', back_populates='test_results')
+    test_run = relationship("TestRun", back_populates="test_results")
 
     date_created = Column(
         DateTime(timezone=True),
         nullable=False,
-        server_default=text('now()'),
+        server_default=text("now()"),
     )
 
     last_updated = Column(
         DateTime(timezone=True),
         nullable=False,
-        server_default=text('now()'),
+        server_default=text("now()"),
     )
 
     @validates("severity")
@@ -135,18 +127,16 @@ class ValidationResult(Base):
         return severity
 
     def __repr__(self):
-        return "<ValidationResult(id=%d, error='%s')>" % (
-            self.id, self.error_type
-        )
+        return "<ValidationResult(id=%d, error='%s')>" % (self.id, self.error_type)
 
     def to_json(self):
         return {
-            'node_id': self.node_id,
-            'submitter_id': self.submitter_id,
-            'error': self.error_type,
-            'severity': self.severity,
-            'message': self.message,
-            'related_nodes': self.related_nodes,
-            'date_created': self.date_created.isoformat(),
-            'last_updated': self.last_updated.isoformat()
+            "node_id": self.node_id,
+            "submitter_id": self.submitter_id,
+            "error": self.error_type,
+            "severity": self.severity,
+            "message": self.message,
+            "related_nodes": self.related_nodes,
+            "date_created": self.date_created.isoformat(),
+            "last_updated": self.last_updated.isoformat(),
         }
