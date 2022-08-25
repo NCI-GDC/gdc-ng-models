@@ -18,7 +18,7 @@ The `ng` in `gdc-ng-models` stands for _non-graph_.
 ```sh
 psql -c "create user gdc_test with superuser password 'gdc_test';" -U postgres
 psql -c 'create database automated_test with owner "gdc_test";' -U postgres
-./service_wrapper.sh pytest tests/
+pytest tests/
 ```
 
 Or we can use [tox](https://tox.readthedocs.io/en/latest/) for testing
