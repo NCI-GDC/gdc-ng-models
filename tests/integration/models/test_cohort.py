@@ -75,9 +75,7 @@ def fixture_static_filter_parent_child(create_cohort_db, db_session, fixture_coh
 
 @pytest.fixture(scope="function")
 def fixture_cohort_static_full(
-        create_cohort_db,
-        db_session,
-        fixture_static_filter_parent_child
+    create_cohort_db, db_session, fixture_static_filter_parent_child
 ):
     """Create a static cohort with a full relationship hierarchy.
 
@@ -744,9 +742,9 @@ def test_cohort_snapshot__to_json(create_cohort_db, db_session, fixture_static_f
 
 
 def test_cohort_cascade_delete(
-        create_cohort_db,
-        db_session,
-        fixture_cohort_static_full,
+    create_cohort_db,
+    db_session,
+    fixture_cohort_static_full,
 ):
     # record ids to delete
     test_cohort = fixture_cohort_static_full
