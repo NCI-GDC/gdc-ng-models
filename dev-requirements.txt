@@ -97,7 +97,7 @@ pyopenssl==16.2.0
     #   ndg-httpsclient
 pyparsing==2.4.7
     # via packaging
-pytest==4.6.3
+pytest==4.6.11
     # via
     #   -r dev-requirements.in
     #   pytest-cov

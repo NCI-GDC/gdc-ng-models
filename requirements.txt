@@ -12,7 +12,7 @@ psycopg2-binary==2.8.2
     # via gdc-ng-models (setup.py)
 pycparser==2.20
     # via cffi
-pytz==2019.3
+pytz==2020.5
     # via gdc-ng-models (setup.py)
 six==1.15.0
     # via cryptography

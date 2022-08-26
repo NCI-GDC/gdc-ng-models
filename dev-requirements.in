@@ -1,7 +1,7 @@
 -c requirements.txt
 
 flake8~=3.7.7
-pytest~=4.6.3
+pytest~=4.6.11
 tox~=3.13.2
 pre-commit~=1.21.0
 pytest-cov~=2.7.1

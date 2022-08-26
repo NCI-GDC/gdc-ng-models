@@ -8,7 +8,7 @@ setup(
     install_requires=[
         "cryptography~=3.2.1",
         "psycopg2-binary~=2.8.2",
-        "pytz~=2019.3",
+        "pytz~=2020.5",
         "sqlalchemy~=1.3.3",
     ],
     license="Apache",
