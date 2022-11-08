@@ -207,6 +207,27 @@ def test_cohort__valid_create(create_cohort_db, db_session, fixture_context):
     assert test_cohort.context_id == expected_context_id
 
 
+def test_cohort__valid_update(create_cohort_db, db_session, fixture_context):
+    """Tests valid update of a cohort entity."""
+
+    # create cohort
+    test_cohort = cohort.Cohort(
+        id=uuid.uuid4(),
+        name="test_cohort",
+        context_id=fixture_context.id,
+    )
+    db_session.add(test_cohort)
+    db_session.commit()
+
+    # update cohort
+    test_cohort.name = "updated_cohort"
+    db_session.merge(test_cohort)
+
+    # validate cohort
+    assert test_cohort.name == "updated_cohort"
+    assert test_cohort.updated_datetime > test_cohort.created_datetime
+
+
 def test_cohort__unique_ids(create_cohort_db, db_session, fixture_context):
     """Tests unique constraint on cohort ID."""
 
