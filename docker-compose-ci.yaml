@@ -1,7 +1,7 @@
 version: "3.3"
 services:
   postgres:
-    image: postgres:9.4
+    image: postgres:13
     logging:
       driver: none
     environment: 
@@ -10,7 +10,7 @@ services:
       - ./psql-users.sh:/docker-entrypoint-initdb.d/psql-users.sh
 
   app:
-    image: docker.osdc.io/ncigdc/jenkins-agent:master
+    image: quay.io/ncigdc/jenkins-agent:multipython
     environment:
       SSH_AUTH_SOCK: $SSH_AUTH_SOCK
       HTTPS_PROXY: http://cloud-proxy:3128
@@ -18,7 +18,7 @@ services:
     volumes:
     - .:/home/jenkins
     - $SSH_AUTH_SOCK:$SSH_AUTH_SOCK
-    command: bash -c "wait-for-it localhost:5432 -t 120  && tox --recreate"
+    command: bash -c "./wait-for-it.sh localhost:5432 -t 120 && ./docker-run-tests.sh"
     network_mode: "service:postgres"
     depends_on: 
       - postgres

@@ -1,0 +1,45 @@
+[tool.poetry]
+authors = ["Genomic Data Commons <support@nci-gdc.datacommons.io>"]
+description = "Repository for GDC models that do not have a dependency on psqlgraph"
+license = "Apache-2.0"
+name = "gdc-ng-models"
+packages = [{ include = "gdc_ng_models" }]
+readme = "README.md"
+version = "0.0.0"
+
+[tool.poetry.dependencies]
+alembic = { version = ">=1.6,<2.0", optional = true }
+cryptography = "^38.0.4"
+psycopg2-binary = "^2.9.5"
+python = ">=3.6.1"
+pytz = "^2022.6"
+sqlalchemy = "^1.4.44"
+
+[tool.poetry.extras]
+alembic = ["alembic"]
+
+[tool.poetry.scripts]
+ng-models = { type = "file", reference = "bin/ng-models", extras = ["alembic"] }
+
+[tool.poetry.group.test.dependencies]
+cdisutils = { git = "https://git@github.com/NCI-GDC/cdisutils.git", branch = "feat/dev-XXXX-test-cdisutils-with-py36-plus" }
+coverage = [
+  { version = "^6.2.0", python = "^3.6" },
+  { version = "^6.4.0", python = "^3.7" },
+]
+flake8 = ">=5,<5.1"
+more-itertools = ">=8,<8.1"
+pytest = [
+  { version = "^6.1.0", python = "^3.6" },
+  { version = "^7.0.0", python = "^3.7" },
+]
+
+[tool.poetry-dynamic-versioning]
+dirty = true
+enable = true
+metadata = true
+pattern = "default-unprefixed"
+
+[build-system]
+build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core", "poetry-dynamic-versioning"]
