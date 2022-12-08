@@ -103,7 +103,7 @@ nova = ["python-novaclient (>=17.0,<18.0)"]
 type = "git"
 url = "https://git@github.com/NCI-GDC/cdisutils.git"
 reference = "feat/dev-XXXX-test-cdisutils-with-py36-plus"
-resolved_reference = "1f87b4d3658eaef179c5d66ab65123a56b0e4678"
+resolved_reference = "dea2b7a9834fc8613f02cc5a64d15bfb2b6abb03"
 
 [[package]]
 name = "cffi"
