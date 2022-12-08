@@ -31,6 +31,7 @@ install:
   - pipx install --python=$TOX_PYTHON tox
   - pipx inject --pip-args='--upgrade' tox setuptools 
   - pipx install poetry
+  - pipx inject --pip-args='--upgrade' poetry poetry-core
   - pipx inject poetry poetry-dynamic-versioning
 before_script:
   - psql -U postgres -c "create user test with superuser password 'test';"
