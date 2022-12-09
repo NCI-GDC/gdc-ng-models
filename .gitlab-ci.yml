@@ -8,6 +8,15 @@
   image: $DOCKER_IMAGE-bullseye
 
   before_script:
+    - # Install postgres
+    - sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+    - wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+    - apt update && apt install postgresql-13 postgresql-client-13
+    # Configure postres
+    - cp travis/postgresql.conf /etc/postgresql/13/main/postgresql.conf
+    - cp travis/pg_hba.conf /etc/postgresql/13/main/pg_hba.conf
+    - service postgresql restart
+    # Install tox & poetry
     - apt-get update && apt-get install -y python3-pip python3-venv
     - /usr/bin/python3.9 -m pip install poetry==1.2.2 poetry-dynamic-versioning tox
   script:
