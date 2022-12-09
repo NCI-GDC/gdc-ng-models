@@ -9,12 +9,12 @@ version = "0.0.0"
 
 [tool.poetry.dependencies]
 alembic = { version = ">=1.6,<2.0", optional = true }
+cdisutils = ">=0.0.0"
 cryptography = "^38.0.4"
 psycopg2-binary = "^2.9.5"
 python = ">=3.6.1"
 pytz = "^2022.6"
 sqlalchemy = "^1.4.44"
-cdisutils = ">=0.0.0"
 
 [tool.poetry.extras]
 alembic = ["alembic"]
@@ -34,8 +34,14 @@ pytest = "^7.0.0"
 [[tool.poetry.source]]
 default = false
 name = "gitlab"
-secondary = false
+secondary = true
 url = "https://gitlab.datacommons.io/api/v4/groups/10/-/packages/pypi"
+
+[[tool.poetry.source]]
+default = false
+name = "nexusio"
+secondary = false
+url = "https://nexus.osdc.io/repository/pypi-all"
 
 [tool.poetry-dynamic-versioning]
 dirty = true
