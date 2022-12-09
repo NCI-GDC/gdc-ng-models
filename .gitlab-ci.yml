@@ -1,0 +1,56 @@
+.test:
+  variables:
+    PY_VERSION:
+      description: "The py version with which to run tox e.g. py36"
+    DOCKER_IMAGE:
+      description: "The image to install for tests"
+
+  image: $DOCKER_IMAGE-bullseye
+
+  before_script:
+    - apt-get update && apt-get install -y python3-pip python3-venv
+    - /usr/bin/python3.9 -m pip install poetry==1.2.2 poetry-dynamic-versioning tox
+  script:
+    - tox -e $PY_VERSION
+
+test:3.6:
+  extends:
+    - .test
+  variables:
+    PY_VERSION: py36
+    DOCKER_IMAGE: python:3.6
+
+test:3.7:
+  extends:
+    - .test
+  variables:
+    PY_VERSION: py37
+    DOCKER_IMAGE: python:3.7
+
+test:3.8:
+  extends:
+    - .test
+  variables:
+    PY_VERSION: py38
+    DOCKER_IMAGE: python:3.8
+
+test:3.9:
+  extends:
+    - .test
+  variables:
+    PY_VERSION: py39
+    DOCKER_IMAGE: python:3.9
+
+test:3.10:
+  extends:
+    - .test
+  variables:
+    PY_VERSION: py310
+    DOCKER_IMAGE: python:3.10
+
+test:3.11:
+  extends:
+    - .test
+  variables:
+    PY_VERSION: py311
+    DOCKER_IMAGE: python:3.11
