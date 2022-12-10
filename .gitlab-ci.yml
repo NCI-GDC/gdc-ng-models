@@ -8,16 +8,16 @@
   image: $DOCKER_IMAGE-bullseye
 
   before_script:
-    # Install postgres
+    # Add postgres apt repo
     - sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt bullseye-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
     - wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
     # Configure postres
     - mkdir -p /etc/postgresql/13/main/
     - cp travis/postgresql.conf /etc/postgresql/13/main/postgresql.conf
     - cp travis/pg_hba.conf /etc/postgresql/13/main/pg_hba.conf
-    - apt update && apt install postgresql-13 postgresql-client-13
-    # Install tox & poetry
-    - apt-get update && apt-get install -y python3-pip python3-venv
+    # Install required packages including postgres
+    - apt update && apt install -y postgresql-13 postgresql-client-13 python3-pip python3-venv
+    # Install universal python commands
     - /usr/bin/python3.9 -m pip install pipx
     - pipx install poetry
     - pipx inject poetry poetry-dynamic-versioning
