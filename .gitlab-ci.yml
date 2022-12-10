@@ -9,7 +9,7 @@
 
   before_script:
     # Install postgres
-    - sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+    - sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt bullseye-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
     - wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
     # Configure postres
     - mkdir -p /etc/postgresql/13/main/
@@ -18,8 +18,9 @@
     - apt update && apt install postgresql-13 postgresql-client-13
     # Install tox & poetry
     - apt-get update && apt-get install -y python3-pip python3-venv
-    - /usr/bin/python3.9 -m pipx
+    - /usr/bin/python3.9 -m pip install pipx
     - pipx install poetry
+    - pipx inject poetry poetry-dynamic-versioning
     - pipx install tox
   script:
     - tox -e $PY_VERSION
