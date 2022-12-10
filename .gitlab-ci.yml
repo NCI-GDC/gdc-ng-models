@@ -13,6 +13,7 @@
     - wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
     # Install required packages including postgres
     - apt update && apt install -y postgresql-13 postgresql-client-13 python3-pip python3-venv
+    - service postgresql start
     # Configure postres
     - export PSQL_CONF_DIR=$(dirname $(psql -t -U postgres -c 'SHOW config_file'))
     - echo $PSQL_CONF_DIR
