@@ -20,7 +20,9 @@
     - service postgresql restart
     # Install tox & poetry
     - apt-get update && apt-get install -y python3-pip python3-venv
-    - /usr/bin/python3.9 -m pip install poetry==1.2.2 poetry-dynamic-versioning tox
+    - /usr/bin/python3.9 -m pipx
+    - pipx install poetry
+    - pipx install tox
   script:
     - tox -e $PY_VERSION
 

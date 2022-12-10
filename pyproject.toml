@@ -34,13 +34,13 @@ pytest = "^7.0.0"
 [[tool.poetry.source]]
 default = false
 name = "gitlab"
-secondary = true
+secondary = false
 url = "https://gitlab.datacommons.io/api/v4/groups/10/-/packages/pypi"
 
 [[tool.poetry.source]]
 default = false
 name = "nexusio"
-secondary = false
+secondary = true
 url = "https://nexus.osdc.io/repository/pypi-all"
 
 [tool.poetry-dynamic-versioning]
