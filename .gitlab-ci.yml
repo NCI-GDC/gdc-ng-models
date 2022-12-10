@@ -11,12 +11,15 @@
     # Add postgres apt repo
     - sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt bullseye-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
     - wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add -
-    # Configure postres
-    - mkdir -p /etc/postgresql/13/main/
-    - cp travis/postgresql.conf /etc/postgresql/13/main/postgresql.conf
-    - cp travis/pg_hba.conf /etc/postgresql/13/main/pg_hba.conf
     # Install required packages including postgres
     - apt update && apt install -y postgresql-13 postgresql-client-13 python3-pip python3-venv
+    # Configure postres
+    - export PSQL_CONF_DIR=$(dirname $(psql -t -U postgres -c 'SHOW config_file'))
+    - echo $PSQL_CONF_DIR
+    - cp travis/postgresql.conf $PSQL_CONF_DIR/postgresql.conf
+    - cp travis/pg_hba.conf $PSQL_CONF_DIR/pg_hba.conf
+    - service postgresql restart
+    - ./psql-users.sh
     # Install universal python commands
     - /usr/bin/python3.9 -m pip install pipx && pipx ensurepath && . ~/.bashrc
     - pipx install poetry
