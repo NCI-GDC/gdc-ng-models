@@ -18,7 +18,7 @@
     # Install required packages including postgres
     - apt update && apt install -y postgresql-13 postgresql-client-13 python3-pip python3-venv
     # Install universal python commands
-    - /usr/bin/python3.9 -m pip install pipx && pipx ensurepath
+    - /usr/bin/python3.9 -m pip install pipx && pipx ensurepath && exec bash
     - pipx install poetry
     - pipx inject poetry poetry-dynamic-versioning
     - pipx install tox
