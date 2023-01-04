@@ -19,9 +19,7 @@ cffi==1.14.5
     #   -c requirements.txt
     #   cryptography
 cfgv==2.0.1
-    # via
-    #   -r dev-requirements.in
-    #   pre-commit
+    # via pre-commit
 coverage==5.5
     # via pytest-cov
 cryptography==3.2.1
@@ -58,9 +56,7 @@ jdcal==1.4.1
 mccabe==0.6.1
     # via flake8
 more-itertools==5.0.0
-    # via
-    #   -r dev-requirements.in
-    #   pytest
+    # via pytest
 ndg-httpsclient==0.4.3
     # via cdisutils
 nodeenv==1.5.0
