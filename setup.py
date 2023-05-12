@@ -5,6 +5,12 @@ setup(
     setup_requires=["setuptools_scm<6"],
     use_scm_version={"local_scheme": "dirty-tag", "fallback_version": "local"},
     description="Non-graph GDC models",
+    install_requires=[
+        "cryptography~=3.2.1",
+        "psycopg2-binary~=2.8.2",
+        "pytz~=2020.5",
+        "sqlalchemy~=1.3.3",
+    ],
     license="Apache",
     packages=find_packages(),
     package_data={"gdc_ng_models": ["alembic/*"]},

@@ -11,7 +11,8 @@ gdc_ng_models.egg-info/
 .vscode/
 
 # Virtualenv
-venv/
+venv
+venv*/
 
 # Tox
 .tox

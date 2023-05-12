@@ -6,10 +6,12 @@ gdcdatamodel.test.conftest
 pytest setup for gdcdatamodel tests
 """
 import pytest
+import sqlalchemy
 from sqlalchemy.orm import sessionmaker
 
 from gdc_ng_models.models import (
     batch,
+    cohort,
     download_reports,
     qcreport,
     redaction,
@@ -71,6 +73,29 @@ def create_batch_db(db_engine):
     batch.Base.metadata.create_all(db_engine)
     yield
     batch.Base.metadata.drop_all(db_engine)
+
+
+@pytest.fixture(scope="session")
+def create_cohort_db(db_engine):
+    # type: (sqlalchemy.engine.base.Engine) -> None
+    """Provides capabilities for setup and teardown of a test cohort database.
+
+    Creates a database using the declarations in the cohort module in the
+    gdc_ng_models/models package. This includes the following tables:
+        anonymous_context: Used to authorize changes to a cohort.
+        cohort: Defines the basic properties (name, id, context) of a cohort.
+        cohort_filter: Defines the filter used to generate a cohort case set.
+        cohort_snapshot: Defines the set of cases for a static cohort.
+
+    Args:
+        db_engine: A sqlalchemy database engine.
+
+    Yields:
+        None.
+    """
+    cohort.Base.metadata.create_all(db_engine)
+    yield
+    cohort.Base.metadata.drop_all(db_engine)
 
 
 @pytest.fixture(scope="function")
