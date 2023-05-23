@@ -8,7 +8,7 @@ cffi==1.15.1
     # via cryptography
 cryptography==3.4.8
     # via gdc-ng-models (setup.py)
-psycopg2-binary==2.9.6
+psycopg2==2.9.6
     # via gdc-ng-models (setup.py)
 pycparser==2.21
     # via cffi
