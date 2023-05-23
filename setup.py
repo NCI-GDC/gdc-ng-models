@@ -9,7 +9,7 @@ setup(
         "cryptography~=3.2",
         "psycopg2-binary~=2.8",
         "pytz~=2020.5",
-        "sqlalchemy~=1.3",
+        "sqlalchemy~=1.3.14",
     ],
     license="Apache",
     packages=find_packages(),
