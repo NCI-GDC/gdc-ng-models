@@ -1,8 +1,0 @@
--c requirements.txt
-
-flake8
-pytest
-pytest-cov
-pytest-env
-
-git+https://git@github.com/NCI-GDC/cdisutils.git@1.3.0#egg=cdisutils

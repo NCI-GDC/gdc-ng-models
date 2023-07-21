@@ -13,12 +13,10 @@ PERMISSIONS = dict(READ="SELECT", WRITE="SELECT, INSERT, UPDATE, DELETE")
 
 def get_configs():
     return {
-        "host": os.environ.get("PG_HOST"),
-        "database": os.environ.get("PG_NAME"),
-        "admin_user": os.environ.get("PG_ADMIN_USER"),
-        "admin_password": os.environ.get("PG_ADMIN_PASS"),
-        "app_user": os.environ.get("PG_USER"),
-        "app_password": os.environ.get("PG_PASS"),
+        "host": os.environ.get("PG_HOST", "localhost"),
+        "database": os.environ.get("PG_NAME", "automated_test"),
+        "admin_user": os.environ.get("PG_USER", "postgres"),
+        "admin_password": os.environ.get("PG_PASS", "postgres"),
     }
 
 
