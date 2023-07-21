@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 gdcdatamodel.models.submission
 ----------------------------------
@@ -47,19 +46,19 @@ class TransactionLog(Base):
     def __table_args__(cls):
         tbl = cls.__tablename__
         return (
-            Index("{}_program_idx".format(tbl), "program"),
-            Index("{}_project_idx".format(tbl), "project"),
-            Index("{}_is_dry_run_idx".format(tbl), "is_dry_run"),
-            Index("{}_committed_by_idx".format(tbl), "committed_by"),
-            Index("{}_closed_idx".format(tbl), "closed"),
-            Index("{}_state_idx".format(tbl), "state"),
-            Index("{}_submitter_idx".format(tbl), "submitter"),
-            Index("{}_created_datetime_idx".format(tbl), "created_datetime"),
-            Index("{}_project_id_idx".format(tbl), cls.program + "-" + cls.project),
+            Index(f"{tbl}_program_idx", "program"),
+            Index(f"{tbl}_project_idx", "project"),
+            Index(f"{tbl}_is_dry_run_idx", "is_dry_run"),
+            Index(f"{tbl}_committed_by_idx", "committed_by"),
+            Index(f"{tbl}_closed_idx", "closed"),
+            Index(f"{tbl}_state_idx", "state"),
+            Index(f"{tbl}_submitter_idx", "submitter"),
+            Index(f"{tbl}_created_datetime_idx", "created_datetime"),
+            Index(f"{tbl}_project_id_idx", cls.program + "-" + cls.project),
         )
 
     def __repr__(self):
-        return "<TransactionLog({}, {})>".format(self.id, self.created_datetime)
+        return f"<TransactionLog({self.id}, {self.created_datetime})>"
 
     def to_json(self, fields=None):
 
@@ -85,7 +84,7 @@ class TransactionLog(Base):
         if set(fields) - set(existing_fields):
             raise RuntimeError(
                 "Fields do not exist: {}".format(
-                    ", ".join((set(fields) - set(existing_fields)))
+                    ", ".join(set(fields) - set(existing_fields))
                 )
             )
 
@@ -180,7 +179,7 @@ class TransactionSnapshot(Base):
         return (Index("idx_transaction_snapshots_transactions_id", "transaction_id"),)
 
     def __repr__(self):
-        return "<TransactionSnapshot({}, {})>".format(self.id, self.transaction_id)
+        return f"<TransactionSnapshot({self.id}, {self.transaction_id})>"
 
     def to_json(self, fields=None):
         fields = set(fields) if fields else set()
@@ -190,7 +189,7 @@ class TransactionSnapshot(Base):
         if set(fields) - set(existing_fields):
             raise RuntimeError(
                 "Entity fields do not exist: {}".format(
-                    ", ".join((set(fields) - set(existing_fields)))
+                    ", ".join(set(fields) - set(existing_fields))
                 )
             )
         doc = {key: getattr(self, key) for key in fields}

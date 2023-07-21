@@ -74,7 +74,7 @@ def test_batch__default_status(create_batch_db, db_session):
     ids=["incorrect_status", "empty_status"],
 )
 def test_batch__status_values(create_batch_db, db_session, status, expected):
-    with pytest.raises(ValueError, match=r"{}".format(expected)):
+    with pytest.raises(ValueError, match=rf"{expected}"):
         db_session.add(batch.Batch(name="a", project_id="GDC-MISC", status=status))
         db_session.commit()
 

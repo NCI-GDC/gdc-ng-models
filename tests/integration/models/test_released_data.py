@@ -72,7 +72,7 @@ def test_released_data__invalid_data_type(fake_released_data):
 def test_released_data__project_id(fake_released_data, db_session):
     fake_released_data()
     node = db_session.query(released_data.ReleasedData).first()
-    assert node.project_id == "{}-{}".format(node.program_name, node.project_code)
+    assert node.project_id == f"{node.program_name}-{node.project_code}"
 
 
 def test_released_data__id(fake_released_data, db_session):
@@ -127,7 +127,7 @@ def test_release_data_log__auto_increment(db_session, fake_released_log):
 def test_release_data_log__project_id(fake_released_log, db_session):
     fake_released_log()
     node = db_session.query(released_data.ReleasedDataLog).first()
-    assert node.project_id == "{}-{}".format(node.program_name, node.project_code)
+    assert node.project_id == f"{node.program_name}-{node.project_code}"
 
 
 @pytest.mark.usefixtures("create_released_data_db")
