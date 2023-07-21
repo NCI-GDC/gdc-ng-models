@@ -22,7 +22,7 @@ def get_module(args):
         )
     except ImportError:
         logger.error(
-            'No ng-model [{name}] exists!'.format(name=name)
+            f'No ng-model [{name}] exists!'
         )
 
 

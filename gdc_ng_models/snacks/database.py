@@ -47,19 +47,19 @@ def execute_statement(configs, stmt, success):
 
 @try_or_log_error(logger)
 def drop_database(configs, database):
-    stmt = "drop database {database}".format(database=database)
+    stmt = f"drop database {database}"
     execute_statement(configs, stmt, drop_database.__name__ + " success")
 
 
 @try_or_log_error(logger)
 def create_database(configs, database):
-    stmt = "create database {database}".format(database=database)
+    stmt = f"create database {database}"
     execute_statement(configs, stmt, create_database.__name__ + " success")
 
 
 @try_or_log_error(logger)
 def drop_user(configs, user):
-    stmt = "drop user {user}".format(user=user)
+    stmt = f"drop user {user}"
     execute_statement(configs, stmt, drop_user.__name__ + " success")
 
 

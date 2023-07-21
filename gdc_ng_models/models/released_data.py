@@ -19,7 +19,7 @@ class ReleasedDataMixin:
 
     @property
     def project_id(self):
-        return "{}-{}".format(self.program_name, self.project_code)
+        return f"{self.program_name}-{self.project_code}"
 
     @validates("data_type")
     def validate_data_type(self, key, data_type):
@@ -64,7 +64,7 @@ class ReleasedData(Base, audit.AuditColumnsMixin, ReleasedDataMixin):
 
     @hybrid_property
     def id(self):
-        return "{}_{}_{}".format(self.program_name, self.project_code, self.data_type)
+        return f"{self.program_name}_{self.project_code}_{self.data_type}"
 
 
 class ReleasedDataLog(Base, audit.AuditColumnsMixin, ReleasedDataMixin):
