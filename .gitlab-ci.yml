@@ -12,15 +12,15 @@ tox:
   stage: test
   parallel:
     matrix:
-      - BUILD_PY_VERSION: [ '3.6', '3.7', '3.8', '3.9' ]
+      - BUILD_PY_VERSION: [ 'python3.6', 'python3.7', 'python3.8', 'python3.9' ]
   services:
     - name: docker.osdc.io/ncigdc/ci-postgres-13:${BASE_CONTAINER_VERSION}
       alias: postgres
   variables:
     # these are for postgres docker
     POSTGRES_DB: automated_test
-    POSTGRES_USER: postgres
-    POSTGRES_PASSWORD: postgres
+    POSTGRES_USER: gdc_test
+    POSTGRES_PASSWORD: gdc_test
     POSTGRES_HOST_AUTH_METHOD: trust
     PG_HOST: postgres
   before_script:
