@@ -15,8 +15,8 @@ def get_configs():
     return {
         "host": os.environ.get("PG_HOST", "localhost"),
         "database": os.environ.get("PG_NAME", "automated_test"),
-        "admin_user": os.environ.get("PG_USER", "postgres"),
-        "admin_password": os.environ.get("PG_PASS", "postgres"),
+        "admin_user": os.environ.get("PG_USER", "gdc_test"),
+        "admin_password": os.environ.get("PG_PASS", "gdc_test"),
     }
 
 

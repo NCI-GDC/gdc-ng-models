@@ -1,10 +1,10 @@
 repos:
+  - repo: https://github.com/psf/black
+    rev: 22.3.0
+    hooks:
+      - id: black
   - repo: git@github.com:Yelp/detect-secrets
     rev: v1.4.0
     hooks:
       - id: detect-secrets
         args: ['--baseline', '.secrets.baseline']
-  - repo: https://github.com/psf/black
-    rev: 22.3.0
-    hooks:
-      - id: black

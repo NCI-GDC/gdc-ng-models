@@ -16,7 +16,7 @@ setup(
             "flake8",
             "pytest",
             "pytest-cov",
-            "cdisutils @ git+https://git@github.com/NCI-GDC/cdisutils.git@1.3.0#egg=cdisutils",
+            "cdisutils",
         ],
         "alembic": ["alembic~=1.4"],
     },
