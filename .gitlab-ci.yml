@@ -28,7 +28,5 @@ tox:
 
 
 release:
-  variables:
-    RELEASE_PY_VERSION: python3.7
   before_script:
     - git fetch --unshallow || true
