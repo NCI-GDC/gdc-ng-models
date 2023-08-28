@@ -1,0 +1,30 @@
+[build-system]
+requires = [
+    "setuptools>=42",
+    "wheel",
+    "setuptools_scm[toml]>=3.4"
+]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
+local_scheme = "no-local-version"
+
+[tool.black]
+line-length = 88
+target-version = [
+    'py37',
+]
+include = '\.pyi?$'
+
+[tool.coverage.run]
+branch = true
+context = "tests"
+source = ["gdc-ng-models"]
+
+[tool.coverage.html]
+title = "gdc-ng-models coverage report"
+directory = "htmlcov"
+show_contexts = true
+
+[tool.isort]
+profile = "black"

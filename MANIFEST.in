@@ -1,0 +1,9 @@
+graft gdc_ng_models
+include alembic.ini LICENSE
+
+exclude .pre-commit-config.yaml .gitlab-ci.yml .gitignore .secrets.baseline
+
+prune tests
+prune */__pycache__
+
+global-exclude *.pyc
