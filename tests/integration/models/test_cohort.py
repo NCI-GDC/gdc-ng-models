@@ -15,7 +15,7 @@ class CohortType(enum.Enum):
 def fixture_context(create_cohort_db, db_session):
     """Create an anonymous context for use with test cases."""
 
-    test_context = cohort.AnonymousContext(name="fixture_context")
+    test_context = cohort.AnonymousContext()
     db_session.add(test_context)
     db_session.commit()
     return test_context
@@ -106,16 +106,14 @@ def test_anonymous_context__valid_create(create_cohort_db, db_session):
 
     # define expected values
     expected_id = uuid.uuid4()
-    expected_name = "test_context"
 
     # create context
-    test_context = cohort.AnonymousContext(id=expected_id, name=expected_name)
+    test_context = cohort.AnonymousContext(id=expected_id)
     db_session.add(test_context)
     db_session.commit()
 
     # validate context
     assert test_context.id == expected_id
-    assert test_context.name == expected_name
 
 
 def test_anonymous_context__unique_ids(create_cohort_db, db_session):
@@ -125,7 +123,6 @@ def test_anonymous_context__unique_ids(create_cohort_db, db_session):
     db_session.add(
         cohort.AnonymousContext(
             id=target_id,
-            name="context_1",
         )
     )
     db_session.commit()
@@ -136,7 +133,6 @@ def test_anonymous_context__unique_ids(create_cohort_db, db_session):
         db_session.add(
             cohort.AnonymousContext(
                 id=target_id,
-                name="context_2",
             )
         )
         db_session.commit()
@@ -145,8 +141,8 @@ def test_anonymous_context__unique_ids(create_cohort_db, db_session):
 def test_anonymous_context__defaults_unique_ids(create_cohort_db, db_session):
     """Tests default generated IDs on anonymous context are unique."""
 
-    context_1 = cohort.AnonymousContext(name="context_1")
-    context_2 = cohort.AnonymousContext(name="context_2")
+    context_1 = cohort.AnonymousContext()
+    context_2 = cohort.AnonymousContext()
     db_session.add_all([context_1, context_2])
     db_session.commit()
 
@@ -155,18 +151,10 @@ def test_anonymous_context__defaults_unique_ids(create_cohort_db, db_session):
     assert context_1.id != context_2.id
 
 
-def test_anonymous_context__name_not_nullable(create_cohort_db, db_session):
-    """Tests name must be defined for anonymous context."""
-
-    with pytest.raises(exc.IntegrityError, match=r"violates not-null constraint"):
-        db_session.add(cohort.AnonymousContext(id=uuid.uuid4()))
-        db_session.commit()
-
-
 def test_anonymous_context__to_json(create_cohort_db, db_session):
     """Tests json output for anonymous context is valid."""
 
-    test_context = cohort.AnonymousContext(name="test_context")
+    test_context = cohort.AnonymousContext()
     db_session.add(test_context)
     db_session.commit()
 
@@ -174,7 +162,6 @@ def test_anonymous_context__to_json(create_cohort_db, db_session):
         json.dumps(
             {
                 "id": str(test_context.id),
-                "name": test_context.name,
                 "created_datetime": test_context.created_datetime.isoformat(),
                 "updated_datetime": test_context.updated_datetime.isoformat(),
             }
