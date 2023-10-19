@@ -29,7 +29,6 @@ class AnonymousContext(Base, audit.AuditColumnsMixin):
 
     Attributes:
         id: A unique identifier for the context.
-        name: A human-readable name for the context.
         created_datetime: The date and time when the record is created.
         updated_datetime: The date and time when the record is updated.
     """
@@ -40,7 +39,6 @@ class AnonymousContext(Base, audit.AuditColumnsMixin):
         primary_key=True,
         default=uuid.uuid4,
     )
-    name = sqlalchemy.Column(sqlalchemy.Text, nullable=False)
 
     # establishes a one-to-many relationship with Cohort
     cohorts = sqlalchemy.orm.relationship(
@@ -51,11 +49,9 @@ class AnonymousContext(Base, audit.AuditColumnsMixin):
         return (
             "<AnonymousContext("
             "id={id}, "
-            "name='{name}', "
             "created_datetime={created_datetime}, "
             "updated_datetime={updated_datetime})>".format(
                 id=self.id,
-                name=self.name,
                 created_datetime=self.created_datetime.isoformat()
                 if self.created_datetime
                 else None,
@@ -68,7 +64,6 @@ class AnonymousContext(Base, audit.AuditColumnsMixin):
     def to_json(self):
         return {
             "id": str(self.id),
-            "name": self.name,
             "created_datetime": self.created_datetime.isoformat()
             if self.created_datetime
             else None,
