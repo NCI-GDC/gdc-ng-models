@@ -320,6 +320,7 @@ def test_cohort__to_json(create_cohort_db, db_session, fixture_context):
                 "context_id": str(test_cohort.context_id),
                 "created_datetime": test_cohort.created_datetime.isoformat(),
                 "updated_datetime": test_cohort.updated_datetime.isoformat(),
+                "accessed_datetime": test_cohort.accessed_datetime.isoformat(),
             }
         )
     )

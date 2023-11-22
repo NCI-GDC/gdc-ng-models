@@ -13,7 +13,7 @@ import uuid
 import sqlalchemy
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.ext import declarative
-from gdc_ng_models.models import audit
+from gdc_ng_models.models import accessed, audit
 
 Base = declarative.declarative_base()
 
@@ -73,7 +73,7 @@ class AnonymousContext(Base, audit.AuditColumnsMixin):
         }
 
 
-class Cohort(Base, audit.AuditColumnsMixin):
+class Cohort(Base, audit.AuditColumnsMixin, accessed.AccessedColumnMixin):
     """A base definition for a cohort entity.
 
     Attributes:
@@ -81,7 +81,8 @@ class Cohort(Base, audit.AuditColumnsMixin):
         context_id: The ID of the associated context.
         name: A user defined name for the cohort.
         created_datetime: The date and time when the record is created.
-        updated_datetime: The date and time when the record is updated.
+        updated_datetime: The date and time when the record is last updated.
+        accessed_datetime: The date and time when the record is last accessed.
     """
 
     __tablename__ = "cohort"
@@ -121,7 +122,8 @@ class Cohort(Base, audit.AuditColumnsMixin):
             "name='{name}', "
             "context_id={context_id}, "
             "created_datetime={created_datetime}, "
-            "updated_datetime={updated_datetime})>".format(
+            "updated_datetime={updated_datetime}), "
+            "accessed_datetime={accessed_datetime})>".format(
                 id=self.id,
                 name=self.name,
                 context_id=self.context_id,
@@ -130,6 +132,9 @@ class Cohort(Base, audit.AuditColumnsMixin):
                 else None,
                 updated_datetime=self.updated_datetime.isoformat()
                 if self.updated_datetime
+                else None,
+                accessed_datetime=self.accessed_datetime.isoformat()
+                if self.accessed_datetime
                 else None,
             )
         )
@@ -144,6 +149,9 @@ class Cohort(Base, audit.AuditColumnsMixin):
             else None,
             "updated_datetime": self.updated_datetime.isoformat()
             if self.updated_datetime
+            else None,
+            "accessed_datetime": self.accessed_datetime.isoformat()
+            if self.accessed_datetime
             else None,
         }
 
