@@ -41,7 +41,7 @@ def create_reports_db(db_engine):
 
 
 @pytest.fixture(scope="session")
-def create_entity_sets(db_engine):
+def create_entity_set_db(db_engine):
     # type: (sqlalchemy.engine.base.Engine) -> None
     """Provides capabilities for setup and teardown of a test entity_sets tables.
 
