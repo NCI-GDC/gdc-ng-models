@@ -132,4 +132,3 @@ def test_entity_set_to_json(create_entity_set_db, db_session):
         )
     )
     assert objectUnderTest.to_json() == expected_json
-    print(objectUnderTest)
