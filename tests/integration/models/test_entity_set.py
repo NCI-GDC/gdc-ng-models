@@ -4,7 +4,6 @@ Validations that need to be enforced programmatically as they
   do not raise an exception with sqlalchemy
   * EntitySet.id should not allow the empty string
   * EntitySet.entity_ids values cannot exceed 36 characters
-  * EntitySet.entity_ids array should not be empty
   * EntitySet.entity_ids should be a unique 'set' not an array of values
 """
 import enum
@@ -122,7 +121,7 @@ def test_entity_set_to_json(create_entity_set_db, db_session):
     expected_json = json.loads(
         json.dumps(
             {
-                "id": str(STRING_128_CHAR),
+                "id": STRING_128_CHAR,
                 "type": SetType.frozen.name,
                 "entity_type": EntityType.case.name,
                 "entity_ids": [STRING_36_CHAR],
@@ -133,3 +132,4 @@ def test_entity_set_to_json(create_entity_set_db, db_session):
         )
     )
     assert objectUnderTest.to_json() == expected_json
+    print(objectUnderTest)

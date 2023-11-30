@@ -1,10 +1,11 @@
 """Data model to describe entity sets.
 
-A set is a collection of entity ids (a.k.a. node ids). Sets have a long
-history in the GDC. For a long time they only existed ephmerally in
-the elasticsearch indices to speed up query times. However, their
-usage became integrated into defining cohorts which created new
-requirements for sets. The entity_set helps capture those new requirements.
+A set is a collection of entity ids (a.k.a. node ids) that are all of the same type.
+Sets have a long history in the GDC and for a long time they only existed ephemerally in
+the elasticsearch indices to speed up query times. The entity_set ids are persisted
+in the database, but are copied to elasticsearch to be used in elasticsearch queries.
+Sets became integrated into defining cohorts which created requirements for persistent
+sets. The entity_set helps capture those new requirements.
 
 Sets can be discussed in this context
 * Ephmeral Set: a set that does not need to be persisted. These are usually
@@ -31,7 +32,7 @@ class EntitySet(Base, audit.AuditColumnsMixin, accessed.AccessedColumnMixin):
 
     Attributes:
        id: A unique string identifier for the entity_set defined by the client
-       type: Ephmeral, Frozen, Mutable
+       type: ephmeral, frozen, mutable
        entity_type: case, file, gene, ssm used to route to the indices in elasticsearch
          e.g., gdc_case_set, gdc_file_set, gdc_gene_set, gdc_ssm_set
        entity_ids: array of node UUIDs of entity_type
@@ -68,14 +69,14 @@ class EntitySet(Base, audit.AuditColumnsMixin, accessed.AccessedColumnMixin):
         return (
             "<EntitySet("
             "id={id}, "
-            "type='{type}', "
+            "type={type}, "
             "entity_type={entity_type}, "
-            "entity_ids={entity_ids}"
+            "entity_ids={entity_ids}, "
             "created_datetime={created_datetime}, "
             "updated_datetime={updated_datetime}), "
             "accessed_datetime={accessed_datetime})>".format(
                 id=self.id,
-                type=self.entity_type,
+                type=self.type,
                 entity_type=self.entity_type,
                 entity_ids=self.entity_ids,
                 created_datetime=self.created_datetime.isoformat()
@@ -93,7 +94,7 @@ class EntitySet(Base, audit.AuditColumnsMixin, accessed.AccessedColumnMixin):
     def to_json(self):
         return {
             "id": str(self.id),
-            "type": self.type,
+            "type": str(self.type),
             "entity_type": str(self.entity_type),
             "entity_ids": [str(entity_id) for entity_id in self.entity_ids],
             "created_datetime": self.created_datetime.isoformat()
