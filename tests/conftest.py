@@ -12,6 +12,7 @@ from gdc_ng_models.models import (
     batch,
     cohort,
     download_reports,
+    entity_set,
     qcreport,
     redaction,
     released_data,
@@ -37,6 +38,26 @@ def create_reports_db(db_engine):
     download_reports.Base.metadata.create_all(db_engine)
     yield
     download_reports.Base.metadata.drop_all(db_engine)
+
+
+@pytest.fixture(scope="session")
+def create_entity_set_db(db_engine):
+    # type: (sqlalchemy.engine.base.Engine) -> None
+    """Provides capabilities for setup and teardown of a test entity_sets tables.
+
+    Creates tables in a database using the declarations in the entity_set module in the
+    gdc_ng_models/models package. This includes the following tables:
+        entity_set: Contains the persistent set records
+
+    Args:
+        db_engine: A sqlalchemy database engine.
+
+    Yields:
+        None.
+    """
+    entity_set.Base.metadata.create_all(db_engine)
+    yield
+    entity_set.Base.metadata.drop_all(db_engine)
 
 
 @pytest.fixture(scope="session")
