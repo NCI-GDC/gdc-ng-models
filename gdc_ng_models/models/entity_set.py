@@ -86,15 +86,15 @@ class EntitySet(Base, audit.AuditColumnsMixin, accessed.AccessedColumnMixin):
         return (
             "<EntitySet("
             "id={id}, "
-            "type={type.name}, "
-            "entity_type={entity_type.name}, "
+            "type={type}, "
+            "entity_type={entity_type}, "
             "entity_ids={entity_ids}, "
             "created_datetime={created_datetime}, "
             "updated_datetime={updated_datetime}), "
             "accessed_datetime={accessed_datetime})>".format(
                 id=self.id,
-                type=self.type,
-                entity_type=self.entity_type,
+                type=self.type.name,
+                entity_type=self.entity_type.name,
                 entity_ids=self.entity_ids,
                 created_datetime=self.created_datetime.isoformat()
                 if self.created_datetime
@@ -111,8 +111,8 @@ class EntitySet(Base, audit.AuditColumnsMixin, accessed.AccessedColumnMixin):
     def to_json(self):
         return {
             "id": str(self.id),
-            "type": str(self.type.name),
-            "entity_type": str(self.entity_type.name),
+            "type": self.type.name,
+            "entity_type": self.entity_type.name,
             "entity_ids": [str(entity_id) for entity_id in self.entity_ids],
             "created_datetime": self.created_datetime.isoformat()
             if self.created_datetime
