@@ -3,6 +3,11 @@ repos:
     rev: 22.3.0
     hooks:
       - id: black
+  - repo: https://github.com/pycqa/isort
+    rev: 5.11.5
+    hooks:
+      - id: isort
+        args: [--profile, black]
   - repo: git@github.com:Yelp/detect-secrets
     rev: v1.4.0
     hooks:
