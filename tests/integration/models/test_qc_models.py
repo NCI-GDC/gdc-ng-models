@@ -1,5 +1,6 @@
-import pytest
 import uuid
+
+import pytest
 
 from gdc_ng_models.models import qcreport
 

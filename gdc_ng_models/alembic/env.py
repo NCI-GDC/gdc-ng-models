@@ -1,8 +1,7 @@
 from logging.config import fileConfig
 
 from alembic import context
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
+from sqlalchemy import engine_from_config, pool
 
 import gdc_ng_models.models.batch as batch_models
 import gdc_ng_models.models.download_reports as download_reports_models
@@ -14,7 +13,6 @@ import gdc_ng_models.models.released_data as released_data_models
 import gdc_ng_models.models.reports as reports_models
 import gdc_ng_models.models.studyrule as studyrule_models
 import gdc_ng_models.models.submission as submission_models
-
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

@@ -1,10 +1,8 @@
 from datetime import date
 
 from cdisutils.dictionary import sort_dict
-from gdc_ng_models.models.download_reports import (
-    DataDownloadReport,
-    DataUsageReport,
-)
+
+from gdc_ng_models.models.download_reports import DataDownloadReport, DataUsageReport
 
 
 def test_create_usage_reports(create_reports_db, db_session):

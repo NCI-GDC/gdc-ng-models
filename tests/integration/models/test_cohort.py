@@ -1,9 +1,11 @@
 import enum
 import json
 import uuid
+
 import pytest
-from gdc_ng_models.models import cohort
 from sqlalchemy import exc
+
+from gdc_ng_models.models import cohort
 
 
 class CohortType(enum.Enum):

@@ -19,10 +19,29 @@ Sets can be discussed in this context
   by the cohort service in the backend system.
 """
 
+import enum
+
 import sqlalchemy
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.ext import declarative
+
 from gdc_ng_models.models import accessed, audit
+
+
+@enum.unique
+class SetType(enum.Enum):
+    ephemeral = 1
+    frozen = 2
+    mutable = 3
+
+
+@enum.unique
+class EntityType(enum.Enum):
+    case = 1
+    file = 2
+    gene = 3
+    ssm = 4
+
 
 Base = declarative.declarative_base()
 
@@ -51,19 +70,17 @@ class EntitySet(Base, audit.AuditColumnsMixin, accessed.AccessedColumnMixin):
         primary_key=True,
     )
     type = sqlalchemy.Column(
-        postgresql.ENUM("ephmeral", "frozen", "mutable", name="entity_set_type"),
+        postgresql.ENUM(SetType, name="entity_set_type"),
         nullable=False,
     )
     entity_type = sqlalchemy.Column(
-        postgresql.ENUM("case", "file", "gene", "ssm", name="entity_type"),
+        postgresql.ENUM(EntityType, name="entity_type"),
         nullable=False,
     )
 
     # entity_ids are UUIDs that are 36 characters long.
-    # Postgres is more performant when the data sizes are not dynamic
-    entity_ids = sqlalchemy.Column(
-        postgresql.ARRAY(sqlalchemy.String(36)), nullable=False
-    )
+    #  However, postgres does not use lengths in its arrays
+    entity_ids = sqlalchemy.Column(postgresql.ARRAY(sqlalchemy.String), nullable=False)
 
     def __repr__(self):
         return (
@@ -76,8 +93,8 @@ class EntitySet(Base, audit.AuditColumnsMixin, accessed.AccessedColumnMixin):
             "updated_datetime={updated_datetime}), "
             "accessed_datetime={accessed_datetime})>".format(
                 id=self.id,
-                type=self.type,
-                entity_type=self.entity_type,
+                type=self.type.name,
+                entity_type=self.entity_type.name,
                 entity_ids=self.entity_ids,
                 created_datetime=self.created_datetime.isoformat()
                 if self.created_datetime
@@ -94,8 +111,8 @@ class EntitySet(Base, audit.AuditColumnsMixin, accessed.AccessedColumnMixin):
     def to_json(self):
         return {
             "id": str(self.id),
-            "type": str(self.type),
-            "entity_type": str(self.entity_type),
+            "type": self.type.name,
+            "entity_type": self.entity_type.name,
             "entity_ids": [str(entity_id) for entity_id in self.entity_ids],
             "created_datetime": self.created_datetime.isoformat()
             if self.created_datetime

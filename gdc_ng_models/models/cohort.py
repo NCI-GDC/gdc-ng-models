@@ -10,9 +10,11 @@ cohort data model includes the following entities:
 """
 
 import uuid
+
 import sqlalchemy
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.ext import declarative
+
 from gdc_ng_models.models import accessed, audit
 
 Base = declarative.declarative_base()

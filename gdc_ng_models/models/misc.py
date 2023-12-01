@@ -1,7 +1,6 @@
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import BigInteger, Column, DateTime, Index, String, Text, Sequence
+from sqlalchemy import BigInteger, Column, DateTime, Index, Sequence, String, Text
 from sqlalchemy.dialects.postgresql import JSONB
-
+from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 

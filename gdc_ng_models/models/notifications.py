@@ -2,17 +2,16 @@ import json
 
 from sqlalchemy import (
     BigInteger,
+    Boolean,
     Column,
+    DateTime,
+    Sequence,
     String,
     Text,
-    DateTime,
     text,
-    Boolean,
-    Sequence,
 )
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects.postgresql import ARRAY
-
+from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 

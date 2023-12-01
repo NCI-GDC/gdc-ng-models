@@ -6,24 +6,11 @@ Validations that need to be enforced programmatically as they
   * EntitySet.entity_ids values cannot exceed 36 characters
   * EntitySet.entity_ids should be a unique 'set' not an array of values
 """
-import enum
 import json
+
 import pytest
+
 from gdc_ng_models.models import entity_set
-
-
-class SetType(enum.Enum):
-    ephemeral = 1
-    frozen = 2
-    mutable = 2
-
-
-class EntityType(enum.Enum):
-    case = 1
-    file = 2
-    gene = 3
-    ssm = 4
-
 
 STRING_36_CHAR = "00000000-0000-0000-0000-000000000000"
 STRING_37_CHAR = "00000000-0000-0000-0000-0000000000001"
@@ -35,8 +22,8 @@ def create_nominal_entity_set() -> entity_set.EntitySet:
     """Helper to build a complete entity set to use for testing"""
     return entity_set.EntitySet(
         id=STRING_128_CHAR,
-        type=SetType.frozen.name,
-        entity_type=EntityType.case.name,
+        type=entity_set.SetType.frozen,
+        entity_type=entity_set.EntityType.case,
         entity_ids=[STRING_36_CHAR],
     )
 
@@ -48,8 +35,8 @@ def test_entity_set_create(create_entity_set_db, db_session):
     db_session.commit()
 
     assert objectUnderTest.id == STRING_128_CHAR
-    assert objectUnderTest.type == SetType.frozen.name
-    assert objectUnderTest.entity_type == EntityType.case.name
+    assert objectUnderTest.type == entity_set.SetType.frozen
+    assert objectUnderTest.entity_type == entity_set.EntityType.case
     assert objectUnderTest.entity_ids == [STRING_36_CHAR]
     assert objectUnderTest.accessed_datetime
     assert objectUnderTest.created_datetime
@@ -122,8 +109,8 @@ def test_entity_set_to_json(create_entity_set_db, db_session):
         json.dumps(
             {
                 "id": STRING_128_CHAR,
-                "type": SetType.frozen.name,
-                "entity_type": EntityType.case.name,
+                "type": entity_set.SetType.frozen.name,
+                "entity_type": entity_set.EntityType.case.name,
                 "entity_ids": [STRING_36_CHAR],
                 "created_datetime": objectUnderTest.created_datetime.isoformat(),
                 "updated_datetime": objectUnderTest.updated_datetime.isoformat(),
