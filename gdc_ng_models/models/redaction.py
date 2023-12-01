@@ -1,20 +1,20 @@
 from datetime import datetime
+
 from sqlalchemy import (
-    Boolean,
     BigInteger,
+    Boolean,
     Column,
     DateTime,
     Enum,
     ForeignKey,
+    Sequence,
     String,
     Text,
     text,
-    Sequence,
 )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
-
 
 Base = declarative_base()
 

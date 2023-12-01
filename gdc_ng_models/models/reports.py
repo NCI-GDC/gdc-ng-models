@@ -1,8 +1,7 @@
-from sqlalchemy import BigInteger, Column, Text, DateTime, text, Index, func, Sequence
+from sqlalchemy import BigInteger, Column, DateTime, Index, Sequence, Text, func, text
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.dialects.postgresql import JSONB
-
 
 Base = declarative_base()
 

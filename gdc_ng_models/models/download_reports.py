@@ -1,8 +1,8 @@
 import json
-import sqlalchemy as db
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.dialects.postgresql import JSONB
 
+import sqlalchemy as db
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 

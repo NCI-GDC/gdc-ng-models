@@ -1,11 +1,9 @@
-import pytest
 import random
 import uuid
 
-from gdc_ng_models.models.redaction import (
-    RedactionEntry,
-    RedactionLog,
-)
+import pytest
+
+from gdc_ng_models.models.redaction import RedactionEntry, RedactionLog
 
 
 @pytest.fixture(scope="function")

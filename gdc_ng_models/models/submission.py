@@ -5,26 +5,28 @@ gdcdatamodel.models.submission
 Models for submission TransactionLogs
 """
 
-from distutils.version import StrictVersion
 from datetime import datetime
-from json import loads, dumps
+from distutils.version import StrictVersion
+from json import dumps, loads
+
 import pytz
 import sqlalchemy as db
-from sqlalchemy import func, Sequence
-from sqlalchemy.ext.declarative import declarative_base, declared_attr
-from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import relationship, deferred
 from sqlalchemy import (
     BigInteger,
     Boolean,
     Column,
     DateTime,
     ForeignKey,
-    Integer,
     Index,
+    Integer,
+    Sequence,
     Text,
+    func,
     text,
 )
+from sqlalchemy.ext.declarative import declarative_base, declared_attr
+from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import deferred, relationship
 
 if StrictVersion(db.__version__) >= StrictVersion("1.3.4"):
     from sqlalchemy.dialects.postgresql.json import JSONB

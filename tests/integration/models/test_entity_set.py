@@ -7,9 +7,10 @@ Validations that need to be enforced programmatically as they
   * EntitySet.entity_ids should be a unique 'set' not an array of values
 """
 import json
-import pytest
-from gdc_ng_models.models import entity_set
 
+import pytest
+
+from gdc_ng_models.models import entity_set
 
 STRING_36_CHAR = "00000000-0000-0000-0000-000000000000"
 STRING_37_CHAR = "00000000-0000-0000-0000-0000000000001"

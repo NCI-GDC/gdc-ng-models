@@ -5,15 +5,14 @@ from sqlalchemy import (
     DateTime,
     Enum,
     ForeignKey,
+    Sequence,
     String,
     Text,
     text,
-    Sequence,
 )
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, validates
-from sqlalchemy.dialects.postgresql import JSONB
-
 
 Base = declarative_base()
 SEVERITY = Enum("CRITICAL", "WARNING", "PASSED", name="error_severity")
