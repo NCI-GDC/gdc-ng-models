@@ -19,11 +19,13 @@ Sets can be discussed in this context
   by the cohort service in the backend system.
 """
 
+import enum
+
 import sqlalchemy
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.ext import declarative
+
 from gdc_ng_models.models import accessed, audit
-import enum
 
 
 @enum.unique
