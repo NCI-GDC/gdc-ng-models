@@ -43,6 +43,15 @@ class EntityType(enum.Enum):
     ssm = 4
 
 
+@enum.unique
+class IntentType(enum.Enum):
+    unknown = 1
+    internal = 2
+    external = 3
+    portal = 4
+    user = 5
+
+
 Base = declarative.declarative_base()
 
 
@@ -77,6 +86,13 @@ class EntitySet(Base, audit.AuditColumnsMixin, accessed.AccessedColumnMixin):
         postgresql.ENUM(EntityType, name="entity_type"),
         nullable=False,
     )
+    intent_type = sqlalchemy.Column(
+        postgresql.ENUM(IntentType, name="intent_type"),
+        nullable=False,
+    )
+    time_to_live_sec = sqlalchemy.Column(
+        postgresql.INTEGER, name="time_to_live", nullable=True
+    )
 
     # entity_ids are UUIDs that are 36 characters long.
     #  However, postgres does not use lengths in its arrays
@@ -87,24 +103,30 @@ class EntitySet(Base, audit.AuditColumnsMixin, accessed.AccessedColumnMixin):
             "<EntitySet("
             "id={id}, "
             "type={type}, "
+            "intent_type={intent_type}, "
             "entity_type={entity_type}, "
             "entity_ids={entity_ids}, "
             "created_datetime={created_datetime}, "
             "updated_datetime={updated_datetime}), "
-            "accessed_datetime={accessed_datetime})>".format(
+            "accessed_datetime={accessed_datetime}), "
+            "time_to_live={time_to_live}>".format(
                 id=self.id,
                 type=self.type.name,
+                intent_type=self.intent_type.name,
                 entity_type=self.entity_type.name,
                 entity_ids=self.entity_ids,
-                created_datetime=self.created_datetime.isoformat()
-                if self.created_datetime
-                else None,
-                updated_datetime=self.updated_datetime.isoformat()
-                if self.updated_datetime
-                else None,
-                accessed_datetime=self.accessed_datetime.isoformat()
-                if self.accessed_datetime
-                else None,
+                created_datetime=(
+                    self.created_datetime.isoformat() if self.created_datetime else None
+                ),
+                updated_datetime=(
+                    self.updated_datetime.isoformat() if self.updated_datetime else None
+                ),
+                accessed_datetime=(
+                    self.accessed_datetime.isoformat()
+                    if self.accessed_datetime
+                    else None
+                ),
+                time_to_live=self.time_to_live_sec,
             )
         )
 
@@ -112,15 +134,17 @@ class EntitySet(Base, audit.AuditColumnsMixin, accessed.AccessedColumnMixin):
         return {
             "id": str(self.id),
             "type": self.type.name,
+            "intent_type": self.intent_type.name,
             "entity_type": self.entity_type.name,
             "entity_ids": [str(entity_id) for entity_id in self.entity_ids],
-            "created_datetime": self.created_datetime.isoformat()
-            if self.created_datetime
-            else None,
-            "updated_datetime": self.updated_datetime.isoformat()
-            if self.updated_datetime
-            else None,
-            "accessed_datetime": self.accessed_datetime.isoformat()
-            if self.accessed_datetime
-            else None,
+            "created_datetime": (
+                self.created_datetime.isoformat() if self.created_datetime else None
+            ),
+            "updated_datetime": (
+                self.updated_datetime.isoformat() if self.updated_datetime else None
+            ),
+            "accessed_datetime": (
+                self.accessed_datetime.isoformat() if self.accessed_datetime else None
+            ),
+            "time_to_live": self.time_to_live_sec,
         }
