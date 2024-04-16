@@ -105,9 +105,15 @@ ng-models \
 ```
 
 ### Option: Migrate database models
+
+> WARNING: That '+' sign in front of '+1' is _REALLY_ important.
+
 Using [Alembic](https://alembic.sqlalchemy.org/en/latest/index.html) migrate existing data models
-> offline mode: alembic will print out the sql it will execute for `upgrade` and `downgrade`
+
+> NOTE: offline mode - alembic will print out the sql it will execute for `upgrade` and `downgrade`
 >   commands if you supply the `--sql` flag. It does not accept relative identifiers.
+
+
 ```bash
 ############################################
 # `alembic_migration` is a script held in tungsten and deployed to the datatools VM
