@@ -28,12 +28,7 @@ setup(
         "sqlalchemy~=1.3.14",
     ],
     extras_require={
-        "dev": [
-            "flake8",
-            "pytest",
-            "pytest-cov",
-            "cdisutils",
-        ],
+        "dev": ["flake8", "pytest", "pytest-cov", "cdisutils", "tox"],
         "alembic": ["alembic~=1.4"],
     },
     packages=find_packages(),

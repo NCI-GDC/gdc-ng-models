@@ -89,9 +89,10 @@ class EntitySet(Base, audit.AuditColumnsMixin, accessed.AccessedColumnMixin):
     intent_type = sqlalchemy.Column(
         postgresql.ENUM(IntentType, name="intent_type"),
         nullable=False,
+        default=IntentType.unknown,
     )
     time_to_live_sec = sqlalchemy.Column(
-        postgresql.INTEGER, name="time_to_live", nullable=True
+        postgresql.INTEGER, name="time_to_live_sec", nullable=True
     )
 
     # entity_ids are UUIDs that are 36 characters long.
@@ -109,7 +110,7 @@ class EntitySet(Base, audit.AuditColumnsMixin, accessed.AccessedColumnMixin):
             "created_datetime={created_datetime}, "
             "updated_datetime={updated_datetime}), "
             "accessed_datetime={accessed_datetime}), "
-            "time_to_live={time_to_live}>".format(
+            "time_to_live_sec={time_to_live_sec}>".format(
                 id=self.id,
                 type=self.type.name,
                 intent_type=self.intent_type.name,
@@ -126,7 +127,7 @@ class EntitySet(Base, audit.AuditColumnsMixin, accessed.AccessedColumnMixin):
                     if self.accessed_datetime
                     else None
                 ),
-                time_to_live=self.time_to_live_sec,
+                time_to_live_sec=self.time_to_live_sec,
             )
         )
 
@@ -146,5 +147,5 @@ class EntitySet(Base, audit.AuditColumnsMixin, accessed.AccessedColumnMixin):
             "accessed_datetime": (
                 self.accessed_datetime.isoformat() if self.accessed_datetime else None
             ),
-            "time_to_live": self.time_to_live_sec,
+            "time_to_live_sec": self.time_to_live_sec,
         }

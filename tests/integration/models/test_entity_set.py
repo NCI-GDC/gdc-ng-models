@@ -6,6 +6,7 @@ Validations that need to be enforced programmatically as they
   * EntitySet.entity_ids values cannot exceed 36 characters
   * EntitySet.entity_ids should be a unique 'set' not an array of values
 """
+
 import json
 
 import pytest
@@ -112,9 +113,11 @@ def test_entity_set_to_json(create_entity_set_db, db_session):
                 "type": entity_set.SetType.frozen.name,
                 "entity_type": entity_set.EntityType.case.name,
                 "entity_ids": [STRING_36_CHAR],
+                "intent_type": entity_set.IntentType.unknown.name,
                 "created_datetime": objectUnderTest.created_datetime.isoformat(),
                 "updated_datetime": objectUnderTest.updated_datetime.isoformat(),
                 "accessed_datetime": objectUnderTest.accessed_datetime.isoformat(),
+                "time_to_live_sec": None,
             }
         )
     )
