@@ -31,6 +31,7 @@ def upgrade():
             intent_type,
             server_default="unknown",
             comment="Provided by the client to provide a hint at the lifecycle of the entity_set",
+            nullable=False,
         ),
     )
     op.add_column(
@@ -39,6 +40,7 @@ def upgrade():
             "time_to_live_sec",
             sa.Integer(),
             comment="Provided by the client explicitly as to when this entity_set can be removed after inactivity",
+            nullable=True,
         ),
     )
 
@@ -46,5 +48,7 @@ def upgrade():
 def downgrade():
     op.drop_column("entity_set", "time_to_live_sec")
     op.drop_column("entity_set", "intent_type")
-    intent_type = postgresql.ENUM(entity_set.IntentType, name="intent_type")
+    intent_type = postgresql.ENUM(
+        "unknown", "internal", "external", "portal", "user", name="intent_type"
+    )
     intent_type.drop(op.get_bind())
