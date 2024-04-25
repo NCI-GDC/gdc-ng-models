@@ -4,7 +4,9 @@ from alembic import context
 from sqlalchemy import engine_from_config, pool
 
 import gdc_ng_models.models.batch as batch_models
+import gdc_ng_models.models.cohort as cohort
 import gdc_ng_models.models.download_reports as download_reports_models
+import gdc_ng_models.models.entity_set as entity_set
 import gdc_ng_models.models.misc as misc_models
 import gdc_ng_models.models.notifications as notifications_models
 import gdc_ng_models.models.qcreport as qcreport_models
@@ -29,7 +31,9 @@ fileConfig(config.config_file_name)
 
 target_metadata = [
     batch_models.Base.metadata,
+    cohort.Base.metadata,
     download_reports_models.Base.metadata,
+    entity_set.Base.metadata,
     misc_models.Base.metadata,
     notifications_models.Base.metadata,
     qcreport_models.Base.metadata,
@@ -54,6 +58,9 @@ def run_migrations_offline():
     we don't even need a DBAPI to be available.
     Calls to context.execute() here emit the given string to the
     script output.
+
+    Alembic makes this easy via the --sql option passed to any upgrade or downgrade command
+    https://alembic.sqlalchemy.org/en/latest/offline.html
     """
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
