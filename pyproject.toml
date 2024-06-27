@@ -1,13 +1,35 @@
 [build-system]
 requires = [
-    "setuptools>=42",
+    "setuptools>=68",
     "wheel",
-    "setuptools_scm[toml]>=3.4"
+    "setuptools_scm[toml]>=7.0",
+    "versionista>=1.1.0"
 ]
 build-backend = "setuptools.build_meta"
 
+[project]
+name = "gdc-ng-models"
+dynamic = [
+  "version",
+  "description",
+  "readme",
+  "requires-python",
+  "license",
+  "authors",
+  "maintainers",
+  "keywords",
+  "classifiers",
+  "urls",
+  "scripts",
+  "gui-scripts",
+  "entry-points",
+  "dependencies",
+  "optional-dependencies"
+]
+
 [tool.setuptools_scm]
-local_scheme = "no-local-version"
+local_scheme = "versionista-local-format"
+version_scheme = "versionista-format"
 
 [tool.black]
 line-length = 88
@@ -28,3 +50,23 @@ show_contexts = true
 
 [tool.isort]
 profile = "black"
+known_first_party = ["gdc-ng-models"]
+
+[tool.pytest.ini_options]
+minversion = 6.0
+# Silence warning by opting in to use pytest 6's new default value
+junit_family = "xunit2"
+junit_logging = "system-out"
+console_output_style = "classic"
+log_cli_level = "INFO"
+log_cli = "true"
+addopts = "-rfE --color=yes --cov=gdc-ng-models --cov-report term"
+norecursedirs = [
+  ".git",
+  ".tox",
+  "dist",
+  "build"
+]
+testpaths = [
+  "tests/unit"
+]
