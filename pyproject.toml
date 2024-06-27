@@ -42,6 +42,9 @@ show_contexts = true
 [tool.coverage.run]
 branch = true
 context = "tests"
+omit = [
+  "*/alembic/*"
+]
 source = ["gdc-ng-models"]
 
 [tool.isort]

@@ -1,11 +1,13 @@
 import importlib
 import logging
+import sys
+from typing import List, Optional
 
 from gdc_ng_models.snacks import database
 from gdc_ng_models.utils.arg_parser import get_parser
 
 logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger("ng-models-cli")
+logger = logging.getLogger(__name__)
 
 
 def get_module(args):
@@ -39,34 +41,28 @@ def parse_configs(args):
 
 def make_database_and_tables(module, configs):
 
-    try:
+    engine = database.postgres_engine_factory(configs)
+    module.Base.metadata.create_all(engine)
 
-        engine = database.postgres_engine_factory(configs)
-        module.Base.metadata.create_all(engine)
-
-        logger.info(
-            "Successfully created ng-models table [{name}]".format(name=module.__name__)
-        )
-        return 0
-
-    except Exception as e:
-        logger.error(e)
-        return 1
+    logger.info(
+        "Successfully created ng-models table [{name}]".format(name=module.__name__)
+    )
+    return 0
 
 
-def main():
+def main(arguments: Optional[List[str]] = None):
     parser = get_parser()
-    args = parser.parse_args()
+    args = parser.parse_args(arguments)
 
     module = get_module(args)
     configs = parse_configs(args)
 
     if module is None or configs is None:
         logger.info("Halting because module or configs aren't correct.")
-        return 1
+        sys.exit(2)
 
     if args.action == "create":
-        return make_database_and_tables(module, configs)
+        make_database_and_tables(module, configs)
     elif args.action == "grant":
         tables = list(module.Base.metadata.tables.keys()) + list(
             module.Base.metadata._sequences.keys()
@@ -80,4 +76,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main(["--help"])

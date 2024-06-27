@@ -5,10 +5,15 @@ gdcdatamodel.test.conftest
 pytest setup for gdcdatamodel tests
 """
 
+import shlex
+from typing import Callable, Dict
+
 import pytest
 import sqlalchemy
+from sqlalchemy.engine import Engine
 from sqlalchemy.orm import sessionmaker
 
+from gdc_ng_models import cli
 from gdc_ng_models.models import (
     batch,
     cohort,
@@ -30,20 +35,29 @@ def db_configs():
 
 
 @pytest.fixture(scope="session")
-def db_engine(db_configs):
+def db_args(db_configs: Dict[str, str]) -> str:
+    return (
+        f"-H {db_configs['host']} -d {db_configs['database']} -u {db_configs['admin_user']} "
+        f"-p {db_configs['admin_password']}"
+    )
+
+
+@pytest.fixture(scope="session")
+def db_engine(db_configs: Dict[str, str]) -> Engine:
     return db.postgres_engine_factory(db_configs)
 
 
 @pytest.fixture(scope="session")
-def create_reports_db(db_engine):
-    download_reports.Base.metadata.create_all(db_engine)
+def create_reports_db(db_engine, ng_models_cli, db_args: str) -> None:
+    ng_models_cli(f"-m download_reports {db_args} create")
     yield
     download_reports.Base.metadata.drop_all(db_engine)
 
 
 @pytest.fixture(scope="session")
-def create_entity_set_db(db_engine):
-    # type: (sqlalchemy.engine.base.Engine) -> None
+def create_entity_set_db(
+    db_engine: Engine, db_args: str, ng_models_cli: Callable[[str], None]
+) -> None:
     """Provides capabilities for setup and teardown of a test entity_sets tables.
 
     Creates tables in a database using the declarations in the entity_set module in the
@@ -52,18 +66,22 @@ def create_entity_set_db(db_engine):
 
     Args:
         db_engine: A sqlalchemy database engine.
+        db_args:
+        ng_models_cli
 
     Yields:
         None.
     """
-    entity_set.Base.metadata.create_all(db_engine)
+    ng_models_cli(f"-m entity_set {db_args} create")
     yield
     entity_set.Base.metadata.drop_all(db_engine)
 
 
 @pytest.fixture(scope="session")
-def create_qcreport_db(db_engine):
-    qcreport.Base.metadata.create_all(db_engine)
+def create_qcreport_db(
+    db_engine: Engine, db_args: str, ng_models_cli: Callable[[str], None]
+):
+    ng_models_cli(f"-m qcreport {db_args} create")
     yield
     qcreport.Base.metadata.drop_all(db_engine)
 
@@ -143,3 +161,11 @@ def db_module_session(db_engine):
     session.close()
     transaction.rollback()
     connection.close()
+
+
+@pytest.fixture(scope="session")
+def ng_models_cli() -> Callable[[str], None]:
+    def runner(command: str) -> None:
+        cli.main(shlex.split(command))
+
+    return runner
