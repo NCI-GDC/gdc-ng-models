@@ -10,11 +10,11 @@ sets. The entity_set helps capture those new requirements.
 Sets can be discussed in this context
 * Ephmeral Set: a set that does not need to be persisted. These are usually
   transient and used by front end applications for temporary retrieval and
-  query performance 
-* Frozen Set: an ephemeral set that has been identified that needs to be 
+  query performance
+* Frozen Set: an ephemeral set that has been identified that needs to be
   persistent and immutable. Frozen Sets are used in the filters that define
   a cohort.
-* Mutable Set: a set that needs to be persistent but can also be updated. 
+* Mutable Set: a set that needs to be persistent but can also be updated.
   This is initially targeted to not be an external feature but only used
   by the cohort service in the backend system.
 """

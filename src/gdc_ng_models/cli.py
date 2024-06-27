@@ -1,13 +1,11 @@
 import importlib
-
 import logging
 
-from gdc_ng_models.utils.arg_parser import get_parser
 from gdc_ng_models.snacks import database
-
+from gdc_ng_models.utils.arg_parser import get_parser
 
 logging.basicConfig(level=logging.DEBUG)
-logger = logging.getLogger('ng-models-cli')
+logger = logging.getLogger("ng-models-cli")
 
 
 def get_module(args):
@@ -15,29 +13,25 @@ def get_module(args):
     name = args.module
 
     try:
-        return importlib.import_module(
-            'gdc_ng_models.models.' + name
-        )
+        return importlib.import_module("gdc_ng_models.models." + name)
     except ImportError:
-        logger.error(
-            f'No ng-model [{name}] exists!'
-        )
+        logger.error(f"No ng-model [{name}] exists!")
 
 
 def parse_configs(args):
 
     configs = database.get_configs()
 
-    configs['host'] = args.host or configs['host']
-    configs['database'] = args.database or configs['database']
-    configs['admin_user'] = args.admin_user or configs['admin_user']
-    configs['admin_password'] = args.admin_password or configs['admin_password']
+    configs["host"] = args.host or configs["host"]
+    configs["database"] = args.database or configs["database"]
+    configs["admin_user"] = args.admin_user or configs["admin_user"]
+    configs["admin_password"] = args.admin_password or configs["admin_password"]
 
     all_list = [
-        configs['host'],
-        configs['database'],
-        configs['admin_user'],
-        configs['admin_password'],
+        configs["host"],
+        configs["database"],
+        configs["admin_user"],
+        configs["admin_password"],
     ]
 
     return configs if all(all_list) else None
@@ -51,8 +45,7 @@ def make_database_and_tables(module, configs):
         module.Base.metadata.create_all(engine)
 
         logger.info(
-            'Successfully created ng-models table [{name}]'
-            .format(name=module.__name__)
+            "Successfully created ng-models table [{name}]".format(name=module.__name__)
         )
         return 0
 
@@ -69,20 +62,22 @@ def main():
     configs = parse_configs(args)
 
     if module is None or configs is None:
-        logger.info(
-            'Halting because module or configs aren\'t correct.'
-        )
+        logger.info("Halting because module or configs aren't correct.")
         return 1
 
     if args.action == "create":
         return make_database_and_tables(module, configs)
     elif args.action == "grant":
-        tables = list(module.Base.metadata.tables.keys()) + list(module.Base.metadata._sequences.keys())
+        tables = list(module.Base.metadata.tables.keys()) + list(
+            module.Base.metadata._sequences.keys()
+        )
         database.grant_privilege(configs, args.permission, args.role, tables)
     elif args.action == "revoke":
-        tables = list(module.Base.metadata.tables.keys()) + list(module.Base.metadata._sequences.keys())
+        tables = list(module.Base.metadata.tables.keys()) + list(
+            module.Base.metadata._sequences.keys()
+        )
         database.revoke_privilege(configs, args.permission, args.role, tables)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

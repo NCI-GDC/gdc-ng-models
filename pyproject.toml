@@ -1,9 +1,9 @@
 [build-system]
 requires = [
-    "setuptools>=68",
-    "wheel",
-    "setuptools_scm[toml]>=7.0",
-    "versionista>=1.1.0"
+  "setuptools>=68",
+  "wheel",
+  "setuptools_scm[toml]>=7.0",
+  "versionista>=1.1.0"
 ]
 build-backend = "setuptools.build_meta"
 
@@ -27,26 +27,22 @@ dynamic = [
   "optional-dependencies"
 ]
 
-[tool.setuptools_scm]
-local_scheme = "versionista-local-format"
-version_scheme = "versionista-format"
-
 [tool.black]
 line-length = 88
 target-version = [
-    'py37',
+  'py37'
 ]
 include = '\.pyi?$'
-
-[tool.coverage.run]
-branch = true
-context = "tests"
-source = ["gdc-ng-models"]
 
 [tool.coverage.html]
 title = "gdc-ng-models coverage report"
 directory = "htmlcov"
 show_contexts = true
+
+[tool.coverage.run]
+branch = true
+context = "tests"
+source = ["gdc-ng-models"]
 
 [tool.isort]
 profile = "black"
@@ -60,7 +56,7 @@ junit_logging = "system-out"
 console_output_style = "classic"
 log_cli_level = "INFO"
 log_cli = "true"
-addopts = "-rfE --color=yes --cov=gdc-ng-models --cov-report term"
+addopts = "-rfE --color=yes --cov=gdc_ng_models --cov-report term"
 norecursedirs = [
   ".git",
   ".tox",
@@ -68,5 +64,10 @@ norecursedirs = [
   "build"
 ]
 testpaths = [
-  "tests/unit"
+  "tests/unit",
+  "tests/integration"
 ]
+
+[tool.setuptools_scm]
+local_scheme = "versionista-local-format"
+version_scheme = "versionista-format"

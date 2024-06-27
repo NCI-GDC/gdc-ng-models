@@ -1,15 +1,52 @@
+---
 repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: check-json
+      - id: check-toml
+      - id: check-yaml
+        exclude: ^\.gitlab-ci.yml
+      - id: end-of-file-fixer
+      - id: fix-encoding-pragma
+        args: [--remove]
+      - id: no-commit-to-branch
+        args: [--branch, develop, --branch, master, --pattern, release/.*]
+      - id: pretty-format-json
+        args: [--autofix]
+      - id: trailing-whitespace
+        exclude: ^\.gitlab-ci.yml
+        args: [--markdown-linebreak-ext=md]
   - repo: https://github.com/psf/black
-    rev: 22.3.0
+    rev: 24.4.2
     hooks:
       - id: black
   - repo: https://github.com/pycqa/isort
-    rev: 5.11.5
+    rev: 5.13.2
     hooks:
       - id: isort
+        name: isort (python)
         args: [--profile, black]
+      - id: isort
+        name: isort (cython)
+        types: [cython]
+        args: [--profile, black]
+      - id: isort
+        name: isort (pyi)
+        types: [pyi]
+        args: [--profile, black]
+  - repo: https://github.com/jumanjihouse/pre-commit-hook-yamlfmt
+    rev: 0.2.3
+    hooks:
+      - id: yamlfmt
+        args: [--mapping, '2', --sequence, '4', --offset, '2', --width, '80']
+  - repo: https://github.com/pappasam/toml-sort
+    rev: v0.23.1 # last version to support py36
+    hooks:
+      - id: toml-sort
+        args: [--in-place]
   - repo: git@github.com:Yelp/detect-secrets
-    rev: v1.4.0
+    rev: v1.5.0
     hooks:
       - id: detect-secrets
-        args: ['--baseline', '.secrets.baseline']
+        args: [--baseline, .secrets.baseline]

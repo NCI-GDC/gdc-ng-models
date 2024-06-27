@@ -4,6 +4,7 @@ gdcdatamodel.test.conftest
 
 pytest setup for gdcdatamodel tests
 """
+
 import pytest
 import sqlalchemy
 from sqlalchemy.orm import sessionmaker

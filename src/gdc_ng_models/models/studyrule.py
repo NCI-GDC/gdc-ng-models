@@ -3,6 +3,7 @@
 Studies will be used for the single-study controlled-access feature in gdcapi.
 These models provide a way to associate programs and projects to studies.
 """
+
 from sqlalchemy import orm
 from sqlalchemy.ext import declarative
 from sqlalchemy.sql import schema, sqltypes
@@ -41,24 +42,24 @@ class StudyRule(Base, audit.AuditColumnsMixin):
         return "<StudyRule(id={id}, name='{name}', created_datetime={created_datetime}, updated_datetime={updated_datetime})>".format(
             id=self.id,
             name=self.name,
-            created_datetime=self.created_datetime.isoformat()
-            if self.created_datetime
-            else None,
-            updated_datetime=self.updated_datetime.isoformat()
-            if self.updated_datetime
-            else None,
+            created_datetime=(
+                self.created_datetime.isoformat() if self.created_datetime else None
+            ),
+            updated_datetime=(
+                self.updated_datetime.isoformat() if self.updated_datetime else None
+            ),
         )
 
     def to_json(self):
         return {
             "id": self.id,
             "name": self.name,
-            "created_datetime": self.created_datetime.isoformat()
-            if self.created_datetime
-            else None,
-            "updated_datetime": self.updated_datetime.isoformat()
-            if self.updated_datetime
-            else None,
+            "created_datetime": (
+                self.created_datetime.isoformat() if self.created_datetime else None
+            ),
+            "updated_datetime": (
+                self.updated_datetime.isoformat() if self.updated_datetime else None
+            ),
         }
 
 
@@ -94,24 +95,24 @@ class StudyRuleProgram(Base, audit.AuditColumnsMixin):
         return "<StudyRuleProgram(study_rule_id={study_rule_id}, program_name='{program_name}', created_datetime={created_datetime}, updated_datetime={updated_datetime})>".format(
             study_rule_id=self.study_rule_id,
             program_name=self.program_name,
-            created_datetime=self.created_datetime.isoformat()
-            if self.created_datetime
-            else None,
-            updated_datetime=self.updated_datetime.isoformat()
-            if self.updated_datetime
-            else None,
+            created_datetime=(
+                self.created_datetime.isoformat() if self.created_datetime else None
+            ),
+            updated_datetime=(
+                self.updated_datetime.isoformat() if self.updated_datetime else None
+            ),
         )
 
     def to_json(self):
         return {
             "study_rule_id": self.study_rule_id,
             "program_name": self.program_name,
-            "created_datetime": self.created_datetime.isoformat()
-            if self.created_datetime
-            else None,
-            "updated_datetime": self.updated_datetime.isoformat()
-            if self.updated_datetime
-            else None,
+            "created_datetime": (
+                self.created_datetime.isoformat() if self.created_datetime else None
+            ),
+            "updated_datetime": (
+                self.updated_datetime.isoformat() if self.updated_datetime else None
+            ),
         }
 
 
@@ -156,12 +157,12 @@ class StudyRuleProgramProject(Base, audit.AuditColumnsMixin):
             study_rule_id=self.study_rule_id,
             program_name=self.program_name,
             project_code=self.project_code,
-            created_datetime=self.created_datetime.isoformat()
-            if self.created_datetime
-            else None,
-            updated_datetime=self.updated_datetime.isoformat()
-            if self.updated_datetime
-            else None,
+            created_datetime=(
+                self.created_datetime.isoformat() if self.created_datetime else None
+            ),
+            updated_datetime=(
+                self.updated_datetime.isoformat() if self.updated_datetime else None
+            ),
         )
 
     def to_json(self):
@@ -169,10 +170,10 @@ class StudyRuleProgramProject(Base, audit.AuditColumnsMixin):
             "study_rule_id": self.study_rule_id,
             "program_name": self.program_name,
             "project_code": self.project_code,
-            "created_datetime": self.created_datetime.isoformat()
-            if self.created_datetime
-            else None,
-            "updated_datetime": self.updated_datetime.isoformat()
-            if self.updated_datetime
-            else None,
+            "created_datetime": (
+                self.created_datetime.isoformat() if self.created_datetime else None
+            ),
+            "updated_datetime": (
+                self.updated_datetime.isoformat() if self.updated_datetime else None
+            ),
         }

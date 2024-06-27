@@ -22,7 +22,7 @@ coverage.xml
 htmlcov/
 test-reports/
 
-# Jenkins 
+# Jenkins
 .local/
 .eggs/
 .ssh/
@@ -31,3 +31,4 @@ wait-for-it.sh
 
 # vim
 *.swp
+report.xml

@@ -1,4 +1,5 @@
 """Common audit metadata for our data models."""
+
 import datetime
 
 from sqlalchemy import func, schema, sql
