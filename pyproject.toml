@@ -36,7 +36,7 @@ include = '\.pyi?$'
 
 [tool.coverage.html]
 title = "gdc-ng-models coverage report"
-directory = "htmlcov"
+directory = "docs/htmlcov"
 show_contexts = true
 
 [tool.coverage.run]
