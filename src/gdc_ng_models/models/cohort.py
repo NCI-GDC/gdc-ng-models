@@ -54,24 +54,24 @@ class AnonymousContext(Base, audit.AuditColumnsMixin):
             "created_datetime={created_datetime}, "
             "updated_datetime={updated_datetime})>".format(
                 id=self.id,
-                created_datetime=self.created_datetime.isoformat()
-                if self.created_datetime
-                else None,
-                updated_datetime=self.updated_datetime.isoformat()
-                if self.updated_datetime
-                else None,
+                created_datetime=(
+                    self.created_datetime.isoformat() if self.created_datetime else None
+                ),
+                updated_datetime=(
+                    self.updated_datetime.isoformat() if self.updated_datetime else None
+                ),
             )
         )
 
     def to_json(self):
         return {
             "id": str(self.id),
-            "created_datetime": self.created_datetime.isoformat()
-            if self.created_datetime
-            else None,
-            "updated_datetime": self.updated_datetime.isoformat()
-            if self.updated_datetime
-            else None,
+            "created_datetime": (
+                self.created_datetime.isoformat() if self.created_datetime else None
+            ),
+            "updated_datetime": (
+                self.updated_datetime.isoformat() if self.updated_datetime else None
+            ),
         }
 
 
@@ -129,15 +129,17 @@ class Cohort(Base, audit.AuditColumnsMixin, accessed.AccessedColumnMixin):
                 id=self.id,
                 name=self.name,
                 context_id=self.context_id,
-                created_datetime=self.created_datetime.isoformat()
-                if self.created_datetime
-                else None,
-                updated_datetime=self.updated_datetime.isoformat()
-                if self.updated_datetime
-                else None,
-                accessed_datetime=self.accessed_datetime.isoformat()
-                if self.accessed_datetime
-                else None,
+                created_datetime=(
+                    self.created_datetime.isoformat() if self.created_datetime else None
+                ),
+                updated_datetime=(
+                    self.updated_datetime.isoformat() if self.updated_datetime else None
+                ),
+                accessed_datetime=(
+                    self.accessed_datetime.isoformat()
+                    if self.accessed_datetime
+                    else None
+                ),
             )
         )
 
@@ -146,15 +148,15 @@ class Cohort(Base, audit.AuditColumnsMixin, accessed.AccessedColumnMixin):
             "id": str(self.id),
             "name": self.name,
             "context_id": str(self.context_id),
-            "created_datetime": self.created_datetime.isoformat()
-            if self.created_datetime
-            else None,
-            "updated_datetime": self.updated_datetime.isoformat()
-            if self.updated_datetime
-            else None,
-            "accessed_datetime": self.accessed_datetime.isoformat()
-            if self.accessed_datetime
-            else None,
+            "created_datetime": (
+                self.created_datetime.isoformat() if self.created_datetime else None
+            ),
+            "updated_datetime": (
+                self.updated_datetime.isoformat() if self.updated_datetime else None
+            ),
+            "accessed_datetime": (
+                self.accessed_datetime.isoformat() if self.accessed_datetime else None
+            ),
         }
 
 
@@ -227,12 +229,12 @@ class CohortFilter(Base, audit.AuditColumnsMixin):
                 cohort_id=self.cohort_id,
                 filters=self.filters,
                 cohort_type=self.cohort_type,
-                created_datetime=self.created_datetime.isoformat()
-                if self.created_datetime
-                else None,
-                updated_datetime=self.updated_datetime.isoformat()
-                if self.updated_datetime
-                else None,
+                created_datetime=(
+                    self.created_datetime.isoformat() if self.created_datetime else None
+                ),
+                updated_datetime=(
+                    self.updated_datetime.isoformat() if self.updated_datetime else None
+                ),
             )
         )
 
@@ -243,12 +245,12 @@ class CohortFilter(Base, audit.AuditColumnsMixin):
             "cohort_id": str(self.cohort_id),
             "filters": self.filters,
             "cohort_type": self.cohort_type,
-            "created_datetime": self.created_datetime.isoformat()
-            if self.created_datetime
-            else None,
-            "updated_datetime": self.updated_datetime.isoformat()
-            if self.updated_datetime
-            else None,
+            "created_datetime": (
+                self.created_datetime.isoformat() if self.created_datetime else None
+            ),
+            "updated_datetime": (
+                self.updated_datetime.isoformat() if self.updated_datetime else None
+            ),
         }
 
 
@@ -305,12 +307,12 @@ class CohortSnapshot(Base, audit.AuditColumnsMixin):
                 filter_id=self.filter_id,
                 data_release=self.data_release,
                 case_ids=self.case_ids,
-                created_datetime=self.created_datetime.isoformat()
-                if self.created_datetime
-                else None,
-                updated_datetime=self.updated_datetime.isoformat()
-                if self.updated_datetime
-                else None,
+                created_datetime=(
+                    self.created_datetime.isoformat() if self.created_datetime else None
+                ),
+                updated_datetime=(
+                    self.updated_datetime.isoformat() if self.updated_datetime else None
+                ),
             )
         )
 
@@ -320,10 +322,10 @@ class CohortSnapshot(Base, audit.AuditColumnsMixin):
             "filter_id": self.filter_id,
             "data_release": str(self.data_release),
             "case_ids": [str(case_id) for case_id in self.case_ids],
-            "created_datetime": self.created_datetime.isoformat()
-            if self.created_datetime
-            else None,
-            "updated_datetime": self.updated_datetime.isoformat()
-            if self.updated_datetime
-            else None,
+            "created_datetime": (
+                self.created_datetime.isoformat() if self.created_datetime else None
+            ),
+            "updated_datetime": (
+                self.updated_datetime.isoformat() if self.updated_datetime else None
+            ),
         }

@@ -1,4 +1,5 @@
 """Mixin for adding an accessed timestamp column to track the last time a record was accessed."""
+
 import datetime
 
 from sqlalchemy import schema, sql

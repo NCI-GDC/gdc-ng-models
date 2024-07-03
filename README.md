@@ -51,7 +51,7 @@ If you would like to run alembic directly.
 ```sh
 # datatools.service.consul or repl.service.consul
 sudo -i -u ubuntu # Ubuntu Pro
-sudo -i -u ec2-user # Amazon Linux 
+sudo -i -u ec2-user # Amazon Linux
 
 export http_proxy=http://cloud-proxy:3128 && export https_proxy=http://cloud-proxy:3128
 git clone https://github.com/NCI-GDC/gdc-ng-models.git
@@ -62,7 +62,7 @@ python --version  # verify the python version, expects python 3.9
 pip install -e ".[alembic]" --index-url https://nexus.osdc.io/repository/pypi-all/simple
 
 ```
-> Update the alembic.ini file for local execution, if running on the datatools VM this 
+> Update the alembic.ini file for local execution, if running on the datatools VM this
 >  will already be configured in /var/tungsten/services/datatools/alembic.ini
 >  `sqlalchemy.url = postgres://dev_admin:<pass>@postgres.service.consul/dev_gdc`
 
@@ -93,7 +93,7 @@ ng-models \
   -u $USER \
   -p "$PASS" \
   grant -r ${ENV_PREFIX}_graph_readwrite -P write
-  
+
 # Add READ permission
 ng-models \
   -m $MODEL \
@@ -150,11 +150,11 @@ sudo bash alembic_migration downgrade -1
   # or get the SQL to run manually
   alembic --config alembic.ini downgrade 12dbbcac7a1d:e9d53a640d5d --sql
 ```
-    
+
 ## Setup pre-commit hook to check for secrets
 
 We use [pre-commit](https://pre-commit.com/) to setup pre-commit hooks for this repo.
-We use [detect-secrets](https://github.com/Yelp/detect-secrets) to search for secrets being committed into the repo. 
+We use [detect-secrets](https://github.com/Yelp/detect-secrets) to search for secrets being committed into the repo.
 
 To install the pre-commit hook, run
 ```
@@ -166,10 +166,8 @@ To update the .secrets.baseline file run
 detect-secrets scan --update .secrets.baseline
 ```
 
-`.secrets.baseline` contains all the string that were caught by detect-secrets but are not stored in plain text. Audit the baseline to view the secrets . 
+`.secrets.baseline` contains all the string that were caught by detect-secrets but are not stored in plain text. Audit the baseline to view the secrets .
 
 ```
 detect-secrets audit .secrets.baseline
 ```
-
-
