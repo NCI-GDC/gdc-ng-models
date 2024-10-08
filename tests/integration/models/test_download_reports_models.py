@@ -38,11 +38,16 @@ def test_create_download_report(create_reports_db, db_session):
 
     report = DataDownloadReport()
 
-    report.add_access_type("open", 100.0)
-    report.add_access_type("closed", 33.0)
-    report.add_experimental_strategy("WXS", 100.0)
-    report.add_access_location("San Francisco, CA, USA", 300)
-    report.add_project_id("TCGA-YYY", 330)
+    report.add_size_access_type("open", 100.0)
+    report.add_size_access_type("closed", 33.0)
+    report.add_size_experimental_strategy("WXS", 100.0)
+    report.add_size_access_location("San Francisco, CA, USA", 300)
+    report.add_size_project_id("TCGA-YYY", 330)
+    report.add_count_access_type("open", 10)
+    report.add_count_access_type("closed", 3)
+    report.add_count_experimental_strategy("WXS", 101)
+    report.add_count_access_location("San Francisco, CA, USA", 303)
+    report.add_count_project_id("TCGA-YYY", 3300)
     report.report_period = date.today()
 
     db_session.add(report)
