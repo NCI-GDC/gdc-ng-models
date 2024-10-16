@@ -1,5 +1,7 @@
+import json
 from datetime import date
 
+import pytest
 from cdisutils.dictionary import sort_dict
 
 from gdc_ng_models.models.download_reports import DataDownloadReport, DataUsageReport
@@ -38,11 +40,16 @@ def test_create_download_report(create_reports_db, db_session):
 
     report = DataDownloadReport()
 
-    report.add_access_type("open", 100.0)
-    report.add_access_type("closed", 33.0)
-    report.add_experimental_strategy("WXS", 100.0)
-    report.add_access_location("San Francisco, CA, USA", 300)
-    report.add_project_id("TCGA-YYY", 330)
+    report.add_size_access_type("open", 100.0)
+    report.add_size_access_type("closed", 33.0)
+    report.add_size_experimental_strategy("WXS", 100.0)
+    report.add_size_access_location("San Francisco, CA, USA", 300)
+    report.add_size_project_id("TCGA-YYY", 330)
+    report.add_count_access_type("open", 10)
+    report.add_count_access_type("closed", 3)
+    report.add_count_experimental_strategy("WXS", 101)
+    report.add_count_access_location("San Francisco, CA, USA", 303)
+    report.add_count_project_id("TCGA-YYY", 3300)
     report.report_period = date.today()
 
     db_session.add(report)
@@ -67,3 +74,83 @@ def test_create_download_report(create_reports_db, db_session):
     assert rp.project_id_report == report.project_id_report
     assert rp.date_created == report.date_created
     assert rp.last_updated == report.last_updated
+
+
+def test_download_report_to_json_contains_size_and_count():
+
+    report = DataDownloadReport()
+
+    report.add_size_access_type("open", 100.0)
+    report.add_size_experimental_strategy("WXS", 101.0)
+    report.add_size_project_id("TCGA-YYY", 330)
+    report.add_count_access_type("closed", 3)
+    report.add_count_access_location("San Francisco, CA, USA", 303)
+
+    assert report.to_json() == json.loads(
+        """
+        {
+            "access_type_report": {
+                "open": {
+                    "downloaded_size_gb": 100.0,
+                    "user_interest_files_count": 0
+                },
+                "closed": {
+                    "downloaded_size_gb": 0,
+                    "user_interest_files_count": 3
+                }
+            },
+            "experimental_strategy_report": {
+                "WXS": {
+                    "downloaded_size_gb": 101.0,
+                    "user_interest_files_count": 0
+                }
+            },
+            "project_id_report": {
+                "TCGA-YYY": {
+                    "downloaded_size_gb": 330.0,
+                    "user_interest_files_count": 0
+                }
+            },
+            "access_location_report": {
+                "San Francisco, CA, USA": {
+                    "downloaded_size_gb": 0,
+                    "user_interest_files_count": 303
+                }
+            },
+            "report_period": "None",
+            "date_created": "None",
+            "last_updated": "None"
+        }
+        """
+    )
+
+
+_SIZE_COUNT_PROP_MAP = {
+    "size": "downloaded_size_gb",
+    "count": "user_interest_files_count",
+}
+
+
+@pytest.mark.parametrize("size_or_count", (("size", "count")))
+@pytest.mark.parametrize(
+    "field_name",
+    ("access_type", "project_id", "access_location", "experimental_strategy"),
+)
+def test_download_report_to_json_contains_field_with_value(field_name, size_or_count):
+    report = DataDownloadReport()
+    adder_method = getattr(report, f"add_{size_or_count}_{field_name}")
+
+    adder_method(field_name, 123)
+    report.to_json() == json.loads(
+        """
+        {
+            "%(field_name)s_report": {
+                "%(size_or_count_prop)s": 123
+            }
+        }
+        """
+        % {
+            "field_name": field_name,
+            "size_or_count_prop": _SIZE_COUNT_PROP_MAP[size_or_count],
+        }
+    )

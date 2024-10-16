@@ -83,9 +83,17 @@ class DataUsageReport(Base):
         )
 
 
+SIZE_FIELD = "downloaded_size_gb"
+COUNT_FIELD = "user_interest_files_count"
+
+
 class DataDownloadReport(Base):
 
     __tablename__ = "data_download_report"
+
+    @staticmethod
+    def _create_default():
+        return {SIZE_FIELD: 0, COUNT_FIELD: 0}
 
     report_period = db.Column(db.Date, primary_key=True, nullable=False)
 
@@ -104,7 +112,7 @@ class DataDownloadReport(Base):
         db.DateTime(timezone=True), nullable=False, server_default=db.text("now()")
     )
 
-    def add_access_type(self, access_type, size):
+    def add_size_access_type(self, access_type, size):
         """
         Args:
             access_type (str): open/closed
@@ -112,9 +120,11 @@ class DataDownloadReport(Base):
         """
         if not self.access_type_report:
             self.access_type_report = {}
-        self.access_type_report[access_type] = size
+        if access_type not in self.access_type_report:
+            self.access_type_report[access_type] = DataDownloadReport._create_default()
+        self.access_type_report[access_type][SIZE_FIELD] = size
 
-    def add_experimental_strategy(self, strategy, size):
+    def add_size_experimental_strategy(self, strategy, size):
         """
         Args:
             strategy (str): strategy name
@@ -122,9 +132,13 @@ class DataDownloadReport(Base):
         """
         if not self.experimental_strategy_report:
             self.experimental_strategy_report = {}
-        self.experimental_strategy_report[strategy] = size
+        if strategy not in self.experimental_strategy_report:
+            self.experimental_strategy_report[strategy] = (
+                DataDownloadReport._create_default()
+            )
+        self.experimental_strategy_report[strategy][SIZE_FIELD] = size
 
-    def add_project_id(self, project, size):
+    def add_size_project_id(self, project, size):
         """
         Args:
             project id (str): project's name
@@ -132,9 +146,11 @@ class DataDownloadReport(Base):
         """
         if not self.project_id_report:
             self.project_id_report = {}
-        self.project_id_report[project] = size
+        if project not in self.project_id_report:
+            self.project_id_report[project] = DataDownloadReport._create_default()
+        self.project_id_report[project][SIZE_FIELD] = size
 
-    def add_access_location(self, location, size):
+    def add_size_access_location(self, location, size):
         """
         Args:
             location (str): location name (country code)
@@ -142,7 +158,59 @@ class DataDownloadReport(Base):
         """
         if not self.access_location_report:
             self.access_location_report = {}
-        self.access_location_report[location] = size
+        if location not in self.access_location_report:
+            self.access_location_report[location] = DataDownloadReport._create_default()
+        self.access_location_report[location][SIZE_FIELD] = size
+
+    def add_count_access_type(self, access_type, count):
+        """
+        Args:
+            access_type (str): open/closed
+            count (double): count
+        """
+        if not self.access_type_report:
+            self.access_type_report = {}
+        if access_type not in self.access_type_report:
+            self.access_type_report[access_type] = DataDownloadReport._create_default()
+        self.access_type_report[access_type][COUNT_FIELD] = count
+
+    def add_count_experimental_strategy(self, strategy, count):
+        """
+        Args:
+            strategy (str): strategy name
+            count (double): count
+        """
+        if not self.experimental_strategy_report:
+            self.experimental_strategy_report = {}
+        if strategy not in self.experimental_strategy_report:
+            self.experimental_strategy_report[strategy] = (
+                DataDownloadReport._create_default()
+            )
+        self.experimental_strategy_report[strategy][COUNT_FIELD] = count
+
+    def add_count_project_id(self, project, count):
+        """
+        Args:
+            project id (str): project's name
+            count (double): count
+        """
+        if not self.project_id_report:
+            self.project_id_report = {}
+        if project not in self.project_id_report:
+            self.project_id_report[project] = DataDownloadReport._create_default()
+        self.project_id_report[project][COUNT_FIELD] = count
+
+    def add_count_access_location(self, location, count):
+        """
+        Args:
+            location (str): location name (country code)
+            count (double): count
+        """
+        if not self.access_location_report:
+            self.access_location_report = {}
+        if location not in self.access_location_report:
+            self.access_location_report[location] = DataDownloadReport._create_default()
+        self.access_location_report[location][COUNT_FIELD] = count
 
     def to_json(self):
         """Returns a JSON safe representation of :class:`DataDownloadReport`"""
