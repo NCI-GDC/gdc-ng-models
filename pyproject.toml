@@ -1,75 +1,81 @@
 [build-system]
-requires = [
-  "setuptools>=68",
-  "wheel",
-  "setuptools_scm[toml]>=7.0",
-  "versionista>=1.1.0"
-]
 build-backend = "setuptools.build_meta"
+requires = ["setuptools>=68", "wheel", "setuptools_scm[toml]>=7.0", "versionista>=1.1.0"]
 
 [project]
-name = "gdc-ng-models"
-dynamic = [
-  "version",
-  "description",
-  "readme",
-  "requires-python",
-  "license",
-  "authors",
-  "maintainers",
-  "keywords",
-  "classifiers",
-  "urls",
-  "scripts",
-  "gui-scripts",
-  "entry-points",
-  "dependencies",
-  "optional-dependencies"
+authors = [
+  {name = "GDC feature team", email = "gdc_dev_questions-aaaaae2lhsbell56tlvh3upgoq@cdis.slack.com"}
 ]
+classifiers = [
+  "License :: OSI Approved :: Apache Software License",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13"
+]
+dependencies = ["psycopg2", "pytz>=2020.5", "sqlalchemy<2"]
+description = "Non-graph GDC models."
+dynamic = ["version"]
+keywords = ["Genomic Data Commons", "non-graph-models", "SQLAlchemy", "psqlgraph"]
+license = {file = "LICENSE"}
+maintainers = [
+  {name = "GDC feature team", email = "gdc_dev_questions-aaaaae2lhsbell56tlvh3upgoq@cdis.slack.com"}
+]
+name = "gdc-ng-models"
+readme = "README.md"
+requires-python = ">=3.9"
+
+[project.optional-dependencies]
+alembic = ["alembic>=1.4"]
+dev = ["coverage[toml]", "pytest>=6", "pytest-cov", "cdisutils"]
+
+[project.scripts]
+ng-models = "gdc_ng_models.cli:main"
+
+[project.urls]
+Repository = "https://github.com/NCI-GDC/gdc-ng-models"
 
 [tool.black]
-line-length = 88
-target-version = [
-  'py37'
-]
 include = '\.pyi?$'
+line-length = 88
+target-version = ["py39"]
 
 [tool.coverage.html]
-title = "gdc-ng-models coverage report"
 directory = "docs/htmlcov"
 show_contexts = true
+title = "gdc-ng-models coverage report"
 
 [tool.coverage.run]
 branch = true
 context = "tests"
-omit = [
-  "*/alembic/*"
-]
+omit = ["*/alembic/*"]
 source = ["gdc-ng-models"]
 
 [tool.isort]
-profile = "black"
 known_first_party = ["gdc-ng-models"]
+profile = "black"
 
 [tool.pytest.ini_options]
-minversion = 6.0
+addopts = "-rfE --color=yes --cov=gdc_ng_models --cov-report term"
+console_output_style = "classic"
+minversion = "6.0"
 # Silence warning by opting in to use pytest 6's new default value
 junit_family = "xunit2"
 junit_logging = "system-out"
-console_output_style = "classic"
+log_cli = true
 log_cli_level = "INFO"
-log_cli = "true"
-addopts = "-rfE --color=yes --cov=gdc_ng_models --cov-report term"
-norecursedirs = [
-  ".git",
-  ".tox",
-  "dist",
-  "build"
-]
-testpaths = [
-  "tests/unit",
-  "tests/integration"
-]
+norecursedirs = [".git", ".tox", "dist", "build"]
+testpaths = ["tests/unit", "tests/integration"]
+
+[tool.setuptools.package-data]
+gdc_ng_models = ["alembic/*"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
 
 [tool.setuptools_scm]
 local_scheme = "versionista-local-format"
