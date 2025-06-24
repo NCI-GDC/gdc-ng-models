@@ -6,11 +6,11 @@ Models for submission TransactionLogs
 """
 
 from datetime import datetime
-from distutils.version import StrictVersion
 from json import dumps, loads
 
 import pytz
 import sqlalchemy as db
+from packaging import version
 from sqlalchemy import (
     BigInteger,
     Boolean,
@@ -28,7 +28,7 @@ from sqlalchemy.ext.declarative import declarative_base, declared_attr
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import deferred, relationship
 
-if StrictVersion(db.__version__) >= StrictVersion("1.3.4"):
+if version.Version(db.__version__) >= version.Version("1.3.4"):
     from sqlalchemy.dialects.postgresql.json import JSONB
 else:
     from sqlalchemy.dialects.postgresql import JSONB
