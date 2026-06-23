@@ -1,10 +1,10 @@
 import json
 
 import sqlalchemy as db
+from sqlalchemy import orm
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.ext.declarative import declarative_base
 
-Base = declarative_base()
+Base = orm.declarative_base()
 
 
 DEFAULT_USAGE_REPORT = dict(visits=0, visitors=0, requests=0, network_usage=0)
@@ -108,7 +108,7 @@ class DataDownloadReport(Base):
     )
 
     def add_size_access_type(self, access_type: str, size: float) -> None:
-        """Adds the size to the given access type.
+        """Sets the size for the given access type.
 
         Args:
             access_type: open/closed.
@@ -121,7 +121,7 @@ class DataDownloadReport(Base):
         self.access_type_report[access_type][SIZE_FIELD] = size
 
     def add_size_experimental_strategy(self, strategy: str, size: float) -> None:
-        """Adds the size to the given strategy.
+        """Sets the size for the given strategy.
 
         Args:
             strategy: strategy name.
@@ -134,7 +134,7 @@ class DataDownloadReport(Base):
         self.experimental_strategy_report[strategy][SIZE_FIELD] = size
 
     def add_size_project_id(self, project: str, size: float) -> None:
-        """Adds the size to the given project.
+        """Sets the size for the given project.
 
         Args:
             project: project's name.
@@ -147,7 +147,7 @@ class DataDownloadReport(Base):
         self.project_id_report[project][SIZE_FIELD] = size
 
     def add_size_access_location(self, location: str, size: float) -> None:
-        """Adds the size to the given location.
+        """Sets the size for the given location.
 
         Args:
             location: location name (country code).
@@ -160,7 +160,7 @@ class DataDownloadReport(Base):
         self.access_location_report[location][SIZE_FIELD] = size
 
     def add_count_access_type(self, access_type: str, count: int) -> None:
-        """Adds the count to the given access type.
+        """Sets the count for the given access type.
 
         Args:
             access_type: open/closed.
@@ -173,7 +173,7 @@ class DataDownloadReport(Base):
         self.access_type_report[access_type][COUNT_FIELD] = count
 
     def add_count_experimental_strategy(self, strategy: str, count: int) -> None:
-        """Adds the count to the given experimental strategy.
+        """Sets the count for the given experimental strategy.
 
         Args:
             strategy: strategy name.
@@ -186,7 +186,7 @@ class DataDownloadReport(Base):
         self.experimental_strategy_report[strategy][COUNT_FIELD] = count
 
     def add_count_project_id(self, project: str, count: int) -> None:
-        """Adds the count to the given project.
+        """Sets the count for the given project.
 
         Args:
             project: project's name.
@@ -199,7 +199,7 @@ class DataDownloadReport(Base):
         self.project_id_report[project][COUNT_FIELD] = count
 
     def add_count_access_location(self, location: str, count: int) -> None:
-        """Adds the count to the given location.
+        """Sets the count for the given location.
 
         Args:
             location: location name (country code).

@@ -1,8 +1,7 @@
-from sqlalchemy import BigInteger, Column, DateTime, Index, Sequence, String, Text
+from sqlalchemy import BigInteger, Column, DateTime, Index, Sequence, String, Text, orm
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.ext.declarative import declarative_base
 
-Base = declarative_base()
+Base = orm.declarative_base()
 
 
 class FileReport(Base):

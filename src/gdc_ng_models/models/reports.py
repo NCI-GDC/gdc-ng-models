@@ -1,9 +1,8 @@
-from sqlalchemy import BigInteger, Column, DateTime, Index, Sequence, Text, func, text
+from sqlalchemy import BigInteger, Column, DateTime, Index, Sequence, Text, func, orm, text
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 
-Base = declarative_base()
+Base = orm.declarative_base()
 
 
 class GDCReport(Base):

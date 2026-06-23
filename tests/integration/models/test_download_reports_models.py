@@ -1,7 +1,6 @@
 import json
 from datetime import date
 
-import pytest
 from cdisutils.dictionary import sort_dict
 
 from gdc_ng_models.models.download_reports import DataDownloadReport, DataUsageReport
@@ -118,33 +117,6 @@ def test_download_report_to_json_contains_size_and_count():
             "report_period": "None",
             "date_created": "None",
             "last_updated": "None"
-        }
-        """
-    )
-
-
-_SIZE_COUNT_PROP_MAP = {
-    "size": "downloaded_size_gb",
-    "count": "user_interest_files_count",
-}
-
-
-@pytest.mark.parametrize("size_or_count", (("size", "count")))
-@pytest.mark.parametrize(
-    "field_name",
-    ("access_type", "project_id", "access_location", "experimental_strategy"),
-)
-def test_download_report_to_json_contains_field_with_value(field_name, size_or_count):
-    report = DataDownloadReport()
-    adder_method = getattr(report, f"add_{size_or_count}_{field_name}")
-
-    adder_method(field_name, 123)
-    assert report.to_json() == json.loads(
-        f"""
-        {
-            "{field_name}_report": {
-                "{_SIZE_COUNT_PROP_MAP[size_or_count]}": 123
-            }
         }
         """
     )

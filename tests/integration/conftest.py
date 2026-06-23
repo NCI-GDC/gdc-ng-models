@@ -4,12 +4,15 @@
 pytest setup for gdcdatamodel tests
 """
 
+import os
 import shlex
 from collections.abc import Callable, Iterator
+from importlib import resources
 
 import pytest
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import sessionmaker
+from testcontainers import compose
 
 from gdc_ng_models import cli
 from gdc_ng_models.models import (
@@ -28,8 +31,21 @@ Session = sessionmaker()
 
 
 @pytest.fixture(scope="session")
-def db_configs():
-    return db.get_configs()
+def db_configs() -> Iterator[dict]:
+    if os.getenv("CI"):
+        yield db.get_configs()
+        return
+
+    docker_resource = resources.files("tests.integration") / "docker"
+
+    with (
+        resources.as_file(docker_resource) as docker_dir,
+        compose.DockerCompose(docker_dir, pull=True) as services,
+    ):
+        pg_port = services.get_service_port("postgres")
+        os.environ["PG_HOST"] = f"localhost:{pg_port}"
+
+        yield db.get_configs()
 
 
 @pytest.fixture(scope="session")

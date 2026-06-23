@@ -8,13 +8,13 @@ from sqlalchemy import (
     Sequence,
     String,
     Text,
+    orm,
     text,
 )
 from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, validates
 
-Base = declarative_base()
+Base = orm.declarative_base()
 SEVERITY = Enum("CRITICAL", "WARNING", "PASSED", name="error_severity")
 TEST_RUN_STATUS = Enum(
     "PENDING", "RUNNING", "SUCCESS", "ERROR", "FAILED", name="test_run_status"

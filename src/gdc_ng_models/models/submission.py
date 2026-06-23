@@ -8,8 +8,6 @@ from datetime import datetime
 from json import dumps, loads
 
 import pytz
-import sqlalchemy as db
-from packaging import version
 from sqlalchemy import (
     BigInteger,
     Boolean,
@@ -21,19 +19,15 @@ from sqlalchemy import (
     Sequence,
     Text,
     func,
+    orm,
     text,
 )
-from sqlalchemy.ext.declarative import declarative_base, declared_attr
+from sqlalchemy.dialects.postgresql import json
+from sqlalchemy.ext.declarative import declared_attr
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import deferred, relationship
 
-if version.Version(db.__version__) >= version.Version("1.3.4"):
-    from sqlalchemy.dialects.postgresql.json import JSONB
-else:
-    from sqlalchemy.dialects.postgresql import JSONB
-
-
-Base = declarative_base()
+Base = orm.declarative_base()
 
 
 def datetime_to_unix(dt):
@@ -162,7 +156,7 @@ class TransactionLog(Base):
 
     canonical_json = deferred(
         Column(
-            JSONB,
+            json.JSONB,
             server_default="[]",
             nullable=False,
         )
@@ -211,12 +205,12 @@ class TransactionSnapshot(Base):
     )
 
     old_props = Column(
-        JSONB,
+        json.JSONB,
         nullable=False,
     )
 
     new_props = Column(
-        JSONB,
+        json.JSONB,
         nullable=False,
     )
 
@@ -276,11 +270,7 @@ class TransactionDocument(Base):
         )
     )
 
-    response_json = deferred(
-        Column(
-            JSONB,
-        )
-    )
+    response_json = deferred(Column(json.JSONB))
 
     transaction = relationship("TransactionLog", backref="documents")
 

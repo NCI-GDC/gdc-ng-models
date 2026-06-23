@@ -26,5 +26,5 @@ class AuditColumnsMixin:
         sqltypes.DateTime(timezone=True),
         nullable=False,
         server_default=sql.text("now()"),
-        onupdate=datetime.datetime.utcnow,
+        onupdate=lambda: datetime.datetime.now(datetime.UTC),
     )

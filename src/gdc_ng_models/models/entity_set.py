@@ -22,8 +22,8 @@ Sets can be discussed in this context
 import enum
 
 import sqlalchemy
+from sqlalchemy import orm
 from sqlalchemy.dialects import postgresql
-from sqlalchemy.ext import declarative
 
 from gdc_ng_models.models import accessed, audit
 
@@ -52,7 +52,7 @@ class IntentType(enum.Enum):
     user = 5
 
 
-Base = declarative.declarative_base()
+Base = orm.declarative_base()
 
 
 class EntitySet(Base, audit.AuditColumnsMixin, accessed.AccessedColumnMixin):

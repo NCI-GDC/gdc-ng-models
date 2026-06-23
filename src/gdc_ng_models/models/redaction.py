@@ -10,13 +10,13 @@ from sqlalchemy import (
     Sequence,
     String,
     Text,
+    orm,
     text,
 )
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
-Base = declarative_base()
+Base = orm.declarative_base()
 
 
 class RedactionLog(Base):

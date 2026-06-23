@@ -5,12 +5,11 @@ These models provide a way to associate programs and projects to studies.
 """
 
 from sqlalchemy import orm
-from sqlalchemy.ext import declarative
 from sqlalchemy.sql import schema, sqltypes
 
 from gdc_ng_models.models import audit
 
-Base = declarative.declarative_base()
+Base = orm.declarative_base()
 
 
 class StudyRule(Base, audit.AuditColumnsMixin):

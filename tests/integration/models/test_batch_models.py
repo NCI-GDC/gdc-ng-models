@@ -452,7 +452,8 @@ def test_batch_membership__delete_parent(
 ):
     with pytest.raises(
         AssertionError,
-        match=r"Dependency rule tried to blank-out primary key column",
+        # sqlalchemy 1.4 & 2.0 have slightly different messages.
+        match=r"Dependency rule.*?tried to blank-out primary key column",
     ):
         b = test_batches_with_members[0]
         db_session.delete(b)
@@ -494,7 +495,9 @@ def test_batch_membership__delete_orphan(
     create_batch_db, db_session, test_batches_with_members
 ):
     with pytest.raises(
-        AssertionError, match=r"Dependency rule tried to blank-out primary key column"
+        AssertionError,
+        # sqlalchemy 1.4 & 2.0 have slightly different messages.
+        match=r"Dependency rule.*? tried to blank-out primary key column",
     ):
         b = test_batches_with_members[0]
         b.members.pop()

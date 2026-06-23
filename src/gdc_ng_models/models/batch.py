@@ -4,12 +4,11 @@ from typing import Any, ClassVar
 
 import sqlalchemy
 from sqlalchemy import orm
-from sqlalchemy.ext import declarative
 from sqlalchemy.sql import schema
 
 from gdc_ng_models.models import audit
 
-Base = declarative.declarative_base()
+Base = orm.declarative_base()
 
 
 class Batch(Base, audit.AuditColumnsMixin):

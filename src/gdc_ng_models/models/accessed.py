@@ -20,5 +20,5 @@ class AccessedColumnMixin:
         sqltypes.DateTime(timezone=True),
         nullable=False,
         server_default=sql.text("now()"),
-        onupdate=datetime.datetime.utcnow,
+        onupdate=datetime.datetime.now(datetime.UTC),
     )

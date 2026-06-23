@@ -1,11 +1,11 @@
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import orm
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import validates
 from sqlalchemy.sql import schema, sqltypes
 
 from gdc_ng_models.models import audit
 
-Base = declarative_base()
+Base = orm.declarative_base()
 
 RELEASED_DATA_DATA_TYPE_VALUES = frozenset({"ssm", "cnv", "case"})
 RELEASED_DATA_LOG_ACTION_VALUES = frozenset({"release", "unrelease"})

@@ -10,12 +10,12 @@ from sqlalchemy import (
     Sequence,
     String,
     Text,
+    orm,
     text,
 )
 from sqlalchemy.dialects.postgresql import ARRAY
-from sqlalchemy.ext.declarative import declarative_base
 
-Base = declarative_base()
+Base = orm.declarative_base()
 
 
 class Notification(Base):

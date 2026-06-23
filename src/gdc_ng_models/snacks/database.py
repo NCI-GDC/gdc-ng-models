@@ -12,10 +12,10 @@ PERMISSIONS = dict(READ="SELECT", WRITE="SELECT, INSERT, UPDATE, DELETE")
 
 def get_configs():
     return {
-        "host": os.environ.get("PG_HOST", "localhost"),
-        "database": os.environ.get("PG_NAME", "automated_test"),
-        "admin_user": os.environ.get("PG_USER", "gdc_test"),
-        "admin_password": os.environ.get("PG_PASS", "gdc_test"),
+        "host": os.environ["PG_HOST"],
+        "database": os.environ["PG_NAME"],
+        "admin_user": os.environ["PG_USER"],
+        "admin_password": os.environ["PG_PASS"],
     }
 
 
