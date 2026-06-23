@@ -14,7 +14,7 @@ tox:
           - python3.12
           - python3.13
           - python3.14
-      - SQLALCHEMY:
+        SQLALCHEMY:
           - sqlalchemy1.4
           - sqlalchemy2
   services:
