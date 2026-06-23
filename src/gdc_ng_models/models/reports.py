@@ -38,5 +38,5 @@ class GDCReport(Base):
         return self.program + "-" + self.project
 
     @project_id.expression
-    def project_id(cls):
+    def project_id(cls):  # noqa: N805
         return func.concat(cls.program, "-", cls.project)

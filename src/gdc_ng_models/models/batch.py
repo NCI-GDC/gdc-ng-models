@@ -1,4 +1,6 @@
 import json
+from collections.abc import Mapping
+from typing import Any, ClassVar
 
 import sqlalchemy
 from sqlalchemy import orm
@@ -22,7 +24,7 @@ class Batch(Base, audit.AuditColumnsMixin):
     """
 
     __tablename__ = "batch"
-    __mapper_args__ = {"eager_defaults": True}
+    __mapper_args__: ClassVar[Mapping[str, Any]] = {"eager_defaults": True}
     __table_args__ = (
         schema.PrimaryKeyConstraint("id", name="batch_pk"),
         schema.Index("batch_name_idx", "name"),
@@ -44,9 +46,7 @@ class Batch(Base, audit.AuditColumnsMixin):
     project_id = sqlalchemy.Column(sqlalchemy.Text, nullable=False)
     status = sqlalchemy.Column(sqlalchemy.Text, default="OPEN", nullable=False)
 
-    members = orm.relationship(
-        "BatchMembership", back_populates="batch", lazy="selectin"
-    )
+    members = orm.relationship("BatchMembership", back_populates="batch", lazy="selectin")
 
     @orm.validates("status")
     def validate_status(self, key, status):
@@ -60,30 +60,19 @@ class Batch(Base, audit.AuditColumnsMixin):
 
         return status
 
-    def __repr__(self):
-        created_datetime = (
-            self.created_datetime.isoformat() if self.created_datetime else None
-        )
-        updated_datetime = (
-            self.updated_datetime.isoformat() if self.updated_datetime else None
-        )
+    def __repr__(self) -> str:
+        created_datetime = self.created_datetime.isoformat() if self.created_datetime else None
+        updated_datetime = self.updated_datetime.isoformat() if self.updated_datetime else None
 
-        return "<Batch(id='{}', name='{}', project_id='{}', status='{}', created_datetime='{}', updated_datetime='{}')>".format(
-            self.id,
-            self.name,
-            self.project_id,
-            self.status,
-            created_datetime,
-            updated_datetime,
+        return (
+            f"<Batch(id='{self.id}', name='{self.name}', project_id='{self.project_id}', "
+            f"status='{self.status}', created_datetime='{created_datetime}', "
+            f"updated_datetime='{updated_datetime}')>"
         )
 
     def to_dict(self):
-        created_datetime = (
-            self.created_datetime.isoformat() if self.created_datetime else None
-        )
-        updated_datetime = (
-            self.updated_datetime.isoformat() if self.updated_datetime else None
-        )
+        created_datetime = self.created_datetime.isoformat() if self.created_datetime else None
+        updated_datetime = self.updated_datetime.isoformat() if self.updated_datetime else None
 
         return {
             "id": self.id,
@@ -95,7 +84,7 @@ class Batch(Base, audit.AuditColumnsMixin):
         }
 
     def to_json(self):
-        """Returns a JSON safe representation of a batch"""
+        """Returns a JSON safe representation of a batch."""
         return json.loads(json.dumps(self.to_dict()))
 
 
@@ -125,27 +114,17 @@ class BatchMembership(Base, audit.AuditColumnsMixin):
     batch = orm.relationship("Batch", back_populates="members")
 
     def __repr__(self):
-        created_datetime = (
-            self.created_datetime.isoformat() if self.created_datetime else None
-        )
-        updated_datetime = (
-            self.updated_datetime.isoformat() if self.updated_datetime else None
-        )
+        created_datetime = self.created_datetime.isoformat() if self.created_datetime else None
+        updated_datetime = self.updated_datetime.isoformat() if self.updated_datetime else None
 
-        return "<BatchMembership(batch_id='{}', node_id='{}', created_datetime='{}', updated_datetime='{}')>".format(
-            self.batch_id,
-            self.node_id,
-            created_datetime,
-            updated_datetime,
+        return (
+            f"<BatchMembership(batch_id='{self.batch_id}', node_id='{self.node_id}', "
+            f"created_datetime='{created_datetime}', updated_datetime='{updated_datetime}')>"
         )
 
     def to_dict(self):
-        created_datetime = (
-            self.created_datetime.isoformat() if self.created_datetime else None
-        )
-        updated_datetime = (
-            self.updated_datetime.isoformat() if self.updated_datetime else None
-        )
+        created_datetime = self.created_datetime.isoformat() if self.created_datetime else None
+        updated_datetime = self.updated_datetime.isoformat() if self.updated_datetime else None
 
         return {
             "batch_id": self.batch_id,
@@ -155,5 +134,5 @@ class BatchMembership(Base, audit.AuditColumnsMixin):
         }
 
     def to_json(self):
-        """Returns a JSON safe representation of a membership object"""
+        """Returns a JSON safe representation of a membership object."""
         return json.loads(json.dumps(self.to_dict()))

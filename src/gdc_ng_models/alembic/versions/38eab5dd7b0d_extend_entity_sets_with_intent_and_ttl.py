@@ -10,8 +10,6 @@ import sqlalchemy as sa
 from alembic import op
 from sqlalchemy.dialects import postgresql
 
-from gdc_ng_models.models import entity_set
-
 # revision identifiers, used by Alembic.
 revision = "38eab5dd7b0d"  # pragma: allowlist secret
 down_revision = "12dbbcac7a1d"  # pragma: allowlist secret
@@ -30,7 +28,8 @@ def upgrade():
             "intent_type",
             intent_type,
             server_default="unknown",
-            comment="Provided by the client to provide a hint at the lifecycle of the entity_set",
+            comment="Provided by the client to provide a hint at the lifecycle of the "
+            "entity_set",
             nullable=False,
         ),
     )
@@ -39,7 +38,8 @@ def upgrade():
         sa.Column(
             "time_to_live_sec",
             sa.Integer(),
-            comment="Provided by the client explicitly as to when this entity_set can be removed after inactivity",
+            comment="Provided by the client explicitly as to when this entity_set can be "
+            "removed after inactivity",
             nullable=True,
         ),
     )

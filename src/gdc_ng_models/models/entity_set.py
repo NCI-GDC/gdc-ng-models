@@ -72,8 +72,9 @@ class EntitySet(Base, audit.AuditColumnsMixin, accessed.AccessedColumnMixin):
     __tablename__ = "entity_set"
 
     # Requirement: custom IDs
-    # Requirement: support sha256 outputlength (64hex characters) and longest id as identified by the front end.
-    # No default ID, all clients will provide their own IDs for consistent usage
+    # Requirement: support sha256 output length (64hex characters) and longest id as identified
+    # by the front end. No default ID, all clients will provide their own IDs for consistent
+    # usage
     id = sqlalchemy.Column(
         sqlalchemy.String(128),
         primary_key=True,
@@ -100,35 +101,23 @@ class EntitySet(Base, audit.AuditColumnsMixin, accessed.AccessedColumnMixin):
     entity_ids = sqlalchemy.Column(postgresql.ARRAY(sqlalchemy.String), nullable=False)
 
     def __repr__(self):
+        created_datetime = self.created_datetime.isoformat() if self.created_datetime else None
+        updated_datetime = self.updated_datetime.isoformat() if self.updated_datetime else None
+        accessed_datetime = (
+            self.accessed_datetime.isoformat() if self.accessed_datetime else None
+        )
+
         return (
             "<EntitySet("
-            "id={id}, "
-            "type={type}, "
-            "intent_type={intent_type}, "
-            "entity_type={entity_type}, "
-            "entity_ids={entity_ids}, "
-            "created_datetime={created_datetime}, "
-            "updated_datetime={updated_datetime}), "
-            "accessed_datetime={accessed_datetime}), "
-            "time_to_live_sec={time_to_live_sec}>".format(
-                id=self.id,
-                type=self.type.name,
-                intent_type=self.intent_type.name,
-                entity_type=self.entity_type.name,
-                entity_ids=self.entity_ids,
-                created_datetime=(
-                    self.created_datetime.isoformat() if self.created_datetime else None
-                ),
-                updated_datetime=(
-                    self.updated_datetime.isoformat() if self.updated_datetime else None
-                ),
-                accessed_datetime=(
-                    self.accessed_datetime.isoformat()
-                    if self.accessed_datetime
-                    else None
-                ),
-                time_to_live_sec=self.time_to_live_sec,
-            )
+            f"id={self.id}, "
+            f"type={self.type.name}, "
+            f"intent_type={self.intent_type.name}, "
+            f"entity_type={self.entity_type.name}, "
+            f"entity_ids={self.entity_ids}, "
+            f"created_datetime={created_datetime}, "
+            f"updated_datetime={updated_datetime}), "
+            f"accessed_datetime={accessed_datetime}), "
+            f"time_to_live_sec={self.time_to_live_sec}>"
         )
 
     def to_json(self):

@@ -1,6 +1,9 @@
 [build-system]
 build-backend = "setuptools.build_meta"
-requires = ["setuptools>=68", "wheel", "setuptools_scm[toml]>=7.0", "versionista>=1.1.0"]
+requires = ["setuptools>=80", "setuptools-scm"]
+
+[dependency-groups]
+dev = ["coverage", "pytest>=6", "pytest-cov", "cdisutils"]
 
 [project]
 authors = [
@@ -11,13 +14,13 @@ classifiers = [
   "Topic :: Software Development :: Libraries :: Python Modules",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
-  "Programming Language :: Python :: 3.13"
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14"
 ]
-dependencies = ["psycopg2", "pytz>=2020.5", "sqlalchemy<2"]
+dependencies = ["packaging", "psycopg2", "pytz>=2020.5", "sqlalchemy<2"]
 description = "Non-graph GDC models."
 dynamic = ["version"]
 keywords = ["Genomic Data Commons", "non-graph-models", "SQLAlchemy", "psqlgraph"]
@@ -27,22 +30,16 @@ maintainers = [
 ]
 name = "gdc-ng-models"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 
 [project.optional-dependencies]
 alembic = ["alembic>=1.4"]
-dev = ["coverage[toml]", "pytest>=6", "pytest-cov", "cdisutils"]
 
 [project.scripts]
 ng-models = "gdc_ng_models.cli:main"
 
 [project.urls]
 Repository = "https://github.com/NCI-GDC/gdc-ng-models"
-
-[tool.black]
-include = '\.pyi?$'
-line-length = 88
-target-version = ["py39"]
 
 [tool.coverage.html]
 directory = "docs/htmlcov"
@@ -55,12 +52,8 @@ context = "tests"
 omit = ["*/alembic/*"]
 source = ["gdc-ng-models"]
 
-[tool.isort]
-known_first_party = ["gdc-ng-models"]
-profile = "black"
-
-[tool.pytest.ini_options]
-addopts = "-rfE --color=yes --cov=gdc_ng_models --cov-report term"
+[tool.pytest]
+addopts = ["-rfE", "--color=yes", "--cov=gdc_ng_models", "--cov-report=term"]
 console_output_style = "classic"
 minversion = "6.0"
 # Silence warning by opting in to use pytest 6's new default value
@@ -71,12 +64,50 @@ log_cli_level = "INFO"
 norecursedirs = [".git", ".tox", "dist", "build"]
 testpaths = ["tests/unit", "tests/integration"]
 
-[tool.setuptools.package-data]
-gdc_ng_models = ["alembic/*"]
+[tool.ruff]
+line-length = 95
+src = ["src", "tests"]
+target-version = "py310" # SET TO THE MINIMUM SUPPORTED VERSION
 
-[tool.setuptools.packages.find]
-where = ["src"]
+[tool.ruff.lint]
+# see https://docs.astral.sh/ruff/rules/
+select = [
+  "E", # pydocstyle errors
+  "F", # pyflakes
+  "I", # isort
+  "N", # pep8 naming
+  "RUF", # ruff specific rules
+  "UP", # pyupgrade
+  # "D", # pydocstyle lint
+  "W" # pydocstyle warnings
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["gdc_ng_models", "tests"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["D"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
 
 [tool.setuptools_scm]
-local_scheme = "versionista-local-format"
-version_scheme = "versionista-format"
+fallback_version = "0.0.0"
+
+[tool.tox]
+env_list = [{prefix = "py3", start = 10, end = 14}]
+
+[tool.tox.env_run_base]
+dependency_groups = ["dev"]
+pass_env = ["PG_*"]
+commands = [
+  ["pytest", {replace = "posargs", default = ["-lv", "--cov-report=xml", "--cov-report=html", "--junit-xml=report.xml"], extend = true}]
+]
+
+[tool.tox.env_run_base.set_env]
+NO_PROXY = "localhost,postgres"
+no_proxy = "localhost,postgres"
+
+[[tool.uv.index]]
+name = "nexus"
+url = "https://nexus.osdc.io/repository/pypi-all/simple"

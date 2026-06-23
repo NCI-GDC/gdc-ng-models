@@ -1,4 +1,4 @@
-"""Mixin for adding an accessed timestamp column to track the last time a record was accessed."""
+"""A module for tracking when a record was last accessed."""
 
 import datetime
 

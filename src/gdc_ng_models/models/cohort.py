@@ -43,24 +43,17 @@ class AnonymousContext(Base, audit.AuditColumnsMixin):
     )
 
     # establishes a one-to-many relationship with Cohort
-    cohorts = sqlalchemy.orm.relationship(
-        "Cohort", back_populates="context", lazy="selectin"
-    )
+    cohorts = sqlalchemy.orm.relationship("Cohort", back_populates="context", lazy="selectin")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
+        created_datetime = self.created_datetime.isoformat() if self.created_datetime else None
+        updated_datetime = self.updated_datetime.isoformat() if self.updated_datetime else None
+
         return (
             "<AnonymousContext("
-            "id={id}, "
-            "created_datetime={created_datetime}, "
-            "updated_datetime={updated_datetime})>".format(
-                id=self.id,
-                created_datetime=(
-                    self.created_datetime.isoformat() if self.created_datetime else None
-                ),
-                updated_datetime=(
-                    self.updated_datetime.isoformat() if self.updated_datetime else None
-                ),
-            )
+            f"id={self.id}, "
+            f"created_datetime={created_datetime}, "
+            f"updated_datetime={updated_datetime})>"
         )
 
     def to_json(self):
@@ -117,30 +110,21 @@ class Cohort(Base, audit.AuditColumnsMixin, accessed.AccessedColumnMixin):
         """Retrieves the latest filter associated with the cohort."""
         return self.filters[0]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
+        created_datetime = self.created_datetime.isoformat() if self.created_datetime else None
+        updated_datetime = self.updated_datetime.isoformat() if self.updated_datetime else None
+        accessed_datetime = (
+            self.accessed_datetime.isoformat() if self.accessed_datetime else None
+        )
+
         return (
             "<Cohort("
-            "id={id}, "
-            "name='{name}', "
-            "context_id={context_id}, "
-            "created_datetime={created_datetime}, "
-            "updated_datetime={updated_datetime}), "
-            "accessed_datetime={accessed_datetime})>".format(
-                id=self.id,
-                name=self.name,
-                context_id=self.context_id,
-                created_datetime=(
-                    self.created_datetime.isoformat() if self.created_datetime else None
-                ),
-                updated_datetime=(
-                    self.updated_datetime.isoformat() if self.updated_datetime else None
-                ),
-                accessed_datetime=(
-                    self.accessed_datetime.isoformat()
-                    if self.accessed_datetime
-                    else None
-                ),
-            )
+            f"id={self.id}, "
+            f"name='{self.name}', "
+            f"context_id={self.context_id}, "
+            f"created_datetime={created_datetime}, "
+            f"updated_datetime={updated_datetime}), "
+            f"accessed_datetime={accessed_datetime})>"
         )
 
     def to_json(self):
@@ -214,28 +198,19 @@ class CohortFilter(Base, audit.AuditColumnsMixin):
     # establishes an adjacency relationship (i.e. self-referential key)
     parent = sqlalchemy.orm.relationship("CohortFilter")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
+        created_datetime = self.created_datetime.isoformat() if self.created_datetime else None
+        updated_datetime = self.updated_datetime.isoformat() if self.updated_datetime else None
+
         return (
             "<CohortFilter("
-            "id={id}, "
-            "parent_id={parent_id}, "
-            "cohort_id={cohort_id}, "
-            "filters={filters}, "
-            "cohort_type={cohort_type}, "
-            "created_datetime={created_datetime}, "
-            "updated_datetime={updated_datetime})>".format(
-                id=self.id,
-                parent_id=self.parent_id,
-                cohort_id=self.cohort_id,
-                filters=self.filters,
-                cohort_type=self.cohort_type,
-                created_datetime=(
-                    self.created_datetime.isoformat() if self.created_datetime else None
-                ),
-                updated_datetime=(
-                    self.updated_datetime.isoformat() if self.updated_datetime else None
-                ),
-            )
+            f"id={self.id}, "
+            f"parent_id={self.parent_id}, "
+            f"cohort_id={self.cohort_id}, "
+            f"filters={self.filters}, "
+            f"cohort_type={self.cohort_type}, "
+            f"created_datetime={created_datetime}, "
+            f"updated_datetime={updated_datetime})>"
         )
 
     def to_json(self):
@@ -294,26 +269,18 @@ class CohortSnapshot(Base, audit.AuditColumnsMixin):
     # establishes a one-to-one relationship with CohortFilter
     filter = sqlalchemy.orm.relationship("CohortFilter", back_populates="snapshot")
 
-    def __repr__(self):
+    def __repr__(self) -> str:
+        created_datetime = self.created_datetime.isoformat() if self.created_datetime else None
+        updated_datetime = self.updated_datetime.isoformat() if self.updated_datetime else None
+
         return (
             "<CohortSnapshot("
-            "id={id}, "
-            "filter_id={filter_id}, "
-            "data_release={data_release}, "
-            "case_ids={case_ids}, "
-            "created_datetime={created_datetime}, "
-            "updated_datetime={updated_datetime})>".format(
-                id=self.id,
-                filter_id=self.filter_id,
-                data_release=self.data_release,
-                case_ids=self.case_ids,
-                created_datetime=(
-                    self.created_datetime.isoformat() if self.created_datetime else None
-                ),
-                updated_datetime=(
-                    self.updated_datetime.isoformat() if self.updated_datetime else None
-                ),
-            )
+            f"id={self.id}, "
+            f"filter_id={self.filter_id}, "
+            f"data_release={self.data_release}, "
+            f"case_ids={self.case_ids}, "
+            f"created_datetime={created_datetime}, "
+            f"updated_datetime={updated_datetime})>"
         )
 
     def to_json(self):

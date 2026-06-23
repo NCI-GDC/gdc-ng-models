@@ -117,9 +117,7 @@ def test_release_data_log__auto_increment(db_session, fake_released_log):
     max_id = -1
     for i in range(10):
         fake_released_log(release_number=str(i))
-        current_id = db_session.query(
-            func.max(released_data.ReleasedDataLog.id)
-        ).scalar()
+        current_id = db_session.query(func.max(released_data.ReleasedDataLog.id)).scalar()
         assert current_id > max_id
         max_id = current_id
 
@@ -132,7 +130,7 @@ def test_release_data_log__project_id(fake_released_log, db_session):
 
 @pytest.mark.usefixtures("create_released_data_db")
 def test_release_data_log__big_int_id(db_session):
-    """Test the BIGINT 'id' column in specific tables"""
+    """Test the BIGINT 'id' column in specific tables."""
     large_int = 1234567890123456
 
     rdl_node = released_data.ReleasedDataLog(

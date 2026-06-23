@@ -1,4 +1,6 @@
 import json
+from collections.abc import Mapping
+from typing import Any, ClassVar
 
 from sqlalchemy import (
     BigInteger,
@@ -33,18 +35,20 @@ class Notification(Base):
     start_date = Column(DateTime(timezone=True), nullable=True)
     end_date = Column(DateTime(timezone=True), nullable=True)
 
-    __mapper_args__ = {"eager_defaults": True}
+    __mapper_args__: ClassVar[Mapping[str, Any]] = {"eager_defaults": True}
 
     def __repr__(self):
-        return "<Notification(id='{}', level='{}', message='{}')>".format(
-            self.id, self.level, self.message
+        return (
+            f"<Notification(id='{self.id}', level='{self.level}', message='{self.message}')>"
         )
 
-    def to_dict(self):
-        """Returns a dictionary representation of :class:`Notification`"""
-        start_date = (
-            self.start_date.isoformat() if self.start_date is not None else None
-        )
+    def to_dict(self) -> dict:
+        """Convert the model to a dictionary.
+
+        Returns:
+           A dictionary representation of :class:`Notification`.
+        """
+        start_date = self.start_date.isoformat() if self.start_date is not None else None
         end_date = self.end_date.isoformat() if self.end_date is not None else None
 
         return {
@@ -58,6 +62,10 @@ class Notification(Base):
             "end_date": end_date,
         }
 
-    def to_json(self):
-        """Returns a JSON safe representation of :class:`Notification`"""
+    def to_json(self) -> dict:
+        """Converts the model to a json compatible dictionary.
+
+        Returns:
+            A JSON safe representation of  :class:`Notification`.
+        """
         return json.loads(json.dumps(self.to_dict()))

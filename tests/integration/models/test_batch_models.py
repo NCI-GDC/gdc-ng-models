@@ -118,7 +118,11 @@ def test_batch__repr():
             tzinfo=pytz.utc,
         ),
     )
-    expected = "<Batch(id='1000', name='a', project_id='GDC-MISC', status='CLOSED', created_datetime='2021-01-18T09:30:10.000123+00:00', updated_datetime='2021-01-18T09:30:10.000123+00:00')>"
+    expected = (
+        "<Batch(id='1000', name='a', project_id='GDC-MISC', status='CLOSED', "
+        "created_datetime='2021-01-18T09:30:10.000123+00:00', "
+        "updated_datetime='2021-01-18T09:30:10.000123+00:00')>"
+    )
     assert repr(b) == expected
 
 
@@ -271,7 +275,6 @@ def test_batch_membership__default_datetimes(
 def test_batch_membership__updated_datetime(
     create_batch_db, db_session, test_batches_with_members
 ):
-    b1 = test_batches_with_members[0]
     b2 = test_batches_with_members[1]
 
     db_session.query(batch.BatchMembership).filter(
@@ -326,13 +329,15 @@ def test_batch_membership__repr():
             tzinfo=pytz.utc,
         ),
     )
-    expected = "<BatchMembership(batch_id='1000', node_id='node_1', created_datetime='2021-01-18T09:30:10.000123+00:00', updated_datetime='2021-01-18T09:30:10.000123+00:00')>"
+    expected = (
+        "<BatchMembership(batch_id='1000', node_id='node_1', "
+        "created_datetime='2021-01-18T09:30:10.000123+00:00', "
+        "updated_datetime='2021-01-18T09:30:10.000123+00:00')>"
+    )
     assert repr(b) == expected
 
 
-def test_batch_membership__primary_key_constraint(
-    create_batch_db, db_session, test_batches
-):
+def test_batch_membership__primary_key_constraint(create_batch_db, db_session, test_batches):
     b = test_batches[0]
     db_session.add(batch.BatchMembership(batch_id=b.id, node_id="node_1"))
     db_session.commit()
@@ -418,9 +423,7 @@ def test_batch__membership_to_json(contents, expected):
     assert b.to_json() == expected
 
 
-def test_batch_membership__node_in_multiple_batches(
-    create_batch_db, db_session, test_batches
-):
+def test_batch_membership__node_in_multiple_batches(create_batch_db, db_session, test_batches):
     b1 = test_batches[0]
     b2 = test_batches[1]
 

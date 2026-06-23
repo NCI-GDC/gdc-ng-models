@@ -2,7 +2,7 @@
 
 import datetime
 
-from sqlalchemy import func, schema, sql
+from sqlalchemy import schema, sql
 from sqlalchemy.sql import sqltypes
 
 

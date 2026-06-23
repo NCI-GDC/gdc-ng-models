@@ -1,15 +1,13 @@
-"""
-gdcdatamodel.test.conftest
+"""gdcdatamodel.test.conftest
 ----------------------------------
 
 pytest setup for gdcdatamodel tests
 """
 
 import shlex
-from typing import Callable, Dict
+from collections.abc import Callable, Iterator
 
 import pytest
-import sqlalchemy
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import sessionmaker
 
@@ -35,7 +33,7 @@ def db_configs():
 
 
 @pytest.fixture(scope="session")
-def db_args(db_configs: Dict[str, str]) -> str:
+def db_args(db_configs: dict[str, str]) -> str:
     return (
         f"-H {db_configs['host']} -d {db_configs['database']} -u {db_configs['admin_user']} "
         f"-p {db_configs['admin_password']}"
@@ -43,7 +41,7 @@ def db_args(db_configs: Dict[str, str]) -> str:
 
 
 @pytest.fixture(scope="session")
-def db_engine(db_configs: Dict[str, str]) -> Engine:
+def db_engine(db_configs: dict[str, str]) -> Engine:
     return db.postgres_engine_factory(db_configs)
 
 
@@ -57,7 +55,7 @@ def create_reports_db(db_engine, ng_models_cli, db_args: str) -> None:
 @pytest.fixture(scope="session")
 def create_entity_set_db(
     db_engine: Engine, db_args: str, ng_models_cli: Callable[[str], None]
-) -> None:
+) -> Iterator[None]:
     """Provides capabilities for setup and teardown of a test entity_sets tables.
 
     Creates tables in a database using the declarations in the entity_set module in the
@@ -78,9 +76,7 @@ def create_entity_set_db(
 
 
 @pytest.fixture(scope="session")
-def create_qcreport_db(
-    db_engine: Engine, db_args: str, ng_models_cli: Callable[[str], None]
-):
+def create_qcreport_db(db_engine: Engine, db_args: str, ng_models_cli: Callable[[str], None]):
     ng_models_cli(f"-m qcreport {db_args} create")
     yield
     qcreport.Base.metadata.drop_all(db_engine)
@@ -116,7 +112,6 @@ def create_batch_db(db_engine):
 
 @pytest.fixture(scope="session")
 def create_cohort_db(db_engine):
-    # type: (sqlalchemy.engine.base.Engine) -> None
     """Provides capabilities for setup and teardown of a test cohort database.
 
     Creates a database using the declarations in the cohort module in the

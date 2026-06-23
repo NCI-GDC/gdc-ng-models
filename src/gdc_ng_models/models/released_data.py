@@ -23,12 +23,9 @@ class ReleasedDataMixin:
 
     @validates("data_type")
     def validate_data_type(self, key, data_type):
+        """Validates data type for the given key."""
         if data_type not in RELEASED_DATA_DATA_TYPE_VALUES:
-            raise ValueError(
-                """"{data_type}" is not a valid value for {key}""".format(
-                    data_type=data_type, key=key
-                )
-            )
+            raise ValueError(f""""{data_type}" is not a valid value for {key}""")
         return data_type
 
 
@@ -44,11 +41,9 @@ class ReleasedData(Base, audit.AuditColumnsMixin, ReleasedDataMixin):
     )
 
     def __repr__(self):
-        return "<ReleasedData(project_id='{}', data_type='{}', is_controlled={}, is_open={})>".format(
-            self.project_id,
-            self.data_type,
-            self.is_controlled,
-            self.is_open,
+        return (
+            f"<ReleasedData(project_id='{self.project_id}', data_type='{self.data_type}', "
+            f"is_controlled={self.is_controlled}, is_open={self.is_open})>"
         )
 
     is_controlled = schema.Column(sqltypes.Boolean, nullable=False)
@@ -79,12 +74,10 @@ class ReleasedDataLog(Base, audit.AuditColumnsMixin, ReleasedDataMixin):
     )
 
     def __repr__(self):
-        return "<ReleasedDataLog(project_id='{}', release_number={}, data_type='{}', is_open={}, action='{}')>".format(
-            self.project_id,
-            self.release_number,
-            self.data_type,
-            self.is_open,
-            self.action,
+        return (
+            f"<ReleasedDataLog(project_id='{self.project_id}', "
+            f"release_number={self.release_number}, "
+            f"data_type='{self.data_type}', is_open={self.is_open}, action='{self.action}')>"
         )
 
     release_data_log_id_seq = schema.Sequence(
@@ -100,12 +93,9 @@ class ReleasedDataLog(Base, audit.AuditColumnsMixin, ReleasedDataMixin):
 
     @validates("action")
     def validate_action(self, key, action):
+        """Validates action for given key."""
         if action not in RELEASED_DATA_LOG_ACTION_VALUES:
-            raise ValueError(
-                """"{action}" is not a valid value for {key}""".format(
-                    action=action, key=key
-                )
-            )
+            raise ValueError(f""""{action}" is not a valid value for {key}""")
         return action
 
     def to_json(self):

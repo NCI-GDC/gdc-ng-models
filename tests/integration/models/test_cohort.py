@@ -16,7 +16,6 @@ class CohortType(enum.Enum):
 @pytest.fixture(scope="function")
 def fixture_context(create_cohort_db, db_session):
     """Create an anonymous context for use with test cases."""
-
     test_context = cohort.AnonymousContext()
     db_session.add(test_context)
     db_session.commit()
@@ -26,7 +25,6 @@ def fixture_context(create_cohort_db, db_session):
 @pytest.fixture(scope="function")
 def fixture_cohort(create_cohort_db, db_session, fixture_context):
     """Create a cohort for use with test cases."""
-
     test_cohort = cohort.Cohort(name="fixture_cohort", context_id=fixture_context.id)
     db_session.add(test_cohort)
     db_session.commit()
@@ -36,12 +34,9 @@ def fixture_cohort(create_cohort_db, db_session, fixture_context):
 @pytest.fixture(scope="function")
 def fixture_static_filter(create_cohort_db, db_session, fixture_cohort):
     """Create a static cohort filter for use with test cases."""
-
     test_filter = cohort.CohortFilter(
         cohort_id=fixture_cohort.id,
-        filters=[
-            {"field": "cases.primary_site", "value": ["breast", "bronchus and lung"]}
-        ],
+        filters=[{"field": "cases.primary_site", "value": ["breast", "bronchus and lung"]}],
         cohort_type=CohortType.static.name,
     )
     db_session.add(test_filter)
@@ -52,7 +47,6 @@ def fixture_static_filter(create_cohort_db, db_session, fixture_cohort):
 @pytest.fixture(scope="function")
 def fixture_static_filter_parent_child(create_cohort_db, db_session, fixture_cohort):
     """Create a static cohort filter hierarchy consisting of a parent and child."""
-
     # create parent
     parent_filter = cohort.CohortFilter(
         cohort_id=fixture_cohort.id,
@@ -105,7 +99,6 @@ def fixture_cohort_static_full(
 
 def test_anonymous_context__valid_create(create_cohort_db, db_session):
     """Tests creation of a valid anonymous context entity."""
-
     # define expected values
     expected_id = uuid.uuid4()
 
@@ -120,7 +113,6 @@ def test_anonymous_context__valid_create(create_cohort_db, db_session):
 
 def test_anonymous_context__unique_ids(create_cohort_db, db_session):
     """Tests unique constraint on anonymous context ID."""
-
     target_id = uuid.uuid4()
     db_session.add(
         cohort.AnonymousContext(
@@ -142,7 +134,6 @@ def test_anonymous_context__unique_ids(create_cohort_db, db_session):
 
 def test_anonymous_context__defaults_unique_ids(create_cohort_db, db_session):
     """Tests default generated IDs on anonymous context are unique."""
-
     context_1 = cohort.AnonymousContext()
     context_2 = cohort.AnonymousContext()
     db_session.add_all([context_1, context_2])
@@ -155,7 +146,6 @@ def test_anonymous_context__defaults_unique_ids(create_cohort_db, db_session):
 
 def test_anonymous_context__to_json(create_cohort_db, db_session):
     """Tests json output for anonymous context is valid."""
-
     test_context = cohort.AnonymousContext()
     db_session.add(test_context)
     db_session.commit()
@@ -175,7 +165,6 @@ def test_anonymous_context__to_json(create_cohort_db, db_session):
 
 def test_cohort__valid_create(create_cohort_db, db_session, fixture_context):
     """Tests creation of a valid cohort entity."""
-
     # define expected values
     expected_id = uuid.uuid4()
     expected_name = "test_cohort"
@@ -198,7 +187,6 @@ def test_cohort__valid_create(create_cohort_db, db_session, fixture_context):
 
 def test_cohort__unique_ids(create_cohort_db, db_session, fixture_context):
     """Tests unique constraint on cohort ID."""
-
     target_id = uuid.uuid4()
     db_session.add(
         cohort.Cohort(
@@ -209,9 +197,7 @@ def test_cohort__unique_ids(create_cohort_db, db_session, fixture_context):
     )
     db_session.commit()
 
-    with pytest.raises(
-        exc.IntegrityError, match=r"violates unique constraint.*cohort_pkey"
-    ):
+    with pytest.raises(exc.IntegrityError, match=r"violates unique constraint.*cohort_pkey"):
         db_session.add(
             cohort.Cohort(
                 id=target_id,
@@ -224,7 +210,6 @@ def test_cohort__unique_ids(create_cohort_db, db_session, fixture_context):
 
 def test_cohort__defaults_unique_ids(create_cohort_db, db_session, fixture_context):
     """Tests default generated IDs on cohort are unique."""
-
     cohort_1 = cohort.Cohort(name="cohort_1", context_id=fixture_context.id)
     cohort_2 = cohort.Cohort(name="cohort_2", context_id=fixture_context.id)
     db_session.add(cohort_1)
@@ -240,7 +225,6 @@ def test_cohort__anonymous_context_bidirectional_relationship(
     create_cohort_db, db_session, fixture_context
 ):
     """Tests bidirectional relationship between cohort and anonymous context."""
-
     test_cohort = cohort.Cohort(name="test_cohort", context_id=fixture_context.id)
     db_session.add(test_cohort)
     db_session.commit()
@@ -251,7 +235,6 @@ def test_cohort__anonymous_context_bidirectional_relationship(
 
 def test_cohort__current_filter(create_cohort_db, db_session, fixture_cohort):
     """Tests the current filter function is retrieving the latest filter."""
-
     # create first filter and validate returned as current
     filter_1 = cohort.CohortFilter(
         parent_id=None,
@@ -278,7 +261,6 @@ def test_cohort__current_filter(create_cohort_db, db_session, fixture_cohort):
 
 def test_cohort__context_fkey_constraint(create_cohort_db, db_session):
     """Tests cohort foreign key constraint on context_id."""
-
     non_existent_id = uuid.uuid4()
     with pytest.raises(exc.IntegrityError, match=r"violates foreign key constraint"):
         db_session.add(
@@ -292,7 +274,6 @@ def test_cohort__context_fkey_constraint(create_cohort_db, db_session):
 
 def test_cohort__name_not_nullable(create_cohort_db, db_session, fixture_context):
     """Tests name must be defined for cohort."""
-
     with pytest.raises(exc.IntegrityError, match=r"violates not-null constraint"):
         db_session.add(
             cohort.Cohort(
@@ -305,7 +286,6 @@ def test_cohort__name_not_nullable(create_cohort_db, db_session, fixture_context
 
 def test_cohort__to_json(create_cohort_db, db_session, fixture_context):
     """Tests json output for cohort is valid."""
-
     test_cohort = cohort.Cohort(
         name="test_cohort",
         id=uuid.uuid4(),
@@ -332,7 +312,6 @@ def test_cohort__to_json(create_cohort_db, db_session, fixture_context):
 
 def test_cohort_filter__valid_create(create_cohort_db, db_session, fixture_cohort):
     """Tests creation of a valid cohort filter entity."""
-
     # define expected values
     expected_id = 1
     expected_cohort_id = fixture_cohort.id
@@ -362,7 +341,6 @@ def test_cohort_filter__valid_create(create_cohort_db, db_session, fixture_cohor
 
 def test_cohort_filter__unique_ids(create_cohort_db, db_session, fixture_cohort):
     """Tests unique constraint on cohort filter ID."""
-
     target_id = 1
     db_session.add(
         cohort.CohortFilter(
@@ -386,11 +364,8 @@ def test_cohort_filter__unique_ids(create_cohort_db, db_session, fixture_cohort)
         db_session.commit()
 
 
-def test_cohort_filter__defaults_unique_ids(
-    create_cohort_db, db_session, fixture_cohort
-):
+def test_cohort_filter__defaults_unique_ids(create_cohort_db, db_session, fixture_cohort):
     """Tests default generated IDs on cohort filter are unique."""
-
     filter_1 = cohort.CohortFilter(cohort_id=fixture_cohort.id, filters=[])
     filter_2 = cohort.CohortFilter(cohort_id=fixture_cohort.id, filters=[])
     db_session.add_all([filter_1, filter_2])
@@ -405,7 +380,6 @@ def test_cohort_filter__cohort_bidirectional_relationship(
     create_cohort_db, db_session, fixture_cohort
 ):
     """Tests bidirectional relationship between cohort filter and cohort."""
-
     test_filter = cohort.CohortFilter(
         parent_id=None,
         cohort_id=fixture_cohort.id,
@@ -421,7 +395,6 @@ def test_cohort_filter__cohort_bidirectional_relationship(
 
 def test_cohort_filter__cohort_fkey_constraint(create_cohort_db, db_session):
     """Tests cohort filter foreign key constraint on cohort_id."""
-
     non_existent_id = uuid.uuid4()
     with pytest.raises(exc.IntegrityError, match=r"violates foreign key constraint"):
         db_session.add(
@@ -433,11 +406,8 @@ def test_cohort_filter__cohort_fkey_constraint(create_cohort_db, db_session):
         db_session.commit()
 
 
-def test_cohort_filter__filters_not_nullable(
-    create_cohort_db, db_session, fixture_cohort
-):
+def test_cohort_filter__filters_not_nullable(create_cohort_db, db_session, fixture_cohort):
     """Tests filters must be defined for cohort filter."""
-
     with pytest.raises(exc.IntegrityError, match=r"violates not-null constraint"):
         db_session.add(
             cohort.CohortFilter(
@@ -449,7 +419,6 @@ def test_cohort_filter__filters_not_nullable(
 
 def test_cohort_filter__static_default(create_cohort_db, db_session, fixture_cohort):
     """Tests static indicator on cohort filter defaults to false."""
-
     test_filter = cohort.CohortFilter(cohort_id=fixture_cohort.id, filters=[])
     db_session.add(test_filter)
     db_session.commit()
@@ -459,7 +428,6 @@ def test_cohort_filter__static_default(create_cohort_db, db_session, fixture_coh
 
 def test_cohort_filter__parent_id_history(create_cohort_db, db_session, fixture_cohort):
     """Tests history is maintained via parent_id on cohort filter."""
-
     # create parent filter
     parent_filter = cohort.CohortFilter(
         cohort_id=fixture_cohort.id,
@@ -493,12 +461,9 @@ def test_cohort_filter__parent_id_history(create_cohort_db, db_session, fixture_
 
 def test_cohort_filter__to_json(create_cohort_db, db_session, fixture_cohort):
     """Tests json output for cohort filter is valid."""
-
     test_filter = cohort.CohortFilter(
         cohort_id=fixture_cohort.id,
-        filters=[
-            {"field": "cases.primary_site", "value": ["breast", "bronchus and lung"]}
-        ],
+        filters=[{"field": "cases.primary_site", "value": ["breast", "bronchus and lung"]}],
     )
     db_session.add(test_filter)
     db_session.commit()
@@ -520,11 +485,8 @@ def test_cohort_filter__to_json(create_cohort_db, db_session, fixture_cohort):
     assert test_filter.to_json() == expected_json
 
 
-def test_cohort_snapshot__valid_create(
-    create_cohort_db, db_session, fixture_static_filter
-):
+def test_cohort_snapshot__valid_create(create_cohort_db, db_session, fixture_static_filter):
     """Tests creation of a valid cohort snapshot entity."""
-
     # define expected values
     expected_id = 1
     expected_filter_id = fixture_static_filter.id
@@ -552,7 +514,6 @@ def test_cohort_snapshot__unique_ids(
     create_cohort_db, db_session, fixture_static_filter_parent_child
 ):
     """Tests unique constraint on cohort snapshot ID."""
-
     target_id = 1
 
     # due to unique constraint, each snapshot must have a unique filter
@@ -589,7 +550,6 @@ def test_cohort_snapshot__default_unique_ids(
     create_cohort_db, db_session, fixture_static_filter_parent_child
 ):
     """Tests default generated IDs on cohort snapshot are unique."""
-
     # due to unique constraint, each snapshot must have a unique filter
     filter_1 = fixture_static_filter_parent_child[0]
     filter_2 = fixture_static_filter_parent_child[1]
@@ -617,7 +577,6 @@ def test_cohort_snapshot__cohort_filter_bidirectional_relationship(
     create_cohort_db, db_session, fixture_static_filter
 ):
     """Tests bidirectional relationship between cohort snapshot and cohort filter."""
-
     test_snapshot = cohort.CohortSnapshot(
         filter_id=fixture_static_filter.id,
         data_release=uuid.uuid4(),
@@ -632,7 +591,6 @@ def test_cohort_snapshot__cohort_filter_bidirectional_relationship(
 
 def test_cohort_snapshot__cohort_filter_fkey_constraint(create_cohort_db, db_session):
     """Tests cohort snapshot foreign key constraint on cohort filter id."""
-
     non_existent_id = 12345
 
     with pytest.raises(exc.IntegrityError, match=r"violates foreign key constraint"):
@@ -650,7 +608,6 @@ def test_cohort_snapshot__filter_id_unique_constraint(
     create_cohort_db, db_session, fixture_static_filter
 ):
     """Tests unique constraint on filter ID."""
-
     # create snapshot
     db_session.add(
         cohort.CohortSnapshot(
@@ -677,7 +634,6 @@ def test_cohort_snapshot__data_release_not_nullable(
     create_cohort_db, db_session, fixture_static_filter
 ):
     """Tests data release must be defined for cohort snapshot."""
-
     with pytest.raises(exc.IntegrityError, match=r"violates not-null constraint"):
         db_session.add(
             cohort.CohortSnapshot(
@@ -692,7 +648,6 @@ def test_cohort_snapshot__case_ids_not_nullable(
     create_cohort_db, db_session, fixture_static_filter
 ):
     """Tests case IDs must be defined for cohort snapshot."""
-
     with pytest.raises(exc.IntegrityError, match=r"violates not-null constraint"):
         db_session.add(
             cohort.CohortSnapshot(
@@ -705,7 +660,6 @@ def test_cohort_snapshot__case_ids_not_nullable(
 
 def test_cohort_snapshot__to_json(create_cohort_db, db_session, fixture_static_filter):
     """Tests json output for cohort snapshot is valid."""
-
     test_snapshot = cohort.CohortSnapshot(
         id=1,
         filter_id=fixture_static_filter.id,

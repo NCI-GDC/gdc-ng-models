@@ -8,8 +8,7 @@ from gdc_ng_models.models.redaction import RedactionEntry, RedactionLog
 
 @pytest.fixture(scope="function")
 def redacted_fixture(create_redaction_log_db, db_session):
-    """Creates a redacted log entry"""
-
+    """Creates a redacted log entry."""
     log = RedactionLog()
     log.initiated_by = "TEST"
     log.annotation_id = str(uuid.uuid4())

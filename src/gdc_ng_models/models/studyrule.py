@@ -25,9 +25,7 @@ class StudyRule(Base, audit.AuditColumnsMixin):
 
     __tablename__ = "study_rule"
     id_seq = schema.Sequence(name="study_rule_id_seq", metadata=Base.metadata)
-    id = schema.Column(
-        sqltypes.BigInteger, nullable=False, server_default=id_seq.next_value()
-    )
+    id = schema.Column(sqltypes.BigInteger, nullable=False, server_default=id_seq.next_value())
     name = schema.Column(sqltypes.Text, nullable=False)
 
     __table_args__ = (
@@ -38,16 +36,14 @@ class StudyRule(Base, audit.AuditColumnsMixin):
     whole_programs = orm.relationship("StudyRuleProgram", lazy="joined")
     partial_programs = orm.relationship("StudyRuleProgramProject", lazy="joined")
 
-    def __repr__(self):
-        return "<StudyRule(id={id}, name='{name}', created_datetime={created_datetime}, updated_datetime={updated_datetime})>".format(
-            id=self.id,
-            name=self.name,
-            created_datetime=(
-                self.created_datetime.isoformat() if self.created_datetime else None
-            ),
-            updated_datetime=(
-                self.updated_datetime.isoformat() if self.updated_datetime else None
-            ),
+    def __repr__(self) -> str:
+        created_datetime = self.created_datetime.isoformat() if self.created_datetime else None
+        updated_datetime = self.updated_datetime.isoformat() if self.updated_datetime else None
+
+        return (
+            f"<StudyRule(id={self.id}, name='{self.name}', "
+            f"created_datetime={created_datetime}, "
+            f"updated_datetime={updated_datetime})>"
         )
 
     def to_json(self):
@@ -91,16 +87,15 @@ class StudyRuleProgram(Base, audit.AuditColumnsMixin):
         ),
     )
 
-    def __repr__(self):
-        return "<StudyRuleProgram(study_rule_id={study_rule_id}, program_name='{program_name}', created_datetime={created_datetime}, updated_datetime={updated_datetime})>".format(
-            study_rule_id=self.study_rule_id,
-            program_name=self.program_name,
-            created_datetime=(
-                self.created_datetime.isoformat() if self.created_datetime else None
-            ),
-            updated_datetime=(
-                self.updated_datetime.isoformat() if self.updated_datetime else None
-            ),
+    def __repr__(self) -> str:
+        created_datetime = self.created_datetime.isoformat() if self.created_datetime else None
+        updated_datetime = self.updated_datetime.isoformat() if self.updated_datetime else None
+
+        return (
+            f"<StudyRuleProgram(study_rule_id={self.study_rule_id}, "
+            f"program_name='{self.program_name}', "
+            f"created_datetime={created_datetime}, "
+            f"updated_datetime={updated_datetime})>"
         )
 
     def to_json(self):
@@ -152,17 +147,15 @@ class StudyRuleProgramProject(Base, audit.AuditColumnsMixin):
         ),
     )
 
-    def __repr__(self):
-        return "<StudyRuleProgramProject(study_rule_id={study_rule_id}, program_name='{program_name}', project_code='{project_code}', created_datetime={created_datetime}, updated_datetime={updated_datetime})>".format(
-            study_rule_id=self.study_rule_id,
-            program_name=self.program_name,
-            project_code=self.project_code,
-            created_datetime=(
-                self.created_datetime.isoformat() if self.created_datetime else None
-            ),
-            updated_datetime=(
-                self.updated_datetime.isoformat() if self.updated_datetime else None
-            ),
+    def __repr__(self) -> str:
+        created_datetime = self.created_datetime.isoformat() if self.created_datetime else None
+        updated_datetime = self.updated_datetime.isoformat() if self.updated_datetime else None
+
+        return (
+            f"<StudyRuleProgramProject(study_rule_id={self.study_rule_id}, "
+            f"program_name='{self.program_name}', project_code='{self.project_code}', "
+            f"created_datetime={created_datetime}, "
+            f"updated_datetime={updated_datetime})>"
         )
 
     def to_json(self):

@@ -1,5 +1,4 @@
-"""
-gdcdatamodel.models.submission
+"""gdcdatamodel.models.submission
 ----------------------------------
 
 Models for submission TransactionLogs
@@ -45,7 +44,7 @@ class TransactionLog(Base):
     __tablename__ = "transaction_logs"
 
     @declared_attr
-    def __table_args__(cls):
+    def __table_args__(cls):  # noqa: N805
         tbl = cls.__tablename__
         return (
             Index(f"{tbl}_program_idx", "program"),
@@ -85,9 +84,7 @@ class TransactionLog(Base):
         # Check for field existence
         if set(fields) - set(existing_fields):
             raise RuntimeError(
-                "Fields do not exist: {}".format(
-                    ", ".join(set(fields) - set(existing_fields))
-                )
+                "Fields do not exist: {}".format(", ".join(set(fields) - set(existing_fields)))
             )
 
         # Set standard fields
@@ -154,7 +151,7 @@ class TransactionLog(Base):
         return self.program + "-" + self.project
 
     @project_id.expression
-    def project_id(cls):
+    def project_id(cls):  # noqa: N805
         return func.concat(cls.program, "-", cls.project)
 
     created_datetime = Column(
@@ -173,11 +170,10 @@ class TransactionLog(Base):
 
 
 class TransactionSnapshot(Base):
-
     __tablename__ = "transaction_snapshots"
 
     @declared_attr
-    def __table_args__(cls):
+    def __table_args__(cls):  # noqa: N805
         return (Index("idx_transaction_snapshots_transactions_id", "transaction_id"),)
 
     def __repr__(self):
@@ -228,11 +224,10 @@ class TransactionSnapshot(Base):
 
 
 class TransactionDocument(Base):
-
     __tablename__ = "transaction_documents"
 
     @declared_attr
-    def __table_args__(cls):
+    def __table_args__(cls):  # noqa: N805
         return (Index("idx_transaction_document_transactions_id", "transaction_id"),)
 
     def to_json(self, fields=None):
@@ -247,9 +242,7 @@ class TransactionDocument(Base):
         # Check field existence
         if set(fields) - set(existing_fields):
             raise RuntimeError(
-                "Entity fields do not exist: {}".format(
-                    ", ".join(fields - existing_fields)
-                )
+                "Entity fields do not exist: {}".format(", ".join(fields - existing_fields))
             )
 
         # Generate doc
