@@ -99,10 +99,11 @@ env_list = [{prefix = "py3", start = 10, end = 14}]
 
 [tool.tox.env_run_base]
 dependency_groups = ["dev"]
-pass_env = ["PG_*"]
 commands = [
   ["pytest", {replace = "posargs", default = ["-lv", "--cov-report=xml", "--cov-report=html", "--junit-xml=report.xml"], extend = true}]
 ]
+pass_env = ["PG_*"]
+runner = "uv-venv-lock-runner"
 
 [tool.tox.env_run_base.set_env]
 NO_PROXY = "localhost,postgres"
