@@ -105,7 +105,7 @@ commands = [
 ]
 dependency_groups = ["dev"]
 extras = ["{factor:sqlalchemy}"]
-pass_env = ["PG_*"]
+pass_env = ["CI", "PG_*"]
 runner = "uv-venv-lock-runner"
 
 [tool.tox.env_run_base.set_env]
