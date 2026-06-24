@@ -1,21 +1,17 @@
-from typing import Callable
+from collections.abc import Callable
 
 import pytest
 from sqlalchemy.engine import Engine
 
 
-@pytest.mark.parametrize(
-    "command", ["-h", "create --help", "grant --help", "revoke --help"]
-)
+@pytest.mark.parametrize("command", ["-h", "create --help", "grant --help", "revoke --help"])
 def test_cli__sanity(ng_models_cli: Callable[[str], None], command: str) -> None:
     with pytest.raises(SystemExit) as v:
         ng_models_cli(command)
     assert v.value.code == 0
 
 
-def test_cli__invalid_module(
-    ng_models_cli: Callable[[str], None], db_args: str
-) -> None:
+def test_cli__invalid_module(ng_models_cli: Callable[[str], None], db_args: str) -> None:
     with pytest.raises(SystemExit) as v:
         ng_models_cli(f"-m skipper_tables {db_args} revoke -r ux -P read")
     assert v.value.code != 0

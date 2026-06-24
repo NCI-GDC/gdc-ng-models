@@ -1,4 +1,4 @@
-"""change columns to BigInteger
+"""Change columns to BigInteger.
 
 Revision ID: 12dbbcac7a1d
 Revises: e9d53a640d5d

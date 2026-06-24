@@ -92,9 +92,7 @@ def create_entity_set_db(
 
 
 @pytest.fixture(scope="session")
-def create_qcreport_db(
-    db_engine: Engine, db_args: str, ng_models_cli: Callable[[str], None]
-):
+def create_qcreport_db(db_engine: Engine, db_args: str, ng_models_cli: Callable[[str], None]):
     ng_models_cli(f"-m qcreport {db_args} create")
     yield
     qcreport.Base.metadata.drop_all(db_engine)

@@ -48,9 +48,7 @@ def get_parser():
     create_parser = sub_parser.add_parser("create", help="Create tables")
     create_parser.set_defaults(action="create")
 
-    grant_parser = sub_parser.add_parser(
-        "grant", help="Grants privileges in module tables"
-    )
+    grant_parser = sub_parser.add_parser("grant", help="Grants privileges in module tables")
 
     grant_parser.add_argument(
         "-r",
@@ -69,9 +67,7 @@ def get_parser():
     )
     grant_parser.set_defaults(action="grant")
 
-    revoke_parser = sub_parser.add_parser(
-        "revoke", help="Revokes privileges in module tables"
-    )
+    revoke_parser = sub_parser.add_parser("revoke", help="Revokes privileges in module tables")
 
     revoke_parser.add_argument(
         "-r",

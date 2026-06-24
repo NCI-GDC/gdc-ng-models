@@ -20,9 +20,7 @@ Base = declarative_base()
 
 
 class RedactionLog(Base):
-    """
-    Logs a redaction event, each redacted node will be stored as a RedactionEntry
-    """
+    """Logs a redaction event, each redacted node will be stored as a RedactionEntry."""
 
     __tablename__ = "redaction_log"
 
@@ -59,9 +57,7 @@ class RedactionLog(Base):
 
     date_rescinded = Column(DateTime(timezone=True), nullable=True)
 
-    entries = relationship(
-        "RedactionEntry", back_populates="redaction_log"
-    )  # type: list[RedactionEntry]
+    entries = relationship("RedactionEntry", back_populates="redaction_log")  # type: list[RedactionEntry]
 
     @hybrid_property
     def project(self):
@@ -72,24 +68,25 @@ class RedactionLog(Base):
         return self.project_id.split("-")[0]
 
     def rescind_all(self, rescinded_by):
-        """Rescinds all entries on this redaction log"""
+        """Rescinds all entries on this redaction log."""
         self.rescinded_by = rescinded_by
         self.date_rescinded = datetime.now()
         for entry in self.entries:
             entry.rescind(rescinded_by)
 
     @hybrid_property
-    def is_rescinded(self):
-        """Checks if all redacted entries in this log has been rescinded
+    def is_rescinded(self) -> bool:
+        """Checks if all redacted entries in this log has been rescinded.
+
         Returns:
-           bool: True if all are rescinded
+           True if all entries are rescinded; otherwise, false is returned.
         """
         for entry in self.entries:
             if not entry.rescinded:
                 return False
         return True
 
-    def to_json(self):
+    def to_json(self) -> dict:
         json = dict(
             id=self.id,
             annotation_id=self.annotation_id,
@@ -101,9 +98,7 @@ class RedactionLog(Base):
 
 
 class RedactionEntry(Base):
-    """
-    Logs a redacted node, holds enough information to enable querying and filtering redacted nodes
-    """
+    """Logs a redacted node w/ enough information to query and filter redacted nodes."""
 
     __tablename__ = "redaction_entry"
 
@@ -132,7 +127,7 @@ class RedactionEntry(Base):
     date_rescinded = Column(DateTime(timezone=True), nullable=True)
 
     def rescind(self, rescinded_by):
-        """Performs a rescind action on an entry"""
+        """Performs a rescind action on an entry."""
         self.rescinded = True
         self.rescinded_by = rescinded_by
         self.date_rescinded = datetime.now()
@@ -141,7 +136,7 @@ class RedactionEntry(Base):
     def is_indexed(self):
         return self.file_name is not None
 
-    def to_json(self):
+    def to_json(self) -> dict:
         return dict(
             node_id=self.node_id,
             redaction_id=self.redaction_id,

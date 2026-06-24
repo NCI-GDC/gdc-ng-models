@@ -17,7 +17,7 @@ class GDCReport(Base):
         Index(f"{__tablename__}_id_idx", "id"),
     )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<Report({self.id}, {self.report_type})>"
 
     id_seq = Sequence("gdc_reports_id_seq", metadata=Base.metadata)
@@ -38,5 +38,5 @@ class GDCReport(Base):
         return self.program + "-" + self.project
 
     @project_id.expression
-    def project_id(cls):
+    def project_id(cls):  # noqa: N805
         return func.concat(cls.program, "-", cls.project)

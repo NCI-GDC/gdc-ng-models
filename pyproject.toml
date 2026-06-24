@@ -2,9 +2,12 @@
 build-backend = "setuptools.build_meta"
 requires = ["setuptools>=80", "setuptools-scm"]
 
+[dependency-groups]
+dev = ["cdisutils", "pytest>=6", "pytest-cov", "testcontainers"]
+
 [project]
 authors = [
-  {name = "GDC feature team", email = "gdc_dev_questions-aaaaae2lhsbell56tlvh3upgoq@cdis.slack.com"}
+  {name = "GDC Feature Team", email = "gdc_dev_questions-aaaaae2lhsbell56tlvh3upgoq@cdis.slack.com"}
 ]
 classifiers = [
   "License :: OSI Approved :: Apache Software License",
@@ -20,9 +23,9 @@ dependencies = ["psycopg2", "pytz>=2020.5", "sqlalchemy<2"]
 description = "Non-graph GDC models."
 dynamic = ["version"]
 keywords = ["Genomic Data Commons", "non-graph-models", "SQLAlchemy"]
-license = {file = "LICENSE"}
+license-files = ["LICENSE"]
 maintainers = [
-  {name = "GDC feature team", email = "gdc_dev_questions-aaaaae2lhsbell56tlvh3upgoq@cdis.slack.com"}
+  {name = "GDC Feature Team", email = "gdc_dev_questions-aaaaae2lhsbell56tlvh3upgoq@cdis.slack.com"}
 ]
 name = "gdc-ng-models"
 readme = "README.md"
@@ -30,18 +33,12 @@ requires-python = ">=3.10"
 
 [project.optional-dependencies]
 alembic = ["alembic>=1.4"]
-dev = ["cdisutils", "pytest>=6", "pytest-cov", "testcontainers"]
 
 [project.scripts]
 ng-models = "gdc_ng_models.cli:main"
 
 [project.urls]
 Repository = "https://github.com/NCI-GDC/gdc-ng-models"
-
-[tool.black]
-include = '\.pyi?$'
-line-length = 88
-target-version = ["py39"]
 
 [tool.coverage.html]
 directory = "docs/htmlcov"
@@ -54,12 +51,8 @@ context = "tests"
 omit = ["*/alembic/*"]
 source = ["gdc-ng-models"]
 
-[tool.isort]
-known_first_party = ["gdc-ng-models"]
-profile = "black"
-
-[tool.pytest.ini_options]
-addopts = "-rfE --color=yes --cov=gdc_ng_models --cov-report term"
+[tool.pytest]
+addopts = ["-rfE", "--color=yes", "--cov=gdc_ng_models", "--cov-report", "term"]
 console_output_style = "classic"
 minversion = "6.0"
 # Silence warning by opting in to use pytest 6's new default value
@@ -70,8 +63,64 @@ log_cli_level = "INFO"
 norecursedirs = [".git", ".tox", "dist", "build"]
 testpaths = ["tests/unit", "tests/integration"]
 
+[tool.ruff]
+line-length = 95
+src = ["src", "tests"]
+target-version = "py310"
+
+[tool.ruff.lint]
+ignore = [
+  "D100", # missing module docstring.
+  "D101", # missing class docstring.
+  "D102", # missing method docstring.
+  "D103", # missing function docstring.
+  "D104", # missing package docstring.
+  "D105" # missing magic method docstring.
+]
+# see https://docs.astral.sh/ruff/rules/
+select = [
+  "E", # pydocstyle errors
+  "F", # pyflakes
+  "I", # isort
+  "N", # pep8 naming
+  "RUF", # ruff specific rules
+  "UP", # pyupgrade
+  "D", # pydocstyle lint
+  "W" # pydocstyle warnings
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["gdc_ng_models", "tests"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["D"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools_scm]
 fallback_version = "0.0.0"
+
+[tool.tox]
+env_list = [{prefix = "py3", start = 10, stop = 14}]
+
+[tool.tox.env_run_base]
+commands = [
+  [
+    "pytest",
+    {replace = "posargs", defaults = ["-lv", "--cov-report=xml", "--cov-report=html", "--junit-xml=report.xml"], extend = true}
+  ]
+]
+dependency_groups = ["dev"]
+pass_env = ["CI", "PG_*"]
+runner = "uv-venv-lock-runner"
+
+[tool.tox.env_run_base.set_env]
+NO_PROXY = "localhost,postgres"
+no_proxy = "localhost,postgres"
+PG_NAME = "automated_test"
+PG_PASS = "test"
+PG_USER = "test"

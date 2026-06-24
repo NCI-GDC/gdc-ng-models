@@ -1,4 +1,5 @@
 import os
+from collections.abc import Iterable
 from logging import getLogger
 
 from sqlalchemy import create_engine
@@ -64,30 +65,19 @@ def drop_user(configs, user):
 
 @try_or_log_error(logger)
 def create_user(configs, user, password):
-    stmt = "create user {user} with password '{password}'".format(
-        user=user, password=password
-    )
+    stmt = f"create user {user} with password '{password}'"
     execute_statement(configs, stmt, create_user.__name__ + " success")
 
 
 @try_or_log_error(logger)
 def grant_all_privileges(configs, database, user):
-    stmt = "grant all privileges on database {database} " "to {user}".format(
-        database=database,
-        user=user,
-    )
+    stmt = f"grant all privileges on database {database} to {user}"
     execute_statement(configs, stmt, grant_all_privileges.__name__ + " success")
 
 
 @try_or_log_error(logger)
-def grant_privilege(configs, permission, user, tables):
-    """
-    Args:
-        configs (dict):
-        permission (str):
-        user (str):
-        tables (list[str]):
-    """
+def grant_privilege(configs: dict, permission: str, user: str, tables: Iterable[str]) -> None:
+    """Grants the given user the given permission for each of the given tables."""
     stmt = "GRANT {permission} ON {tables} TO {user}".format(
         tables=", ".join(tables), permission=PERMISSIONS[permission.upper()], user=user
     )

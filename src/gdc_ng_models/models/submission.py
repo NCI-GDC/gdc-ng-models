@@ -1,16 +1,9 @@
-"""
-gdcdatamodel.models.submission
-----------------------------------
-
-Models for submission TransactionLogs
-"""
+"""Models for submission TransactionLogs."""
 
 from datetime import datetime
 from json import dumps, loads
 
 import pytz
-import sqlalchemy as db
-from packaging import version
 from sqlalchemy import (
     BigInteger,
     Boolean,
@@ -24,15 +17,10 @@ from sqlalchemy import (
     func,
     text,
 )
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.declarative import declarative_base, declared_attr
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import deferred, relationship
-
-if version.Version(db.__version__) >= version.Version("1.3.4"):
-    from sqlalchemy.dialects.postgresql.json import JSONB
-else:
-    from sqlalchemy.dialects.postgresql import JSONB
-
 
 Base = declarative_base()
 
@@ -45,7 +33,7 @@ class TransactionLog(Base):
     __tablename__ = "transaction_logs"
 
     @declared_attr
-    def __table_args__(cls):
+    def __table_args__(cls):  # noqa: N805
         tbl = cls.__tablename__
         return (
             Index(f"{tbl}_program_idx", "program"),
@@ -59,7 +47,7 @@ class TransactionLog(Base):
             Index(f"{tbl}_project_id_idx", cls.program + "-" + cls.project),
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<TransactionLog({self.id}, {self.created_datetime})>"
 
     def to_json(self, fields=None):
@@ -85,9 +73,7 @@ class TransactionLog(Base):
         # Check for field existence
         if set(fields) - set(existing_fields):
             raise RuntimeError(
-                "Fields do not exist: {}".format(
-                    ", ".join(set(fields) - set(existing_fields))
-                )
+                "Fields do not exist: {}".format(", ".join(set(fields) - set(existing_fields)))
             )
 
         # Set standard fields
@@ -154,7 +140,7 @@ class TransactionLog(Base):
         return self.program + "-" + self.project
 
     @project_id.expression
-    def project_id(cls):
+    def project_id(cls):  # noqa: N805
         return func.concat(cls.program, "-", cls.project)
 
     created_datetime = Column(
@@ -173,14 +159,13 @@ class TransactionLog(Base):
 
 
 class TransactionSnapshot(Base):
-
     __tablename__ = "transaction_snapshots"
 
     @declared_attr
-    def __table_args__(cls):
+    def __table_args__(cls):  # noqa: N805
         return (Index("idx_transaction_snapshots_transactions_id", "transaction_id"),)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"<TransactionSnapshot({self.id}, {self.transaction_id})>"
 
     def to_json(self, fields=None):
@@ -228,11 +213,10 @@ class TransactionSnapshot(Base):
 
 
 class TransactionDocument(Base):
-
     __tablename__ = "transaction_documents"
 
     @declared_attr
-    def __table_args__(cls):
+    def __table_args__(cls):  # noqa: N805
         return (Index("idx_transaction_document_transactions_id", "transaction_id"),)
 
     def to_json(self, fields=None):
@@ -247,9 +231,7 @@ class TransactionDocument(Base):
         # Check field existence
         if set(fields) - set(existing_fields):
             raise RuntimeError(
-                "Entity fields do not exist: {}".format(
-                    ", ".join(fields - existing_fields)
-                )
+                "Entity fields do not exist: {}".format(", ".join(fields - existing_fields))
             )
 
         # Generate doc

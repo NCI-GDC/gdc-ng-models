@@ -1,4 +1,4 @@
-"""Mixin for adding an accessed timestamp column to track the last time a record was accessed."""
+"""Mixin for adding an accessed timestamp to track the last time a record was accessed."""
 
 import datetime
 
@@ -13,12 +13,9 @@ class AccessedColumnMixin:
         accessed_datetime: Metadata describing when a row was last accessed.
     """
 
-    def __init__(self):
-        pass
-
     accessed_datetime = schema.Column(
         sqltypes.DateTime(timezone=True),
         nullable=False,
         server_default=sql.text("now()"),
-        onupdate=datetime.datetime.utcnow,
+        onupdate=lambda: datetime.datetime.now(datetime.timezone.utc),
     )
