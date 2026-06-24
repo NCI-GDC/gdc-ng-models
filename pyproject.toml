@@ -1,6 +1,6 @@
 [build-system]
 build-backend = "setuptools.build_meta"
-requires = ["setuptools>=68", "wheel", "setuptools_scm[toml]>=7.0", "versionista>=1.1.0"]
+requires = ["setuptools>=80", "setuptools-scm"]
 
 [project]
 authors = [
@@ -11,7 +11,6 @@ classifiers = [
   "Topic :: Software Development :: Libraries :: Python Modules",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
@@ -20,14 +19,14 @@ classifiers = [
 dependencies = ["psycopg2", "pytz>=2020.5", "sqlalchemy<2"]
 description = "Non-graph GDC models."
 dynamic = ["version"]
-keywords = ["Genomic Data Commons", "non-graph-models", "SQLAlchemy", "psqlgraph"]
+keywords = ["Genomic Data Commons", "non-graph-models", "SQLAlchemy"]
 license = {file = "LICENSE"}
 maintainers = [
   {name = "GDC feature team", email = "gdc_dev_questions-aaaaae2lhsbell56tlvh3upgoq@cdis.slack.com"}
 ]
 name = "gdc-ng-models"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 
 [project.optional-dependencies]
 alembic = ["alembic>=1.4"]
@@ -71,12 +70,8 @@ log_cli_level = "INFO"
 norecursedirs = [".git", ".tox", "dist", "build"]
 testpaths = ["tests/unit", "tests/integration"]
 
-[tool.setuptools.package-data]
-gdc_ng_models = ["alembic/*"]
-
 [tool.setuptools.packages.find]
 where = ["src"]
 
 [tool.setuptools_scm]
-local_scheme = "versionista-local-format"
-version_scheme = "versionista-format"
+fallback_version = "0.0.0"
