@@ -30,7 +30,7 @@ requires-python = ">=3.10"
 
 [project.optional-dependencies]
 alembic = ["alembic>=1.4"]
-dev = ["coverage[toml]", "pytest>=6", "pytest-cov", "cdisutils"]
+dev = ["cdisutils", "pytest>=6", "pytest-cov", "testcontainers"]
 
 [project.scripts]
 ng-models = "gdc_ng_models.cli:main"
