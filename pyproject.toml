@@ -112,7 +112,7 @@ env_list = [{prefix = "py3", start = 10, stop = 14}]
 commands = [
   [
     "pytest",
-    {replace = "posargs", defaults = ["-lv", "--cov-report=xml", "--cov-report=html", "--junit-xml=report.xml"], extend = true}
+    {replace = "posargs", default = ["-lv", "--cov-report=xml", "--cov-report=html", "--junit-xml=report.xml"], extend = true}
   ]
 ]
 dependency_groups = ["dev"]
