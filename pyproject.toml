@@ -125,3 +125,7 @@ no_proxy = "localhost,postgres"
 PG_NAME = "automated_test"
 PG_PASS = "test"
 PG_USER = "test"
+
+[[tool.uv.index]]
+name = "nexus"
+url = "https://nexus.osdc.io/repository/pypi-all/simple"
