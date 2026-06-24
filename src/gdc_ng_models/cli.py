@@ -1,7 +1,6 @@
 import importlib
 import logging
 import sys
-from typing import List, Optional
 
 from gdc_ng_models.snacks import database
 from gdc_ng_models.utils.arg_parser import get_parser
@@ -44,13 +43,11 @@ def make_database_and_tables(module, configs):
     engine = database.postgres_engine_factory(configs)
     module.Base.metadata.create_all(engine)
 
-    logger.info(
-        "Successfully created ng-models table [{name}]".format(name=module.__name__)
-    )
+    logger.info(f"Successfully created ng-models table [{module.__name__}]")
     return 0
 
 
-def main(arguments: Optional[List[str]] = None):
+def main(arguments: list[str] | None = None):
     parser = get_parser()
     args = parser.parse_args(arguments)
 

@@ -2,7 +2,7 @@
 
 import datetime
 
-from sqlalchemy import func, schema, sql
+from sqlalchemy import schema, sql
 from sqlalchemy.sql import sqltypes
 
 
@@ -14,9 +14,6 @@ class AuditColumnsMixin:
         updated_datetime: Metadata describing when a row was last updated.
     """
 
-    def __init__(self):
-        pass
-
     created_datetime = schema.Column(
         sqltypes.DateTime(timezone=True),
         nullable=False,
@@ -26,5 +23,5 @@ class AuditColumnsMixin:
         sqltypes.DateTime(timezone=True),
         nullable=False,
         server_default=sql.text("now()"),
-        onupdate=datetime.datetime.utcnow,
+        onupdate=lambda: datetime.datetime.now(datetime.timezone.utc),
     )

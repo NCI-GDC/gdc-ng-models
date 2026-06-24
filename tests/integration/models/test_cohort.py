@@ -39,9 +39,7 @@ def fixture_static_filter(create_cohort_db, db_session, fixture_cohort):
 
     test_filter = cohort.CohortFilter(
         cohort_id=fixture_cohort.id,
-        filters=[
-            {"field": "cases.primary_site", "value": ["breast", "bronchus and lung"]}
-        ],
+        filters=[{"field": "cases.primary_site", "value": ["breast", "bronchus and lung"]}],
         cohort_type=CohortType.static.name,
     )
     db_session.add(test_filter)
@@ -209,9 +207,7 @@ def test_cohort__unique_ids(create_cohort_db, db_session, fixture_context):
     )
     db_session.commit()
 
-    with pytest.raises(
-        exc.IntegrityError, match=r"violates unique constraint.*cohort_pkey"
-    ):
+    with pytest.raises(exc.IntegrityError, match=r"violates unique constraint.*cohort_pkey"):
         db_session.add(
             cohort.Cohort(
                 id=target_id,
@@ -386,9 +382,7 @@ def test_cohort_filter__unique_ids(create_cohort_db, db_session, fixture_cohort)
         db_session.commit()
 
 
-def test_cohort_filter__defaults_unique_ids(
-    create_cohort_db, db_session, fixture_cohort
-):
+def test_cohort_filter__defaults_unique_ids(create_cohort_db, db_session, fixture_cohort):
     """Tests default generated IDs on cohort filter are unique."""
 
     filter_1 = cohort.CohortFilter(cohort_id=fixture_cohort.id, filters=[])
@@ -433,9 +427,7 @@ def test_cohort_filter__cohort_fkey_constraint(create_cohort_db, db_session):
         db_session.commit()
 
 
-def test_cohort_filter__filters_not_nullable(
-    create_cohort_db, db_session, fixture_cohort
-):
+def test_cohort_filter__filters_not_nullable(create_cohort_db, db_session, fixture_cohort):
     """Tests filters must be defined for cohort filter."""
 
     with pytest.raises(exc.IntegrityError, match=r"violates not-null constraint"):
@@ -496,9 +488,7 @@ def test_cohort_filter__to_json(create_cohort_db, db_session, fixture_cohort):
 
     test_filter = cohort.CohortFilter(
         cohort_id=fixture_cohort.id,
-        filters=[
-            {"field": "cases.primary_site", "value": ["breast", "bronchus and lung"]}
-        ],
+        filters=[{"field": "cases.primary_site", "value": ["breast", "bronchus and lung"]}],
     )
     db_session.add(test_filter)
     db_session.commit()
@@ -520,9 +510,7 @@ def test_cohort_filter__to_json(create_cohort_db, db_session, fixture_cohort):
     assert test_filter.to_json() == expected_json
 
 
-def test_cohort_snapshot__valid_create(
-    create_cohort_db, db_session, fixture_static_filter
-):
+def test_cohort_snapshot__valid_create(create_cohort_db, db_session, fixture_static_filter):
     """Tests creation of a valid cohort snapshot entity."""
 
     # define expected values

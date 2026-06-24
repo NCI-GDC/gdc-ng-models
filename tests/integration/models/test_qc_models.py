@@ -32,9 +32,7 @@ def test_create_runs(create_qcreport_db, db_session):
 
     # verify
     trx = (
-        db_session.query(qcreport.TestRun)
-        .filter(qcreport.TestRun.entity_id == tr_id)
-        .first()
+        db_session.query(qcreport.TestRun).filter(qcreport.TestRun.entity_id == tr_id).first()
     )
 
     assert trx.id == tr.id

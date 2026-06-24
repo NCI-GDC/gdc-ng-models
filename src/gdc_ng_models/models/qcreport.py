@@ -22,7 +22,6 @@ TEST_RUN_STATUS = Enum(
 
 
 class TestRun(Base):
-
     __tablename__ = "qc_test_runs"
 
     id_seq = Sequence("qc_test_runs_id_seq", metadata=Base.metadata)
@@ -54,14 +53,12 @@ class TestRun(Base):
         server_default=text("now()"),
     )
 
-    def __repr__(self):
-        return "<TestRun(id='%d', test_type='%s', status='%s')>" % (
-            self.id,
-            self.test_type,
-            self.status,
+    def __repr__(self) -> str:
+        return (
+            f"<TestRun(id='{self.id}', test_type='{self.test_type}', status='{self.status}')>"
         )
 
-    def to_json(self):
+    def to_json(self) -> dict:
         return {
             "id": self.id,
             "project_id": self.project_id,
@@ -74,7 +71,6 @@ class TestRun(Base):
 
 
 class ValidationResult(Base):
-
     __tablename__ = "qc_validation_results"
 
     id_seq = Sequence("qc_validation_results_id_seq", metadata=Base.metadata)
@@ -125,10 +121,10 @@ class ValidationResult(Base):
 
         return severity
 
-    def __repr__(self):
-        return "<ValidationResult(id=%d, error='%s')>" % (self.id, self.error_type)
+    def __repr__(self) -> str:
+        return f"<ValidationResult(id={self.id}, error='{self.error_type}')>"
 
-    def to_json(self):
+    def to_json(self) -> dict:
         return {
             "node_id": self.node_id,
             "submitter_id": self.submitter_id,

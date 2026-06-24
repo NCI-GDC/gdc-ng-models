@@ -1,4 +1,4 @@
-"""add start end datetimes for notifications
+"""Add start end date-times for notifications.
 
 Revision ID: e9d53a640d5d
 Revises:
