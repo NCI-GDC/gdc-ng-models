@@ -1,10 +1,10 @@
 import json
 
-import sqlalchemy as db
-from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.ext.declarative import declarative_base
+import sqlalchemy
+from sqlalchemy import orm
+from sqlalchemy.dialects import postgresql
 
-Base = declarative_base()
+Base = orm.declarative_base()
 
 
 DEFAULT_USAGE_REPORT = dict(visits=0, visitors=0, requests=0, network_usage=0)
@@ -13,21 +13,35 @@ DEFAULT_USAGE_REPORT = dict(visits=0, visitors=0, requests=0, network_usage=0)
 class DataUsageReport(Base):
     __tablename__ = "data_usage_report"
 
-    report_period = db.Column(db.Date, primary_key=True, nullable=False)  # MM/YYYY 01/31/2019
+    report_period = sqlalchemy.Column(
+        sqlalchemy.Date, primary_key=True, nullable=False
+    )  # MM/YYYY 01/31/2019
 
-    api_report = db.Column(JSONB, nullable=False, default=DEFAULT_USAGE_REPORT)
-
-    portal_report = db.Column(JSONB, nullable=False, default=DEFAULT_USAGE_REPORT)
-
-    website_report = db.Column(JSONB, nullable=False, default=DEFAULT_USAGE_REPORT)
-
-    doc_site_report = db.Column(JSONB, nullable=False, default=DEFAULT_USAGE_REPORT)
-
-    date_created = db.Column(
-        db.DateTime(timezone=True), nullable=False, server_default=db.text("now()")
+    api_report = sqlalchemy.Column(
+        postgresql.JSONB, nullable=False, default=DEFAULT_USAGE_REPORT
     )
-    last_updated = db.Column(
-        db.DateTime(timezone=True), nullable=False, server_default=db.text("now()")
+
+    portal_report = sqlalchemy.Column(
+        postgresql.JSONB, nullable=False, default=DEFAULT_USAGE_REPORT
+    )
+
+    website_report = sqlalchemy.Column(
+        postgresql.JSONB, nullable=False, default=DEFAULT_USAGE_REPORT
+    )
+
+    doc_site_report = sqlalchemy.Column(
+        postgresql.JSONB, nullable=False, default=DEFAULT_USAGE_REPORT
+    )
+
+    date_created = sqlalchemy.Column(
+        sqlalchemy.DateTime(timezone=True),
+        nullable=False,
+        server_default=sqlalchemy.text("now()"),
+    )
+    last_updated = sqlalchemy.Column(
+        sqlalchemy.DateTime(timezone=True),
+        nullable=False,
+        server_default=sqlalchemy.text("now()"),
     )
 
     def set_api_report(self, visits, visitors, requests, network_usage):
@@ -94,21 +108,33 @@ class DataDownloadReport(Base):
     def _create_default():
         return {SIZE_FIELD: 0, COUNT_FIELD: 0}
 
-    report_period = db.Column(db.Date, primary_key=True, nullable=False)
+    report_period = sqlalchemy.Column(sqlalchemy.Date, primary_key=True, nullable=False)
 
-    project_id_report = db.Column(JSONB, nullable=False, server_default="{}")
-
-    experimental_strategy_report = db.Column(JSONB, nullable=False, server_default="{}")
-
-    access_type_report = db.Column(JSONB, nullable=False, server_default="{}")
-
-    access_location_report = db.Column(JSONB, nullable=False, server_default="{}")
-
-    date_created = db.Column(
-        db.DateTime(timezone=True), nullable=False, server_default=db.text("now()")
+    project_id_report = sqlalchemy.Column(
+        postgresql.JSONB, nullable=False, server_default="{}"
     )
-    last_updated = db.Column(
-        db.DateTime(timezone=True), nullable=False, server_default=db.text("now()")
+
+    experimental_strategy_report = sqlalchemy.Column(
+        postgresql.JSONB, nullable=False, server_default="{}"
+    )
+
+    access_type_report = sqlalchemy.Column(
+        postgresql.JSONB, nullable=False, server_default="{}"
+    )
+
+    access_location_report = sqlalchemy.Column(
+        postgresql.JSONB, nullable=False, server_default="{}"
+    )
+
+    date_created = sqlalchemy.Column(
+        sqlalchemy.DateTime(timezone=True),
+        nullable=False,
+        server_default=sqlalchemy.text("now()"),
+    )
+    last_updated = sqlalchemy.Column(
+        sqlalchemy.DateTime(timezone=True),
+        nullable=False,
+        server_default=sqlalchemy.text("now()"),
     )
 
     def add_size_access_type(self, access_type: str, size: float) -> None:
@@ -238,16 +264,16 @@ class DataDownloadReport(Base):
 
 class MonthlyAwstats(Base):
     __tablename__ = "monthly_awstats"
-    report_date = db.Column("date", db.Date, primary_key=True)
-    site = db.Column("site", db.String(length=50), primary_key=True)
+    report_date = sqlalchemy.Column("date", sqlalchemy.Date, primary_key=True)
+    site = sqlalchemy.Column("site", sqlalchemy.String(length=50), primary_key=True)
     # TODO: many of these are currently Integers, should they be BigInts?
-    unique_visitors = db.Column("unique_visitors", db.Integer)
-    number_of_visits = db.Column("number_of_visits", db.Integer)
-    viewed_pages = db.Column("viewed_pages", db.Integer)
-    viewed_hits = db.Column("viewed_hits", db.Integer)
-    viewed_bw_gb = db.Column("viewed_bw_gb", db.Float)
-    unviewed_pages = db.Column("unviewed_pages", db.Integer)
-    unviewed_hits = db.Column("unviewed_hits", db.Integer)
-    unviewed_bw_gb = db.Column("unviewed_bw_gb", db.Float)
-    observium_bw_in_gb = db.Column("observium_bw_in_gb", db.Float)
-    observium_bw_out_gb = db.Column("observium_bw_out_gb", db.Float)
+    unique_visitors = sqlalchemy.Column("unique_visitors", sqlalchemy.Integer)
+    number_of_visits = sqlalchemy.Column("number_of_visits", sqlalchemy.Integer)
+    viewed_pages = sqlalchemy.Column("viewed_pages", sqlalchemy.Integer)
+    viewed_hits = sqlalchemy.Column("viewed_hits", sqlalchemy.Integer)
+    viewed_bw_gb = sqlalchemy.Column("viewed_bw_gb", sqlalchemy.Float)
+    unviewed_pages = sqlalchemy.Column("unviewed_pages", sqlalchemy.Integer)
+    unviewed_hits = sqlalchemy.Column("unviewed_hits", sqlalchemy.Integer)
+    unviewed_bw_gb = sqlalchemy.Column("unviewed_bw_gb", sqlalchemy.Float)
+    observium_bw_in_gb = sqlalchemy.Column("observium_bw_in_gb", sqlalchemy.Float)
+    observium_bw_out_gb = sqlalchemy.Column("observium_bw_out_gb", sqlalchemy.Float)

@@ -12,12 +12,12 @@ cohort data model includes the following entities:
 import uuid
 
 import sqlalchemy
+from sqlalchemy import orm
 from sqlalchemy.dialects import postgresql
-from sqlalchemy.ext import declarative
 
 from gdc_ng_models.models import accessed, audit
 
-Base = declarative.declarative_base()
+Base = orm.declarative_base()
 
 
 class AnonymousContext(Base, audit.AuditColumnsMixin):
@@ -43,7 +43,7 @@ class AnonymousContext(Base, audit.AuditColumnsMixin):
     )
 
     # establishes a one-to-many relationship with Cohort
-    cohorts = sqlalchemy.orm.relationship("Cohort", back_populates="context", lazy="selectin")
+    cohorts = orm.relationship("Cohort", back_populates="context", lazy="selectin")
 
     def __repr__(self) -> str:
         created_datetime = self.created_datetime.isoformat() if self.created_datetime else None

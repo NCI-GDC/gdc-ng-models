@@ -1,28 +1,15 @@
 """Models for submission TransactionLogs."""
 
+import json
 from datetime import datetime
-from json import dumps, loads
 
 import pytz
-from sqlalchemy import (
-    BigInteger,
-    Boolean,
-    Column,
-    DateTime,
-    ForeignKey,
-    Index,
-    Integer,
-    Sequence,
-    Text,
-    func,
-    text,
-)
-from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.ext.declarative import declarative_base, declared_attr
-from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import deferred, relationship
+import sqlalchemy
+from sqlalchemy import orm
+from sqlalchemy.dialects import postgresql
+from sqlalchemy.ext import declarative, hybrid
 
-Base = declarative_base()
+Base = orm.declarative_base()
 
 
 def datetime_to_unix(dt):
@@ -32,19 +19,20 @@ def datetime_to_unix(dt):
 class TransactionLog(Base):
     __tablename__ = "transaction_logs"
 
-    @declared_attr
+    @declarative.declared_attr
     def __table_args__(cls):  # noqa: N805
         tbl = cls.__tablename__
+
         return (
-            Index(f"{tbl}_program_idx", "program"),
-            Index(f"{tbl}_project_idx", "project"),
-            Index(f"{tbl}_is_dry_run_idx", "is_dry_run"),
-            Index(f"{tbl}_committed_by_idx", "committed_by"),
-            Index(f"{tbl}_closed_idx", "closed"),
-            Index(f"{tbl}_state_idx", "state"),
-            Index(f"{tbl}_submitter_idx", "submitter"),
-            Index(f"{tbl}_created_datetime_idx", "created_datetime"),
-            Index(f"{tbl}_project_id_idx", cls.program + "-" + cls.project),
+            sqlalchemy.Index(f"{tbl}_program_idx", "program"),
+            sqlalchemy.Index(f"{tbl}_project_idx", "project"),
+            sqlalchemy.Index(f"{tbl}_is_dry_run_idx", "is_dry_run"),
+            sqlalchemy.Index(f"{tbl}_committed_by_idx", "committed_by"),
+            sqlalchemy.Index(f"{tbl}_closed_idx", "closed"),
+            sqlalchemy.Index(f"{tbl}_state_idx", "state"),
+            sqlalchemy.Index(f"{tbl}_submitter_idx", "submitter"),
+            sqlalchemy.Index(f"{tbl}_created_datetime_idx", "created_datetime"),
+            sqlalchemy.Index(f"{tbl}_project_id_idx", cls.program + "-" + cls.project),
         )
 
     def __repr__(self) -> str:
@@ -89,69 +77,71 @@ class TransactionLog(Base):
 
         return doc
 
-    id_seq = Sequence("transaction_logs_id_seq", metadata=Base.metadata)
-    id = Column(BigInteger, primary_key=True, server_default=id_seq.next_value())
-
-    submitter = Column(
-        Text,
+    id_seq = sqlalchemy.Sequence("transaction_logs_id_seq", metadata=Base.metadata)
+    id = sqlalchemy.Column(
+        sqlalchemy.BigInteger, primary_key=True, server_default=id_seq.next_value()
     )
 
-    role = Column(
-        Text,
+    submitter = sqlalchemy.Column(
+        sqlalchemy.Text,
+    )
+
+    role = sqlalchemy.Column(
+        sqlalchemy.Text,
         nullable=False,
     )
 
-    program = Column(
-        Text,
+    program = sqlalchemy.Column(
+        sqlalchemy.Text,
         nullable=False,
     )
 
-    project = Column(
-        Text,
+    project = sqlalchemy.Column(
+        sqlalchemy.Text,
         nullable=False,
     )
 
     #: Specifies a non-dry_run transaction that repeated this
     #: transaction in an attempt to write to the database
-    committed_by = Column(
-        Integer,
+    committed_by = sqlalchemy.Column(
+        sqlalchemy.Integer,
     )
 
     #: Was this transaction a dry_run (for validation)
-    is_dry_run = Column(
-        Boolean,
+    is_dry_run = sqlalchemy.Column(
+        sqlalchemy.Boolean,
         nullable=False,
     )
 
     #: Has this transaction succeeded, errored, failed, etc.
-    state = Column(
-        Text,
+    state = sqlalchemy.Column(
+        sqlalchemy.Text,
         nullable=False,
     )
 
-    closed = Column(
-        Boolean,
+    closed = sqlalchemy.Column(
+        sqlalchemy.Boolean,
         default=False,
         nullable=False,
     )
 
-    @hybrid_property
+    @hybrid.hybrid_property
     def project_id(self):
         return self.program + "-" + self.project
 
-    @project_id.expression
-    def project_id(cls):  # noqa: N805
-        return func.concat(cls.program, "-", cls.project)
+    @project_id.comparator
+    def _project_id_comparator(cls):  # noqa: N805
+        return sqlalchemy.func.concat(cls.program, "-", cls.project)
 
-    created_datetime = Column(
-        DateTime(timezone=True),
+    created_datetime = sqlalchemy.Column(
+        sqlalchemy.DateTime(timezone=True),
         nullable=False,
-        server_default=text("now()"),
+        server_default=sqlalchemy.text("now()"),
     )
 
-    canonical_json = deferred(
-        Column(
-            JSONB,
+    canonical_json = orm.deferred(
+        sqlalchemy.Column(
+            postgresql.JSONB,
             server_default="[]",
             nullable=False,
         )
@@ -160,10 +150,9 @@ class TransactionLog(Base):
 
 class TransactionSnapshot(Base):
     __tablename__ = "transaction_snapshots"
-
-    @declared_attr
-    def __table_args__(cls):  # noqa: N805
-        return (Index("idx_transaction_snapshots_transactions_id", "transaction_id"),)
+    __table_args__ = (
+        sqlalchemy.Index("idx_transaction_snapshots_transactions_id", "transaction_id"),
+    )
 
     def __repr__(self) -> str:
         return f"<TransactionSnapshot({self.id}, {self.transaction_id})>"
@@ -182,42 +171,41 @@ class TransactionSnapshot(Base):
         doc = {key: getattr(self, key) for key in fields}
         return doc
 
-    id = Column(
-        Text,
+    id = sqlalchemy.Column(
+        sqlalchemy.Text,
         primary_key=True,
         nullable=False,
     )
 
-    transaction_id = Column(
-        BigInteger,
-        ForeignKey("transaction_logs.id"),
+    transaction_id = sqlalchemy.Column(
+        sqlalchemy.BigInteger,
+        sqlalchemy.ForeignKey("transaction_logs.id"),
         primary_key=True,
     )
 
-    action = Column(
-        Text,
+    action = sqlalchemy.Column(
+        sqlalchemy.Text,
         nullable=False,
     )
 
-    old_props = Column(
-        JSONB,
+    old_props = sqlalchemy.Column(
+        postgresql.JSONB,
         nullable=False,
     )
 
-    new_props = Column(
-        JSONB,
+    new_props = sqlalchemy.Column(
+        postgresql.JSONB,
         nullable=False,
     )
 
-    transaction = relationship("TransactionLog", backref="entities")
+    transaction = orm.relationship("TransactionLog", backref="entities")
 
 
 class TransactionDocument(Base):
     __tablename__ = "transaction_documents"
-
-    @declared_attr
-    def __table_args__(cls):  # noqa: N805
-        return (Index("idx_transaction_document_transactions_id", "transaction_id"),)
+    __table_args__ = (
+        sqlalchemy.Index("idx_transaction_document_transactions_id", "transaction_id"),
+    )
 
     def to_json(self, fields=None):
         # Source fields
@@ -238,40 +226,43 @@ class TransactionDocument(Base):
         doc = {key: getattr(self, key) for key in fields}
         return doc
 
-    id_seq = Sequence("transaction_documents_id_seq", metadata=Base.metadata)
-    id = Column(
-        BigInteger, primary_key=True, nullable=False, server_default=id_seq.next_value()
+    id_seq = sqlalchemy.Sequence("transaction_documents_id_seq", metadata=Base.metadata)
+    id = sqlalchemy.Column(
+        sqlalchemy.BigInteger,
+        primary_key=True,
+        nullable=False,
+        server_default=id_seq.next_value(),
     )
 
-    transaction_id = Column(
-        BigInteger,
-        ForeignKey("transaction_logs.id"),
+    transaction_id = sqlalchemy.Column(
+        sqlalchemy.BigInteger,
+        sqlalchemy.ForeignKey("transaction_logs.id"),
         primary_key=True,
     )
 
-    name = Column(
-        Text,
+    name = sqlalchemy.Column(
+        sqlalchemy.Text,
     )
 
-    doc_format = Column(
-        Text,
+    doc_format = sqlalchemy.Column(
+        sqlalchemy.Text,
         nullable=False,
     )
 
-    doc = deferred(
-        Column(
-            Text,
+    doc = orm.deferred(
+        sqlalchemy.Column(
+            sqlalchemy.Text,
             nullable=False,
         )
     )
 
-    response_json = deferred(
-        Column(
-            JSONB,
+    response_json = orm.deferred(
+        sqlalchemy.Column(
+            postgresql.JSONB,
         )
     )
 
-    transaction = relationship("TransactionLog", backref="documents")
+    transaction = orm.relationship("TransactionLog", backref="documents")
 
     @property
     def is_json(self):
@@ -291,12 +282,12 @@ class TransactionDocument(Base):
     def json(self):
         if not self.is_json:
             return None
-        return loads(self.doc)
+        return json.loads(self.doc)
 
     @json.setter
     def json(self, doc):
         self.doc_format = "JSON"
-        self.doc = dumps(doc)
+        self.doc = json.dumps(doc)
 
     @property
     def xml(self):

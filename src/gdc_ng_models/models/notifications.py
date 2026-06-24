@@ -2,38 +2,31 @@ import json
 from collections.abc import Mapping
 from typing import Any, ClassVar
 
-from sqlalchemy import (
-    BigInteger,
-    Boolean,
-    Column,
-    DateTime,
-    Sequence,
-    String,
-    Text,
-    text,
-)
-from sqlalchemy.dialects.postgresql import ARRAY
-from sqlalchemy.ext.declarative import declarative_base
+import sqlalchemy
+from sqlalchemy import orm
+from sqlalchemy.dialects import postgresql
 
-Base = declarative_base()
+Base = orm.declarative_base()
 
 
 class Notification(Base):
     __tablename__ = "notifications"
 
-    id_seq = Sequence("notifications_id_seq", metadata=Base.metadata)
-    id = Column(BigInteger, primary_key=True, server_default=id_seq.next_value())
-    components = Column(ARRAY(Text), default=list())
-    message = Column(String)
-    level = Column(String)
-    dismissible = Column(Boolean, default=True)
-    created = Column(
-        DateTime(timezone=True),
-        nullable=False,
-        server_default=text("now()"),
+    id_seq = sqlalchemy.Sequence("notifications_id_seq", metadata=Base.metadata)
+    id = sqlalchemy.Column(
+        sqlalchemy.BigInteger, primary_key=True, server_default=id_seq.next_value()
     )
-    start_date = Column(DateTime(timezone=True), nullable=True)
-    end_date = Column(DateTime(timezone=True), nullable=True)
+    components = sqlalchemy.Column(postgresql.ARRAY(sqlalchemy.Text), default=list())
+    message = sqlalchemy.Column(sqlalchemy.String)
+    level = sqlalchemy.Column(sqlalchemy.String)
+    dismissible = sqlalchemy.Column(sqlalchemy.Boolean, default=True)
+    created = sqlalchemy.Column(
+        sqlalchemy.DateTime(timezone=True),
+        nullable=False,
+        server_default=sqlalchemy.text("now()"),
+    )
+    start_date = sqlalchemy.Column(sqlalchemy.DateTime(timezone=True), nullable=True)
+    end_date = sqlalchemy.Column(sqlalchemy.DateTime(timezone=True), nullable=True)
 
     __mapper_args__: ClassVar[Mapping[str, Any]] = {"eager_defaults": True}
 

@@ -1,7 +1,7 @@
 ---
 services:
   postgres:
-    image: docker.osdc.io/ncigdc/ci-postgres-13:latest
+    image: docker.osdc.io/ncigdc/ci-postgres-18:latest
     hostname: postgres.service.local
     # fixes mac m2 manifest issue
     platform: linux/amd64

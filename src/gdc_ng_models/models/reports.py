@@ -1,42 +1,44 @@
-from sqlalchemy import BigInteger, Column, DateTime, Index, Sequence, Text, func, text
-from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.ext.hybrid import hybrid_property
+import sqlalchemy
+from sqlalchemy import orm
+from sqlalchemy.dialects import postgresql
+from sqlalchemy.ext import hybrid
 
-Base = declarative_base()
+Base = orm.declarative_base()
 
 
 class GDCReport(Base):
     __tablename__ = "gdc_reports"
     __table_args__ = (
-        Index(f"{__tablename__}_report_idx", "report", postgresql_using="gin"),
-        Index(f"{__tablename__}_report_type_idx", "report_type"),
-        Index(f"{__tablename__}_created_datetime_idx", "created_datetime"),
-        Index(f"{__tablename__}_program_idx", "program"),
-        Index(f"{__tablename__}_project_idx", "project"),
-        Index(f"{__tablename__}_id_idx", "id"),
+        sqlalchemy.Index(f"{__tablename__}_report_idx", "report", postgresql_using="gin"),
+        sqlalchemy.Index(f"{__tablename__}_report_type_idx", "report_type"),
+        sqlalchemy.Index(f"{__tablename__}_created_datetime_idx", "created_datetime"),
+        sqlalchemy.Index(f"{__tablename__}_program_idx", "program"),
+        sqlalchemy.Index(f"{__tablename__}_project_idx", "project"),
+        sqlalchemy.Index(f"{__tablename__}_id_idx", "id"),
     )
 
     def __repr__(self) -> str:
         return f"<Report({self.id}, {self.report_type})>"
 
-    id_seq = Sequence("gdc_reports_id_seq", metadata=Base.metadata)
-    id = Column(BigInteger, primary_key=True, server_default=id_seq.next_value())
-    program = Column(Text)
-    project = Column(Text)
-    report = Column(JSONB)
-    report_type = Column(Text, nullable=False)
+    id_seq = sqlalchemy.Sequence("gdc_reports_id_seq", metadata=Base.metadata)
+    id = sqlalchemy.Column(
+        sqlalchemy.BigInteger, primary_key=True, server_default=id_seq.next_value()
+    )
+    program = sqlalchemy.Column(sqlalchemy.Text)
+    project = sqlalchemy.Column(sqlalchemy.Text)
+    report = sqlalchemy.Column(postgresql.JSONB)
+    report_type = sqlalchemy.Column(sqlalchemy.Text, nullable=False)
 
-    created_datetime = Column(
-        DateTime(timezone=True),
+    created_datetime = sqlalchemy.Column(
+        sqlalchemy.DateTime(timezone=True),
         nullable=False,
-        server_default=text("now()"),
+        server_default=sqlalchemy.text("now()"),
     )
 
-    @hybrid_property
+    @hybrid.hybrid_property
     def project_id(self):
         return self.program + "-" + self.project
 
     @project_id.expression
-    def project_id(cls):  # noqa: N805
-        return func.concat(cls.program, "-", cls.project)
+    def _project_id_expression(cls):  # noqa: N805
+        return sqlalchemy.func.concat(cls.program, "-", cls.project)

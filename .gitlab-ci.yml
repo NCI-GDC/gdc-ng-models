@@ -17,8 +17,11 @@ tox:
           - python3.12
           - python3.13
           - python3.14
+        SQLALCHEMY:
+          - sqlalchemy1.4
+          - sqlalchemy2
   services:
-    - name: docker.osdc.io/ncigdc/ci-postgres-13:latest
+    - name: docker.osdc.io/ncigdc/ci-postgres-18:latest
       alias: postgres
       variables:
         POSTGRES_DB: automated_test
@@ -27,3 +30,5 @@ tox:
         POSTGRES_HOST_AUTH_METHOD: trust
   variables:
     PG_HOST: postgres
+  script:
+    - uv tool run tox -r -e py-${SQLALCHEMY}

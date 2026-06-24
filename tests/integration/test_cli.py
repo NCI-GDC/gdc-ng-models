@@ -1,6 +1,7 @@
 from collections.abc import Callable
 
 import pytest
+import sqlalchemy
 from sqlalchemy.engine import Engine
 
 
@@ -20,7 +21,9 @@ def test_cli__invalid_module(ng_models_cli: Callable[[str], None], db_args: str)
 def test_cli__grant(
     db_engine: Engine, ng_models_cli: Callable[[str], None], db_args: str
 ) -> None:
-    stmt = "drop role if exists resty; create user resty with password 'password';"
+    stmt = sqlalchemy.text(
+        "drop role if exists resty; create user resty with password 'password';"
+    )
     conn = db_engine.connect()
     conn.execute(stmt)
     conn.close()

@@ -1,11 +1,10 @@
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import validates
+from sqlalchemy import orm
+from sqlalchemy.ext import hybrid
 from sqlalchemy.sql import schema, sqltypes
 
 from gdc_ng_models.models import audit
 
-Base = declarative_base()
+Base = orm.declarative_base()
 
 RELEASED_DATA_DATA_TYPE_VALUES = frozenset({"ssm", "cnv", "case"})
 RELEASED_DATA_LOG_ACTION_VALUES = frozenset({"release", "unrelease"})
@@ -21,7 +20,7 @@ class ReleasedDataMixin:
     def project_id(self):
         return f"{self.program_name}-{self.project_code}"
 
-    @validates("data_type")
+    @orm.validates("data_type")
     def validate_data_type(self, key, data_type):
         if data_type not in RELEASED_DATA_DATA_TYPE_VALUES:
             raise ValueError(f""""{data_type}" is not a valid value for {key}""")
@@ -56,7 +55,7 @@ class ReleasedData(Base, audit.AuditColumnsMixin, ReleasedDataMixin):
             "is_open": self.is_open,
         }
 
-    @hybrid_property
+    @hybrid.hybrid_property
     def id(self):
         return f"{self.program_name}_{self.project_code}_{self.data_type}"
 
@@ -90,7 +89,7 @@ class ReleasedDataLog(Base, audit.AuditColumnsMixin, ReleasedDataMixin):
     release_number = schema.Column(sqltypes.Text, nullable=False)
     action = schema.Column(sqltypes.Text, nullable=False)
 
-    @validates("action")
+    @orm.validates("action")
     def validate_action(self, key, action):
         if action not in RELEASED_DATA_LOG_ACTION_VALUES:
             raise ValueError(f""""{action}" is not a valid value for {key}""")

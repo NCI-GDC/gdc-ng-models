@@ -20,7 +20,7 @@ classifiers = [
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14"
 ]
-dependencies = ["psycopg2", "pytz>=2020.5", "sqlalchemy<2"]
+dependencies = ["psycopg2", "pytz>=2020.5", "sqlalchemy>=1.4,<3.0"]
 description = "Non-graph GDC models."
 dynamic = ["version"]
 keywords = ["Genomic Data Commons", "non-graph-models", "SQLAlchemy"]
@@ -34,6 +34,8 @@ requires-python = ">=3.10"
 
 [project.optional-dependencies]
 alembic = ["alembic>=1.4"]
+"sqlalchemy1.4" = ["sqlalchemy~=1.4.0"]
+sqlalchemy2 = ["sqlalchemy~=2.0"]
 
 [project.scripts]
 ng-models = "gdc_ng_models.cli:main"
@@ -106,7 +108,7 @@ where = ["src"]
 fallback_version = "0.0.0"
 
 [tool.tox]
-env_list = [{prefix = "py3", start = 10, stop = 14}]
+env_list = [{product = [{prefix = "py3", start = 10, stop = 14}, {sqlalchemy = ["sqlalchemy1.4", "sqlalchemy2"]}]}]
 
 [tool.tox.env_run_base]
 commands = [
@@ -116,6 +118,7 @@ commands = [
   ]
 ]
 dependency_groups = ["dev"]
+extras = ["{factor:sqlalchemy:sqlalchemy2}"]
 pass_env = ["CI", "PG_*"]
 runner = "uv-venv-lock-runner"
 
@@ -125,6 +128,9 @@ no_proxy = "localhost,postgres"
 PG_NAME = "automated_test"
 PG_PASS = "test"
 PG_USER = "test"
+
+[tool.uv]
+conflicts = [[{extra = "sqlalchemy1.4"}, {extra = "sqlalchemy2"}]]
 
 [[tool.uv.index]]
 name = "nexus"

@@ -1,22 +1,11 @@
-from sqlalchemy import (
-    BigInteger,
-    Boolean,
-    Column,
-    DateTime,
-    Enum,
-    ForeignKey,
-    Sequence,
-    String,
-    Text,
-    text,
-)
-from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship, validates
+import sqlalchemy
+from sqlalchemy import orm
+from sqlalchemy.dialects import postgresql
 
-Base = declarative_base()
-SEVERITY = Enum("CRITICAL", "WARNING", "PASSED", name="error_severity")
-TEST_RUN_STATUS = Enum(
+Base = orm.declarative_base()
+
+SEVERITY = sqlalchemy.Enum("CRITICAL", "WARNING", "PASSED", name="error_severity")
+TEST_RUN_STATUS = sqlalchemy.Enum(
     "PENDING", "RUNNING", "SUCCESS", "ERROR", "FAILED", name="test_run_status"
 )
 
@@ -24,33 +13,35 @@ TEST_RUN_STATUS = Enum(
 class TestRun(Base):
     __tablename__ = "qc_test_runs"
 
-    id_seq = Sequence("qc_test_runs_id_seq", metadata=Base.metadata)
-    id = Column(BigInteger, primary_key=True, server_default=id_seq.next_value())
-    project_id = Column(String(64), nullable=False, index=True)
+    id_seq = sqlalchemy.Sequence("qc_test_runs_id_seq", metadata=Base.metadata)
+    id = sqlalchemy.Column(
+        sqlalchemy.BigInteger, primary_key=True, server_default=id_seq.next_value()
+    )
+    project_id = sqlalchemy.Column(sqlalchemy.String(64), nullable=False, index=True)
 
-    entity_id = Column(String(64), nullable=False)
-    test_type = Column(String(64), nullable=False, index=True)
-    is_stale = Column(Boolean(64), nullable=False, default=False)
+    entity_id = sqlalchemy.Column(sqlalchemy.String(64), nullable=False)
+    test_type = sqlalchemy.Column(sqlalchemy.String(64), nullable=False, index=True)
+    is_stale = sqlalchemy.Column(sqlalchemy.Boolean, nullable=False, default=False)
 
     # e.g. pending/running/finished
-    status = Column(TEST_RUN_STATUS, default="PENDING", nullable=False, index=True)
+    status = sqlalchemy.Column(TEST_RUN_STATUS, default="PENDING", nullable=False, index=True)
 
-    test_results = relationship(
+    test_results = orm.relationship(
         "ValidationResult",
         back_populates="test_run",
         cascade="all, delete, delete-orphan",
     )
 
-    date_created = Column(
-        DateTime(timezone=True),
+    date_created = sqlalchemy.Column(
+        sqlalchemy.DateTime(timezone=True),
         nullable=False,
-        server_default=text("now()"),
+        server_default=sqlalchemy.text("now()"),
     )
 
-    last_updated = Column(
-        DateTime(timezone=True),
+    last_updated = sqlalchemy.Column(
+        sqlalchemy.DateTime(timezone=True),
         nullable=False,
-        server_default=text("now()"),
+        server_default=sqlalchemy.text("now()"),
     )
 
     def __repr__(self) -> str:
@@ -73,40 +64,47 @@ class TestRun(Base):
 class ValidationResult(Base):
     __tablename__ = "qc_validation_results"
 
-    id_seq = Sequence("qc_validation_results_id_seq", metadata=Base.metadata)
-    id = Column(BigInteger, primary_key=True, server_default=id_seq.next_value())
+    id_seq = sqlalchemy.Sequence("qc_validation_results_id_seq", metadata=Base.metadata)
+    id = sqlalchemy.Column(
+        sqlalchemy.BigInteger, primary_key=True, server_default=id_seq.next_value()
+    )
 
-    node_id = Column(String(64), nullable=False)
-    submitter_id = Column(String(128), nullable=False)
+    node_id = sqlalchemy.Column(sqlalchemy.String(64), nullable=False)
+    submitter_id = sqlalchemy.Column(sqlalchemy.String(128), nullable=False)
 
-    error_type = Column(String(128), nullable=True, default="", index=True)
+    error_type = sqlalchemy.Column(
+        sqlalchemy.String(128), nullable=True, default="", index=True
+    )
 
     # from Node.label
-    node_type = Column(String(128), nullable=False, index=True)
-    message = Column(Text, nullable=False)
+    node_type = sqlalchemy.Column(sqlalchemy.String(128), nullable=False, index=True)
+    message = sqlalchemy.Column(sqlalchemy.Text, nullable=False)
 
-    severity = Column(SEVERITY, nullable=True, index=True)
+    severity = sqlalchemy.Column(SEVERITY, nullable=True, index=True)
 
-    related_nodes = Column(JSONB, nullable=True)
+    related_nodes = sqlalchemy.Column(postgresql.JSONB, nullable=True)
 
-    test_run_id = Column(
-        BigInteger, ForeignKey("qc_test_runs.id"), nullable=False, primary_key=True
-    )
-    test_run = relationship("TestRun", back_populates="test_results")
-
-    date_created = Column(
-        DateTime(timezone=True),
+    test_run_id = sqlalchemy.Column(
+        sqlalchemy.BigInteger,
+        sqlalchemy.ForeignKey("qc_test_runs.id"),
         nullable=False,
-        server_default=text("now()"),
+        primary_key=True,
     )
+    test_run = orm.relationship("TestRun", back_populates="test_results")
 
-    last_updated = Column(
-        DateTime(timezone=True),
+    date_created = sqlalchemy.Column(
+        sqlalchemy.DateTime(timezone=True),
         nullable=False,
-        server_default=text("now()"),
+        server_default=sqlalchemy.text("now()"),
     )
 
-    @validates("severity")
+    last_updated = sqlalchemy.Column(
+        sqlalchemy.DateTime(timezone=True),
+        nullable=False,
+        server_default=sqlalchemy.text("now()"),
+    )
+
+    @orm.validates("severity")
     def validate_severity(self, key, severity):
 
         if not severity:
