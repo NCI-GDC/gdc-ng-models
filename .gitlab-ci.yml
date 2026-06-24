@@ -19,10 +19,10 @@ tox:
   services:
     - name: docker.osdc.io/ncigdc/ci-postgres-13:${BASE_CONTAINER_VERSION}
       alias: postgres
+      variables:
+        POSTGRES_DB: automated_test
+        POSTGRES_USER: test
+        POSTGRES_PASSWORD: test
+        POSTGRES_HOST_AUTH_METHOD: trust
   variables:
-    # these are for postgres docker
-    POSTGRES_DB: automated_test
-    POSTGRES_USER: gdc_test
-    POSTGRES_PASSWORD: gdc_test
-    POSTGRES_HOST_AUTH_METHOD: trust
     PG_HOST: postgres
