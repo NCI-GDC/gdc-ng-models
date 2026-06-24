@@ -17,7 +17,7 @@ tox:
           - python3.12
           - python3.13
   services:
-    - name: docker.osdc.io/ncigdc/ci-postgres-13:${BASE_CONTAINER_VERSION}
+    - name: docker.osdc.io/ncigdc/ci-postgres-13:latest
       alias: postgres
       variables:
         POSTGRES_DB: automated_test
